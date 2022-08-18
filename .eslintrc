@@ -20,13 +20,6 @@
     "no-tabs": "error",
     "curly": "off",
     "react/react-in-jsx-scope": "off",
-    "react/function-component-definition": [
-      2,
-      {
-        "namedComponents": "function-declaration",
-        "unnamedComponents": "arrow-function"
-      }
-    ],
     "no-mixed-spaces-and-tabs": "error"
   }
 }

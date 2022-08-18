@@ -13,9 +13,11 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "baseUrl": "src",
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "exclude": ["node_modules", "**/node_modules/*"],
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
