@@ -6,7 +6,7 @@ name: Firebase CI
 on:
   push:
     branches: [main]
-  pull_request:blank
+  pull_request:
     branches: [main]
 
 jobs:
