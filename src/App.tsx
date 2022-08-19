@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
-import { firebaseConfig } from './app/config/firebase'
+import reactLogo from './assets/react.svg'
 
 function App() {
   const [count, setCount] = useState(0)
-  console.log(firebaseConfig)
 
   return (
     <div className='App'>
