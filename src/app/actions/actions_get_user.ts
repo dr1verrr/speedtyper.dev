@@ -1,6 +1,6 @@
 import { User, onAuthStateChanged } from 'firebase/auth'
 
-import { auth } from 'app/config/firebase'
+import { auth } from '@/app/config/firebase'
 
 const getUser = () => {
   return new Promise<User>((resolve, reject) => {

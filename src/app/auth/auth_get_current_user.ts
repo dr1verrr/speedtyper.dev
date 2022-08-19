@@ -1,4 +1,4 @@
-import { auth } from 'app/config/firebase'
+import { auth } from '@/app/config/firebase'
 
 const getCurrentUser = () => {
   const user = auth.currentUser
