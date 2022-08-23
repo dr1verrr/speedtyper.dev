@@ -1,4 +1,4 @@
-import AuthenticatedRoute from './AuthenticatedRoute/AuthenticatedRoute'
-import PublicRoute from './PublicRoute/PublicRoute'
+import AuthenticatedRoute from './AuthenticatedRoute'
+import PublicRoute from './PublicRoute'
 
 export { PublicRoute, AuthenticatedRoute }
