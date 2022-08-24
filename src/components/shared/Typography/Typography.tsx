@@ -1,4 +1,4 @@
-import { createElement, ReactNode } from 'react'
+import React, { ReactNode, createElement } from 'react'
 
 type TypographyProps = {
   variant?: 'h1' | 'h2' | 'h3' | 'body' | 'body-lg'
@@ -7,12 +7,24 @@ type TypographyProps = {
   children?: ReactNode
 }
 
-export default function Typography({ variant = 'body', sx, children }: TypographyProps) {
+export default function Typography({
+  variant = 'body',
+  sx,
+  children,
+  ...props
+}: TypographyProps) {
   const style = sx
 
-  if (variant !== 'body' && variant !== 'body-lg') {
-    return <span style={sx}>{children}</span>
+  if (!variant) {
+    return (
+      <span
+        style={sx}
+        {...props}
+      >
+        {children}
+      </span>
+    )
   }
 
-  return createElement(variant, { style, children })
+  return createElement(variant, { style, children, ...props })
 }

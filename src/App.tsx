@@ -5,6 +5,7 @@ import { useEvent } from 'effector-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
+
 import './App.css'
 import AppRoutes from './routes/AppRoutes'
 
