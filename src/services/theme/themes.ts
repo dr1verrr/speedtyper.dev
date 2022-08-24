@@ -1,11 +1,11 @@
-import { createContext, useContext } from 'react'
-
 const lightTheme = {
   mode: 'light',
   button: {
-    bg: '',
-    text: '',
     variant: {
+      default: {
+        bg: '#000',
+        text: '#fff'
+      },
       primary: {
         bg: '#000',
         text: '#fff'
@@ -17,20 +17,23 @@ const lightTheme = {
     }
   },
   common: {
-    bg: '',
-    text: ''
+    bg: '#fff',
+    text: '#000',
+    border: '#ccc'
   },
   status: {
-    ghost: ''
+    ghost: '#ccc'
   }
 }
 
 const darkTheme = {
   mode: 'dark',
   button: {
-    bg: '',
-    text: '',
     variant: {
+      default: {
+        bg: '#fff',
+        text: '#000'
+      },
       primary: {
         bg: '#000',
         text: '#fff'
@@ -42,8 +45,9 @@ const darkTheme = {
     }
   },
   common: {
-    bg: '',
-    text: ''
+    bg: '#333',
+    text: '#fff',
+    border: '#555'
   },
   status: {
     ghost: ''
@@ -52,8 +56,4 @@ const darkTheme = {
 
 const defaultTheme = lightTheme
 
-const ThemeContext = createContext({ theme: defaultTheme })
-
-const useTheme = () => useContext(ThemeContext)
-
-export { defaultTheme, lightTheme, darkTheme, useTheme, ThemeContext }
+export { defaultTheme, lightTheme, darkTheme }
