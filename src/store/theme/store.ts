@@ -1,8 +1,7 @@
-import { loadState, saveState } from '@/utils/localStorage'
-import { createStore } from 'effector'
-
 import { LocalStorageKeys } from './constants'
 import { themeChanged, themeToggled } from './events'
+import { loadState, saveState } from '@/utils/localStorage'
+import { createStore } from 'effector'
 
 type ThemeStore = 'dark' | 'light'
 

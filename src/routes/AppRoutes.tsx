@@ -1,9 +1,8 @@
+import AuthenticatedRoute from './AuthenticatedRoute'
+import PublicRoute from './PublicRoute'
 import { NotFound } from '@/views'
 import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
-
-import AuthenticatedRoute from './AuthenticatedRoute'
-import PublicRoute from './PublicRoute'
 
 const Home = lazy(() => import('@/views/Home'))
 const SignIn = lazy(() => import('@/views/Authentication/SignIn'))

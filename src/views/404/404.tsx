@@ -1,6 +1,5 @@
-import { assets } from '@/assets'
-
 import styles from './404.module.css'
+import { assets } from '@/assets'
 
 export default function NotFound() {
   return (

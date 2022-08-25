@@ -1,13 +1,12 @@
+import './App.css'
 import { auth } from '@/app/config/firebase'
 import Layout from '@/components/wrappers/Layout'
+import AppRoutes from '@/routes/AppRoutes'
 import { authChanged } from '@/store/auth/events'
 import { useEvent } from 'effector-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-
-import './App.css'
-import AppRoutes from './routes/AppRoutes'
 
 function App() {
   const updateAuthData = useEvent(authChanged)

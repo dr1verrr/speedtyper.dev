@@ -11,8 +11,9 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "prettier"],
+  "plugins": ["react", "prettier", "unused-imports"],
   "rules": {
+    "unused-imports/no-unused-imports": "error",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "no-unused-vars": "warn",
     "no-console": "warn",

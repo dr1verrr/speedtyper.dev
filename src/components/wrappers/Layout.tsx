@@ -1,7 +1,7 @@
 import Spinner from '@/components/loaders/Spinner'
 import Box from '@/components/shared/Box'
 import useMediaQuery from '@/hooks/useMediaQuery'
-import NavBar from '@/layout/NavBar/NavBar'
+import NavBar from '@/layout/NavBar'
 import { darkTheme, lightTheme } from '@/services/theme/themes'
 import { LocalStorageKeys } from '@/store/theme/constants'
 import { themeChanged } from '@/store/theme/events'
