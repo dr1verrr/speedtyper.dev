@@ -1,3 +1,4 @@
+import './App.css'
 import { auth } from '@/app/config/firebase'
 import Layout from '@/components/wrappers/Layout'
 import AppRoutes from '@/routes/AppRoutes'
