@@ -7,6 +7,8 @@ import RequireAuthentication from '@/hoc/RequireAuth'
 import { useTheme } from '@/services/theme/actions'
 import { Link } from 'react-router-dom'
 
+// FIX: unexpected behavior of KeyboardIcon
+
 export default function NavBar() {
   const SignIn = RequireAuthentication(Button, false)
 

@@ -1,7 +1,7 @@
-import { loadState, saveState } from '@/utils/localStorage'
-import { createStore } from 'effector'
 import { LocalStorageKeys } from './constants'
 import { authChanged } from './events'
+import { loadState, saveState } from '@/utils/localStorage'
+import { createStore } from 'effector'
 
 type AuthStore = boolean
 
