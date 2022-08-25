@@ -1,11 +1,4 @@
 {
-  "importOrder": [
-    "^(assets|handlers|app|components|hoc|context|hooks|views|store|listeners|layouts|lib|pages|routes|services|styles|ui|utils)/?(.*)$",
-    "^[./]",
-    "^[../]"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
   "printWidth": 90,
   "semi": false,
   "singleQuote": true,
