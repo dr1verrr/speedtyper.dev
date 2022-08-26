@@ -1,16 +1,38 @@
-/* eslint-disable no-useless-concat */
+import SwitchTheme from '@/components/buttons/SwitchTheme'
+import About from '@/components/icons/About'
 import KeyboardLogo from '@/components/icons/KeyboardLogo'
 import { Button, Typography } from '@/components/shared'
+import UserAvatar from '@/components/shared/Avatar'
 import Box from '@/components/shared/Box'
 import Container from '@/components/shared/Container'
+import IconButton from '@/components/shared/IconButton'
 import RequireAuthentication from '@/hoc/RequireAuth'
 import { useTheme } from '@/services/theme/actions'
+import { themeToggled } from '@/store/theme/events'
+import { useEvent } from 'effector-react'
 import { Link } from 'react-router-dom'
 
-// FIX: unexpected behavior of KeyboardIcon
-
 export default function NavBar() {
-  const SignIn = RequireAuthentication(Button, false)
+  const AuthenticationButton = RequireAuthentication(
+    () => (
+      <Link to='/sign-in'>
+        <Button>Sign in / Sign up</Button>
+      </Link>
+    ),
+    false
+  )
+
+  const ProfileAvatarButton = RequireAuthentication(() => {
+    return (
+      <Link to='/profile'>
+        <IconButton sx={{ padding: 5 }}>
+          <UserAvatar />
+        </IconButton>
+      </Link>
+    )
+  })
+
+  const toggleTheme = useEvent(themeToggled)
 
   const theme = useTheme()
 
@@ -50,9 +72,24 @@ export default function NavBar() {
               </Box>
             </Box>
           </Link>
-          <Box>
-            <Link to='/sign-in'>
-              <SignIn>Sign in / Sign up</SignIn>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 15
+            }}
+          >
+            <SwitchTheme
+              onClick={toggleTheme}
+              sx={{ maxWidth: 35, maxHeight: 35 }}
+            />
+            <ProfileAvatarButton />
+            <AuthenticationButton />
+            <Link to='/about'>
+              <IconButton sx={{ maxWidth: 35, maxHeight: 35 }}>
+                <About />
+              </IconButton>
             </Link>
           </Box>
         </Box>
