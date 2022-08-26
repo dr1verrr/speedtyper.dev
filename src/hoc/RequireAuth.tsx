@@ -12,7 +12,7 @@ export default function RequireAuthentication<P extends object>(
       return <WrappedComponent {...props} />
     }
 
-    if (!displayOnAuthenticated) {
+    if (!displayOnAuthenticated && !isAuthenticated) {
       return <WrappedComponent {...props} />
     }
 

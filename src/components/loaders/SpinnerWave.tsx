@@ -17,15 +17,16 @@ type SpinnerStyledProps = Omit<SpinnerProps, 'size'> & {
 const useStyles = createUseStyles<RuleNames, SpinnerStyledProps, Theme>({
   '@keyframes spinner': {
     '0%': {
-      transform: 'rotate(0)',
-      animationTimingFunction: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)'
+      top: 8,
+      height: 64
     },
     '50%': {
-      transform: 'rotate(900deg)',
-      animationTimingFunction: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+      top: 24,
+      height: 32
     },
     '100%': {
-      transform: 'rotate(1800deg)'
+      top: 24,
+      height: 32
     }
   },
   spinner: {
@@ -33,23 +34,30 @@ const useStyles = createUseStyles<RuleNames, SpinnerStyledProps, Theme>({
     position: 'relative',
     width: ({ size }) => size + size * 2,
     height: ({ size }) => size + size * 2,
-    '&:after': {
-      content: '""',
-      display: 'block',
-      borderRadius: '50%',
-      width: 0,
-      height: 0,
-      margin: 8,
-      boxSizing: 'border-box',
-      border: ({ theme, size }) => `${size}px solid ${theme.common.text}`,
-      borderColor: ({ theme }) =>
-        `${theme.common.text} transparent ${theme.common.text} transparent`,
-      animation: '$spinner 1.2s infinite'
+    '& div': {
+      display: 'inline-block',
+      position: 'absolute',
+      left: '8px',
+      width: '16px',
+      background: ({ theme }) => theme.common.text,
+      animation: '$spinner 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite'
+    },
+    '& div:nth-child(1)': {
+      left: '8px',
+      animationDelay: '-0.24s'
+    },
+    '& div:nth-child(2)': {
+      left: '32px',
+      animationDelay: '-0.12s'
+    },
+    '& div:nth-child(3)': {
+      left: '56px',
+      animationDelay: 0
     }
   }
 })
 
-export default function Spinner({ size = 30, sx, ...props }: SpinnerProps) {
+export default function SpinnerWave({ size = 30, sx, ...props }: SpinnerProps) {
   const theme = useTheme()
   const classes = useStyles({ size, theme, ...props })
 
@@ -57,6 +65,10 @@ export default function Spinner({ size = 30, sx, ...props }: SpinnerProps) {
     <div
       className={classes.spinner}
       style={sx}
-    ></div>
+    >
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   )
 }

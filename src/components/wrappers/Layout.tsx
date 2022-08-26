@@ -1,5 +1,4 @@
-import Spinner from '@/components/loaders/Spinner'
-import Box from '@/components/shared/Box'
+import FetchLoader from '../loaders/FetchLoader'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import NavBar from '@/layout/NavBar'
 import { darkTheme, lightTheme } from '@/services/theme/themes'
@@ -8,9 +7,10 @@ import { themeChanged } from '@/store/theme/events'
 import $theme, { ThemeStore } from '@/store/theme/store'
 import { loadState } from '@/utils/localStorage'
 import { useEvent, useStore } from 'effector-react'
-import { ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { ThemeProvider } from 'react-jss'
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 type LayoutProps = {
   children?: ReactNode
@@ -24,6 +24,17 @@ export default function Layout({ children }: LayoutProps) {
 
   const isPrefersModeChecked = useRef(false)
   const isFirstRender = useRef(true)
+
+  const memoizedLayoutInner = useMemo(
+    () => (
+      <>
+        <NavBar />
+        <main style={{ position: 'relative', minHeight: 'inherit' }}>{children}</main>
+        <FetchLoader />
+      </>
+    ),
+    [children]
+  )
 
   const getTheme = (mode: ThemeStore) => {
     switch (mode) {
@@ -74,18 +85,8 @@ export default function Layout({ children }: LayoutProps) {
           minHeight: '100vh'
         }}
       >
-        <NavBar />
-        <Suspense
-          fallback={
-            <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
-              <Spinner size={50} />
-            </Box>
-          }
-        >
-          <main style={{ position: 'relative', minHeight: 'inherit' }}>{children}</main>
-        </Suspense>
+        {memoizedLayoutInner}
       </div>
-
       <ToastContainer
         position='top-center'
         style={{ fontWeight: 'bold' }}

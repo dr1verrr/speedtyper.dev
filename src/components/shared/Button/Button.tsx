@@ -1,16 +1,17 @@
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { createUseStyles } from 'react-jss'
 
 type RuleNames = 'button'
 type Variants = 'primary' | 'action' | 'default'
 
-type ButtonProps = {
+type ButtonProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> & {
   variant?: Variants
   sx?: React.CSSProperties
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  children?: ReactNode
 }
 
 type ButtonStyledProps = Omit<ButtonProps, 'variant'> & {
@@ -19,12 +20,16 @@ type ButtonStyledProps = Omit<ButtonProps, 'variant'> & {
 
 const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
   button: {
+    transition: 'background .2s ease',
     background: ({ theme, variant }) => theme.button.variant[variant].bg,
     color: ({ theme, variant }) => theme.button.variant[variant].text,
     border: 0,
     padding: '7px 10px',
     borderRadius: 10,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    '&:hover': {
+      background: ({ theme }) => theme.action.hover
+    }
   }
 })
 
@@ -34,9 +39,10 @@ export default function Button({ variant = 'default', ...props }: ButtonProps) {
 
   return (
     <button
+      type='button'
       className={classes.button}
       {...props}
-      style={props.sx}
+      style={{ ...props.style, ...props.sx }}
     >
       {props.children}
     </button>

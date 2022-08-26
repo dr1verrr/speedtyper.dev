@@ -1,11 +1,13 @@
 import './App.css'
+import Spinner from './components/loaders/Spinner'
+import Box from './components/shared/Box'
 import { auth } from '@/app/config/firebase'
 import Layout from '@/components/wrappers/Layout'
 import AppRoutes from '@/routes/AppRoutes'
 import { authChanged } from '@/store/auth/events'
 import { useEvent } from 'effector-react'
 import { onAuthStateChanged } from 'firebase/auth'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 function App() {
@@ -20,7 +22,15 @@ function App() {
   return (
     <Router>
       <Layout>
-        <AppRoutes />
+        <Suspense
+          fallback={
+            <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
+              <Spinner size={50} />
+            </Box>
+          }
+        >
+          <AppRoutes />
+        </Suspense>
       </Layout>
     </Router>
   )

@@ -15,7 +15,7 @@ export default function Typography({
 }: TypographyProps) {
   const style = sx
 
-  if (!variant) {
+  if (variant === 'body' || variant === 'body-lg') {
     return (
       <span
         style={sx}

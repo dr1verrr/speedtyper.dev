@@ -21,6 +21,8 @@ export default function Container({ sx, maxWidth, children }: ContainerProps) {
   }
 
   return (
-    <div style={{ maxWidth: getMaxWidth(), margin: '0 auto', ...sx }}>{children}</div>
+    <div style={{ maxWidth: getMaxWidth(), margin: '0 auto', padding: '0 15px', ...sx }}>
+      {children}
+    </div>
   )
 }

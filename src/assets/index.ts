@@ -1,5 +1,5 @@
 const assets = {
-  404: 'https://user-images.githubusercontent.com/67706933/186343475-7cf5cd26-3dd2-4c30-af4c-8f4c28f98463.mp4'
+  404: 'https://user-images.githubusercontent.com/67706933/186343376-f5437921-cddc-491d-b7d1-f546228425db.mp4'
 }
 
 export { assets }

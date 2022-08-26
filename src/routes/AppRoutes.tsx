@@ -1,12 +1,13 @@
 import AuthenticatedRoute from './AuthenticatedRoute'
 import PublicRoute from './PublicRoute'
-import { NotFound } from '@/views'
 import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 const Home = lazy(() => import('@/views/Home'))
+const NotFound = lazy(() => import('@/views/404/404'))
 const SignIn = lazy(() => import('@/views/Authentication/SignIn'))
 const SignUp = lazy(() => import('@/views/Authentication/SignUp'))
+const Profile = lazy(() => import('@/views/Profile'))
 
 function AppRoutes() {
   return (
@@ -32,7 +33,7 @@ function AppRoutes() {
       <Route element={<AuthenticatedRoute />}>
         <Route
           path='/profile'
-          element={<div>Profile</div>}
+          element={<Profile />}
         />
       </Route>
     </Routes>
