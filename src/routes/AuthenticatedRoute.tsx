@@ -1,10 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import $auth from '@/store/auth/store'
+import { useStore } from 'effector-react'
+import { Navigate, Outlet } from 'react-router-dom'
 
-function AuthenticatedRoute(): JSX.Element {
-  //const isAuthenticated = useAppSelector(state => state.auth)
+function AuthenticatedRoute() {
+  const isAuthenticated = useStore($auth)
 
-  //return isAuthenticated ? <Outlet /> : <Navigate to={'/signin'} />
-  return <Outlet />
+  return isAuthenticated ? <Outlet /> : <Navigate to='/sign-in' />
 }
 
 export default AuthenticatedRoute
