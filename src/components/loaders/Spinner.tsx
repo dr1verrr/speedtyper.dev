@@ -1,3 +1,4 @@
+import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
 import { CSSProperties } from 'react'
 import { createUseStyles } from 'react-jss'
@@ -9,7 +10,11 @@ type SpinnerProps = {
 
 type RuleNames = 'spinner' | '@keyframes spinner'
 
-const useStyles = createUseStyles<RuleNames, SpinnerProps, Theme>({
+type SpinnerStyledProps = Omit<SpinnerProps, 'size'> & {
+  size: number
+}
+
+const useStyles = createUseStyles<RuleNames, SpinnerStyledProps, Theme>({
   '@keyframes spinner': {
     '0%': {
       transform: 'rotate(0)',
@@ -26,28 +31,27 @@ const useStyles = createUseStyles<RuleNames, SpinnerProps, Theme>({
   spinner: {
     display: 'inline-block',
     position: 'relative',
-    width: ({ size }) => size,
-    height: ({ size }) => size,
+    width: ({ size }) => size + size * 2,
+    height: ({ size }) => size + size * 2,
     '&:after': {
-      content: '',
+      content: '""',
       display: 'block',
       borderRadius: '50%',
-      width: '0',
-      height: '0',
-      margin: '8px',
+      width: 0,
+      height: 0,
+      margin: 8,
       boxSizing: 'border-box',
-      border: '32px solid #fff',
-      borderColor: '#fff transparent #fff transparent',
+      border: ({ theme, size }) => `${size}px solid ${theme.common.text}`,
+      borderColor: ({ theme }) =>
+        `${theme.common.text} transparent ${theme.common.text} transparent`,
       animation: '$spinner 1.2s infinite'
-      //animationName: '$spinner',
-      //animationDuration: '1.2s',
-      //animationIterationCount: 'infinite'
     }
   }
 })
 
-export default function Spinner({ size = 80, sx, ...props }: SpinnerProps) {
-  const classes = useStyles({ size, ...props })
+export default function Spinner({ size = 30, sx, ...props }: SpinnerProps) {
+  const theme = useTheme()
+  const classes = useStyles({ size, theme, ...props })
 
   return (
     <div
