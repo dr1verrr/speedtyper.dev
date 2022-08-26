@@ -1,5 +1,12 @@
 const lightTheme = {
   mode: 'light',
+  input: {
+    border: '#ccc',
+    hover: 'blue'
+  },
+  action: {
+    hover: '#333'
+  },
   button: {
     variant: {
       default: {
@@ -28,6 +35,13 @@ const lightTheme = {
 
 const darkTheme = {
   mode: 'dark',
+  input: {
+    border: '#ccc',
+    hover: 'blue'
+  },
+  action: {
+    hover: '#ccc'
+  },
   button: {
     variant: {
       default: {
