@@ -4,7 +4,9 @@ import { deleteUser as firebaseDeleteUser } from 'firebase/auth'
 const deleteUser = async () => {
   const user = await getUser()
 
-  return await firebaseDeleteUser(user)
+  if (user) {
+    return await firebaseDeleteUser(user)
+  }
 }
 
 export default deleteUser
