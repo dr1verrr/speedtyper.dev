@@ -1,4 +1,3 @@
-import { useTheme } from '@/services/theme/actions'
 import React, { CSSProperties, ReactNode } from 'react'
 
 type BoxProps = React.DetailedHTMLProps<
@@ -12,11 +11,9 @@ type BoxProps = React.DetailedHTMLProps<
 export type { BoxProps }
 
 export default function Box({ sx, children, ...props }: BoxProps) {
-  const theme = useTheme()
-
   return (
     <div
-      style={{ background: theme.common.bg, ...sx }}
+      style={{ ...sx }}
       {...props}
     >
       {children}
