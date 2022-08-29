@@ -220,6 +220,7 @@ export default function Challenger() {
       </SyntaxHighlighter>
       <textarea
         ref={inputRef}
+        autoCapitalize='none'
         style={{
           margin: 0,
           padding: 0,
@@ -245,7 +246,13 @@ export default function Challenger() {
           onClick={() => actions.status.set({ started: true })}
         >
           <Box className={classes.previewMaskInner}>
-            <Button sx={{ padding: '12px 30px', fontSize: 20 }}>
+            <Button
+              sx={{
+                padding: '12px 30px',
+                fontSize: 20,
+                boxShadow: '0 0 15px #999'
+              }}
+            >
               {paused && 'Press space to unpause'}
               {!started && 'Press enter to start typing'}
             </Button>
