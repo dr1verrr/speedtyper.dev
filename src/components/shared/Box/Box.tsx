@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from 'react'
+import React, { CSSProperties, forwardRef, ReactNode } from 'react'
 
 type BoxProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -10,13 +10,14 @@ type BoxProps = React.DetailedHTMLProps<
 
 export type { BoxProps }
 
-export default function Box({ sx, children, ...props }: BoxProps) {
+export default forwardRef<HTMLDivElement, BoxProps>(({ sx, children, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       style={{ ...sx }}
       {...props}
     >
       {children}
     </div>
   )
-}
+})
