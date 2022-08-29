@@ -105,21 +105,23 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
       }
     }
 
-    return filteredTokenCollection.map((token, idx) => {
-      let fullWord = ''
-      let subTokens: SubToken[] = []
+    return filteredTokenCollection
+      .filter(token => token.textContent)
+      .map((token, idx) => {
+        let fullWord = ''
+        let subTokens: SubToken[] = []
 
-      if (token.childNodes) {
-        Object.values(token.children).forEach((child, idx) => {
-          fullWord += child.textContent
-          subTokens.push({ element: child, id: idx })
-        })
-      } else {
-        fullWord = token.textContent as string
-      }
+        if (token.childNodes) {
+          Object.values(token.children).forEach((child, idx) => {
+            fullWord += child.textContent
+            subTokens.push({ element: child, id: idx })
+          })
+        } else {
+          fullWord = token.textContent as string
+        }
 
-      return { element: token, id: idx, fullWord, subTokens }
-    })
+        return { element: token, id: idx, fullWord, subTokens }
+      })
   }
 }
 
