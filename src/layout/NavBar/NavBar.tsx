@@ -1,3 +1,6 @@
+import { useEvent } from 'effector-react'
+import { Link } from 'react-router-dom'
+
 import SwitchTheme from '@/components/buttons/SwitchTheme'
 import About from '@/components/icons/About'
 import KeyboardLogo from '@/components/icons/KeyboardLogo'
@@ -9,8 +12,6 @@ import IconButton from '@/components/shared/IconButton'
 import RequireAuthentication from '@/hoc/RequireAuth'
 import { useTheme } from '@/services/theme/actions'
 import { themeToggled } from '@/store/theme/events'
-import { useEvent } from 'effector-react'
-import { Link } from 'react-router-dom'
 
 export default function NavBar() {
   const AuthenticationButton = RequireAuthentication(
@@ -60,12 +61,11 @@ export default function NavBar() {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 10px',
-                maxWidth: 'fit-content'
+                padding: '0 10px'
               }}
             >
-              <Box sx={{ marginRight: 10 }}>
-                <KeyboardLogo style={{ maxWidth: 40, maxHeight: 40 }} />
+              <Box sx={{ marginRight: 8 }}>
+                <KeyboardLogo size={40} />
               </Box>
               <Box>
                 <Typography variant='h3'>keyboard-trainer.dev</Typography>
@@ -81,8 +81,8 @@ export default function NavBar() {
             }}
           >
             <SwitchTheme
-              onClick={toggleTheme}
               sx={{ maxWidth: 35, maxHeight: 35 }}
+              onClick={toggleTheme}
             />
             <ProfileAvatarButton />
             <AuthenticationButton />
