@@ -3,17 +3,19 @@ import React, { createRef, useEffect } from 'react'
 import { createUseStyles } from 'react-jss'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import './Challenger.css'
 
-import { WHITESPACE } from './constants'
-import { statusChanged, statusToggled, tokensChanged } from './events'
 import {
-  filterTokenWithIndentSpaces,
-  getWhitespacesAfterWord,
-  getWhitespacesBeforeWord
-} from './helpers'
-import { $challenger, $challengerStatus, ChallengerStatus } from './store'
+  challengerChanged,
+  nextSubToken,
+  nextToken,
+  statusToggled,
+  tokensChanged
+} from './events'
+import { getSplittedTokens } from './helpers'
+import { $challenger, ChallengerStore, CurrentToken } from './store'
 
-import { Button, Box } from '@/components/shared'
+import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
 import { codeSample } from '@/views/ChallengePage/constants'
 
@@ -37,18 +39,19 @@ const useStyles = createUseStyles<RuleNames, undefined, Theme>({
 })
 
 export default function Challenger() {
-  const inputRef = createRef<HTMLInputElement>()
+  const inputRef = createRef<HTMLTextAreaElement>()
   const codeRef = createRef<HTMLElement>()
-  const { paused, started } = useStore($challengerStatus)
-  console.log(paused, started)
+  const challenger = useStore($challenger)
+  const { paused, started, currentToken, tokens } = challenger
 
-  const tokens = useStore($challenger)
   const classes = useStyles()
 
   const setTokens = useEvent(tokensChanged)
 
-  const setStatus = useEvent(statusChanged)
+  const updateChallenger = useEvent(challengerChanged)
   const toggleStatus = useEvent(statusToggled)
+  const setNextToken = useEvent(nextToken)
+  const setNextSubToken = useEvent(nextSubToken)
 
   const actions = {
     status: {
@@ -58,7 +61,48 @@ export default function Challenger() {
       started: {
         toggle: () => toggleStatus('started')
       },
-      set: (payload: Partial<ChallengerStatus>) => setStatus(payload)
+      updateHighlights: (prevToken: CurrentToken) => {
+        const { tokens } = challenger
+        if (tokens) {
+          const getPrevElement = () => {
+            if (prevToken.subTokens && prevToken.subTokens.length) {
+              return prevToken.subTokens[0].element
+            } else {
+              return prevToken.element
+            }
+          }
+          const getNextElement = () => {
+            console.log('get next element prev id', prevToken.id)
+            if (prevToken.subTokens && prevToken.subTokens.length > 1) {
+              return prevToken.subTokens[1].element
+            } else {
+              const nextToken = tokens[prevToken.id + 1]
+              if (nextToken) {
+                if (nextToken.subTokens.length >= 1) {
+                  return nextToken.subTokens[0].element
+                } else {
+                  return nextToken.element
+                }
+              }
+            }
+          }
+
+          const prev = getPrevElement()
+          const next = getNextElement()
+
+          prev.className = prev.className.replace('current', '')
+
+          if (next) {
+            next.className += ' current'
+          }
+        }
+      },
+      currentToken: {
+        next: () => setNextToken(),
+        nextSubToken: () => setNextSubToken()
+      },
+
+      set: (payload: Partial<ChallengerStore>) => updateChallenger(payload)
     }
   }
 
@@ -68,96 +112,79 @@ export default function Challenger() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      const { paused, started } = $challengerStatus.getState()
+      const { paused, started } = $challenger.getState()
 
-      if (e.key === 'Enter' && !paused) {
+      if (e.key === 'Enter' && !paused && !started) {
         e.preventDefault()
 
         actions.status.set({ started: true })
         inputRef.current?.focus()
-      } else if (e.key === ' ' && started) {
-        e.preventDefault()
-        actions.status.paused.toggle()
       }
     }
 
     document.addEventListener('keydown', handler)
 
     const onUnmount = () => {
-      actions.status.set({ paused: false, started: false })
+      actions.status.set({
+        paused: false,
+        started: false,
+        currentToken: null,
+        finished: false,
+        tokens: null
+      })
       document.removeEventListener('keydown', handler)
     }
 
     return () => onUnmount()
   }, [])
 
-  const getSplittedTokens = () => {
-    const tokenCollection = codeRef.current?.children
+  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = e => {
+    e.preventDefault()
+    const typedValue = e.target.value
 
-    if (tokenCollection) {
-      const collectionArr = Object.values(tokenCollection)
-      for (const el of collectionArr) {
-        const isTokenContainsWhitespace =
-          el.textContent?.match(/[A-Za-z]/) && el.textContent.includes(WHITESPACE)
+    if (currentToken) {
+      const { subTokens, element, id, fullWord } = currentToken
 
-        if (el.textContent && isTokenContainsWhitespace) {
-          if (el.textContent.startsWith(WHITESPACE)) {
-            const whitespaceBeforeElement = document.createElement('span')
-            const whitespacesBeforeWord = getWhitespacesBeforeWord(el.textContent)
-            whitespaceBeforeElement.textContent = whitespacesBeforeWord
-
-            el.before(whitespaceBeforeElement)
-          }
-
-          if (el.textContent.endsWith(WHITESPACE)) {
-            const whitespaceAfterWordElement = document.createElement('span')
-            const whitespaceAfterWord = getWhitespacesAfterWord(el.textContent)
-            whitespaceAfterWordElement.textContent = whitespaceAfterWord
-
-            el.after(whitespaceAfterWord)
-          }
-
-          el.textContent = el.textContent.replaceAll(WHITESPACE, '')
+      if (subTokens.length) {
+        const comparable = subTokens[0].element.textContent
+        if (comparable === typedValue) {
+          actions.status.updateHighlights(currentToken)
+          nextSubToken()
+        }
+      } else {
+        const comparable = element.textContent
+        if (comparable === typedValue) {
+          actions.status.updateHighlights(currentToken)
+          nextToken()
+        } else if (comparable === '') {
+          actions.status.updateHighlights(currentToken)
+          nextToken()
         }
       }
-
-      const filteredTokenCollection = filterTokenWithIndentSpaces(collectionArr)
-
-      for (const filteredToken of filteredTokenCollection) {
-        if (filteredToken.textContent) {
-          const isTokenValidToSplit =
-            filteredToken.textContent !== '\n' &&
-            filteredToken.textContent.length > 1 &&
-            !filteredToken.textContent.includes(' ')
-
-          if (isTokenValidToSplit) {
-            const splittedToken = filteredToken.textContent.split('')
-            filteredToken.textContent = null
-
-            for (const token of splittedToken) {
-              const splittedTokenLetterElement = document.createElement('span')
-              splittedTokenLetterElement.textContent = token
-              splittedTokenLetterElement.style.cssText = 'color: #fff;'
-
-              filteredToken.appendChild(splittedTokenLetterElement)
-            }
-          }
-        }
-      }
-
-      return filteredTokenCollection
     }
   }
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-    e.preventDefault()
-    console.log('keydown')
-  }
+  useEffect(() => {
+    const currentToken = challenger.currentToken
 
-  const onFocus: React.FocusEventHandler<HTMLInputElement> = e => {
+    if (currentToken) {
+      const { subTokens, element, id, fullWord } = currentToken
+      console.log('word', fullWord, subTokens)
+    }
+  }, [challenger])
+
+  const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
     if (!started) {
-      const splittedTokens = getSplittedTokens()
+      const splittedTokens = getSplittedTokens(codeRef.current)
+
       if (splittedTokens) {
+        actions.status.set({ currentToken: splittedTokens[0] })
+        if (splittedTokens[0].subTokens) {
+          const children = splittedTokens[0].subTokens
+          children[0].element.className += ' current'
+        } else {
+          splittedTokens[0].element.className += ' current'
+        }
         setTokens(splittedTokens)
       }
     }
@@ -191,7 +218,7 @@ export default function Challenger() {
       >
         {codeSample}
       </SyntaxHighlighter>
-      <input
+      <textarea
         ref={inputRef}
         style={{
           margin: 0,
@@ -208,7 +235,7 @@ export default function Challenger() {
           cursor: 'default'
         }}
         tabIndex={-1}
-        type='text'
+        value=''
         onChange={handleChange}
         onFocus={onFocus}
       />

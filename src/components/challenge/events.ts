@@ -1,12 +1,27 @@
-import { ChallengerStatus } from './store'
 import { createEvent } from 'effector'
 
-const tokensChanged = createEvent<Element[]>()
-const tokensCleared = createEvent()
+import { ChallengerStore, CurrentToken } from './store'
 
-const statusChanged = createEvent<Partial<ChallengerStatus>>()
+const tokensChanged = createEvent<CurrentToken[]>()
+const challengerCleared = createEvent()
+const challengerChanged = createEvent<Partial<ChallengerStore>>()
+
+const nextToken = createEvent()
+const nextSubToken = createEvent()
+
+type TBoolean<T> = {
+  [K in keyof T as T[K] extends boolean ? K : never]: T[K]
+}
+
 const statusToggled = createEvent<
-  Array<keyof ChallengerStatus> | keyof ChallengerStatus
+  Array<keyof TBoolean<ChallengerStore>> | keyof TBoolean<ChallengerStore>
 >()
 
-export { statusChanged, tokensChanged, tokensCleared, statusToggled }
+export {
+  challengerChanged,
+  tokensChanged,
+  challengerCleared,
+  statusToggled,
+  nextToken,
+  nextSubToken
+}
