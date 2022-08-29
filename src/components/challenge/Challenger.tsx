@@ -72,7 +72,7 @@ export default function Challenger() {
             }
           }
           const getNextElement = () => {
-            console.log('get next element prev id', prevToken.id)
+            //console.log('get next element prev id', prevToken.id)
             if (prevToken.subTokens && prevToken.subTokens.length > 1) {
               return prevToken.subTokens[1].element
             } else {
@@ -81,6 +81,8 @@ export default function Challenger() {
                 if (nextToken.subTokens.length >= 1) {
                   return nextToken.subTokens[0].element
                 } else {
+                  //console.log('highlighted', prevToken.fullWord, prevToken)
+                  prevToken.element.replaceChildren(prevToken.fullWord)
                   return nextToken.element
                 }
               }

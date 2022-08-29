@@ -1,6 +1,8 @@
 import { WHITESPACE } from './constants'
 import { SubToken } from './store'
 
+// FIX: missing highlight token (incorrect id)
+
 const getWhitespacesBeforeWord = (str: string) => {
   let whitespaces = ''
   let isStart = false
@@ -110,8 +112,10 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
       .map((token, idx) => {
         let fullWord = ''
         let subTokens: SubToken[] = []
+        //console.log('token childnodes', token.childNodes)
+        console.log('id', idx)
 
-        if (token.childNodes) {
+        if (token.childNodes.length > 1) {
           Object.values(token.children).forEach((child, idx) => {
             fullWord += child.textContent
             subTokens.push({ element: child, id: idx })
