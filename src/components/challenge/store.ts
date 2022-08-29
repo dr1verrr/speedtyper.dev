@@ -1,32 +1,51 @@
-import { statusChanged, statusToggled, tokensChanged, tokensCleared } from './events'
 import { createStore } from 'effector'
 
-type Challenger = Element[] | null
+import {
+  statusToggled,
+  tokensChanged,
+  challengerCleared,
+  challengerChanged,
+  nextToken,
+  nextSubToken
+} from './events'
 
-type ChallengerStatus = {
+type SubToken = {
+  element: Element
+  id: number
+}
+
+type CurrentToken = {
+  element: Element
+  id: number
+  subTokens: SubToken[]
+  fullWord: string
+}
+
+type ChallengerStore = {
   paused: boolean
   started: boolean
+  tokens: CurrentToken[] | null
+  currentToken: CurrentToken | null
+  finished: boolean
 }
 
-export type { Challenger, ChallengerStatus }
+export type { ChallengerStore, CurrentToken, SubToken }
 
-const defaults = {
-  $challenger: null,
-  $challengerStatus: {
-    paused: false,
-    started: false
-  }
+const defaultStore = {
+  paused: false,
+  started: false,
+  tokens: null,
+  currentToken: null,
+  finished: false,
+  fullWord: null
 }
 
-const $challenger = createStore<Challenger>(defaults.$challenger)
-const $challengerStatus = createStore<ChallengerStatus>(defaults.$challengerStatus)
+const $challenger = createStore<ChallengerStore>(defaultStore)
 
 $challenger
-  .on(tokensChanged, (_, payload) => payload)
-  .on(tokensCleared, () => defaults.$challenger)
-
-$challengerStatus
-  .on(statusChanged, (state, payload) => ({ ...state, ...payload }))
+  .on(tokensChanged, (state, payload) => ({ ...state, tokens: payload }))
+  .on(challengerCleared, () => defaultStore)
+  .on(challengerChanged, (state, payload) => ({ ...state, ...payload }))
   .on(statusToggled, (state, key) => {
     let status = { ...state } as any
 
@@ -38,12 +57,56 @@ $challengerStatus
     } else {
       status[key] = !status[key]
     }
-    console.log('status toggled')
 
     return { ...state, ...status }
   })
-//.watch(state => {
-//  console.log(state)
-//})
+  .on(nextToken, state => {
+    if (state.tokens) {
+      if (state.tokens[state.tokens.length - 1].id === state.currentToken?.id) {
+        return { ...defaultStore, finished: true }
+      }
+      const next = state.tokens[state.currentToken?.id! + 1]
+      return { ...state, currentToken: next }
+    }
+  })
+  .on(nextSubToken, state => {
+    if (state.tokens && state.currentToken) {
+      const subTokens = state.currentToken.subTokens
 
-export { $challenger, $challengerStatus }
+      if (subTokens.length) {
+        const currentSubToken = state.currentToken.subTokens[0]
+
+        if (currentSubToken.id !== subTokens[subTokens.length - 1].id) {
+          const getNotTypedYed = () => {
+            const result = subTokens.filter(s => s.id !== currentSubToken.id)
+            return result
+          }
+
+          return {
+            ...state,
+            currentToken: { ...state.currentToken, subTokens: getNotTypedYed() }
+          }
+        } else {
+          const getNextToken = () => {
+            if (state.currentToken) {
+              const currentTokenId = state.currentToken?.id
+              const next = state.tokens?.find(t => t.id === currentTokenId + 1)
+              return next
+            }
+          }
+
+          const nextToken = getNextToken()
+
+          if (nextToken) {
+            console.log('nextToken')
+            return { ...state, currentToken: nextToken }
+          } else {
+            console.log('finished')
+            return { ...state, finished: true }
+          }
+        }
+      }
+    }
+  })
+
+export { $challenger }
