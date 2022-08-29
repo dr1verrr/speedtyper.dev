@@ -23,7 +23,7 @@ const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
     transition: 'background .2s ease',
     background: ({ theme, variant }) => theme.button.variant[variant].bg,
     color: ({ theme, variant }) => theme.button.variant[variant].text,
-    border: 0,
+    border: ({ theme, variant }) => `2px solid ${theme.button.variant[variant].border}`,
     padding: '7px 10px',
     borderRadius: 10,
     cursor: 'pointer',

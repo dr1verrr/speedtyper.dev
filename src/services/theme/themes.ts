@@ -11,15 +11,18 @@ const lightTheme = {
     variant: {
       default: {
         bg: '#000',
-        text: '#fff'
+        text: '#fff',
+        border: '#ccc'
       },
       primary: {
         bg: '#000',
-        text: '#fff'
+        text: '#fff',
+        border: '#ccc'
       },
       action: {
         bg: '#22a5f1',
-        text: '#000'
+        text: '#000',
+        border: '#ccc'
       }
     }
   },
@@ -46,15 +49,18 @@ const darkTheme = {
     variant: {
       default: {
         bg: '#fff',
-        text: '#000'
+        text: '#000',
+        border: '#ccc'
       },
       primary: {
         bg: '#000',
-        text: '#fff'
+        text: '#fff',
+        border: ''
       },
       action: {
         bg: '#22a5f1',
-        text: '#000'
+        text: '#000',
+        border: ''
       }
     }
   },

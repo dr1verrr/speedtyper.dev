@@ -7,8 +7,6 @@ const useInfiniteScroll = (data: any[], increment = 5, initialCount = 5) => {
   const [isLoading, setLoading] = useState(false)
   const isMounted = useRef(false)
 
-  // FIX overscroll
-
   const scrollIfHasMore = () => {
     if (
       document.documentElement.offsetHeight <=

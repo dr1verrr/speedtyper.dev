@@ -1,7 +1,8 @@
-import { useTheme } from '@/services/theme/actions'
-import { Theme } from '@/services/theme/types'
 import React, { ReactNode } from 'react'
 import { createUseStyles } from 'react-jss'
+
+import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
 
 type RuleNames = 'button'
 
@@ -33,10 +34,13 @@ const useStyles = createUseStyles<RuleNames, IconButtonStyledProps, Theme>({
     minHeight: ({ styledSize }) => styledSize,
     maxHeight: ({ styledSize }) => styledSize,
     maxWidth: ({ styledSize }) => styledSize,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '100%',
     overflow: 'hidden',
     height: '100%',
-    border: 0,
+    border: ({ theme, variant }) => `2px solid ${theme.button.variant[variant].border}`,
     padding: 7,
     borderRadius: '100%',
     cursor: 'pointer',

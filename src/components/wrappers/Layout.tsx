@@ -1,4 +1,10 @@
+import { useEvent, useStore } from 'effector-react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { ThemeProvider } from 'react-jss'
+import { ToastContainer } from 'react-toastify'
+
 import FetchLoader from '../loaders/FetchLoader'
+
 import useMediaQuery from '@/hooks/useMediaQuery'
 import NavBar from '@/layout/NavBar'
 import { darkTheme, lightTheme } from '@/services/theme/themes'
@@ -6,10 +12,6 @@ import { LocalStorageKeys } from '@/store/theme/constants'
 import { themeChanged } from '@/store/theme/events'
 import $theme, { ThemeStore } from '@/store/theme/store'
 import { loadState } from '@/utils/localStorage'
-import { useEvent, useStore } from 'effector-react'
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { ThemeProvider } from 'react-jss'
-import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 type LayoutProps = {
@@ -88,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
         {memoizedLayoutInner}
       </div>
       <ToastContainer
-        position='top-center'
+        position='bottom-center'
         style={{ fontWeight: 'bold' }}
         theme={toastContainerTheme}
       />
