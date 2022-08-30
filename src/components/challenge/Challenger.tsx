@@ -1,5 +1,5 @@
 import { useEvent, useStore } from 'effector-react'
-import React, { createRef, useEffect } from 'react'
+import React, { createRef, useEffect, useMemo } from 'react'
 import { createUseStyles } from 'react-jss'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -47,11 +47,40 @@ export default function Challenger() {
   const classes = useStyles()
 
   const setTokens = useEvent(tokensChanged)
-
   const updateChallenger = useEvent(challengerChanged)
   const toggleStatus = useEvent(statusToggled)
   const setNextToken = useEvent(nextToken)
   const setNextSubToken = useEvent(nextSubToken)
+
+  const Highlighter = useMemo(
+    () => (
+      <SyntaxHighlighter
+        codeTagProps={{
+          style: {
+            display: 'inline-block',
+            zIndex: 100,
+            cursor: 'text',
+            position: 'relative'
+          },
+          ref: codeRef
+        }}
+        customStyle={{
+          fontSize: 20,
+          fontWeight: 300,
+          letterSpacing: 0.5,
+          userSelect: 'none',
+          filter: started && !paused ? 'none' : 'saturate(0)',
+          fontFamily: 'monospace',
+          maxHeight: '75vh'
+        }}
+        language='js'
+        style={dracula}
+      >
+        {codeSample}
+      </SyntaxHighlighter>
+    ),
+    [paused, started]
+  )
 
   const actions = {
     status: {
@@ -72,7 +101,6 @@ export default function Challenger() {
             }
           }
           const getNextElement = () => {
-            //console.log('get next element prev id', prevToken.id)
             if (prevToken.subTokens && prevToken.subTokens.length > 1) {
               return prevToken.subTokens[1].element
             } else {
@@ -81,7 +109,6 @@ export default function Challenger() {
                 if (nextToken.subTokens.length >= 1) {
                   return nextToken.subTokens[0].element
                 } else {
-                  //console.log('highlighted', prevToken.fullWord, prevToken)
                   prevToken.element.replaceChildren(prevToken.fullWord)
                   return nextToken.element
                 }
@@ -171,7 +198,7 @@ export default function Challenger() {
 
     if (currentToken) {
       const { subTokens, element, id, fullWord } = currentToken
-      console.log('word', fullWord, subTokens)
+      //console.log('word', fullWord, subTokens)
     }
   }, [challenger])
 
@@ -197,29 +224,6 @@ export default function Challenger() {
       sx={{ position: 'relative' }}
       onClick={() => inputRef.current?.focus()}
     >
-      <SyntaxHighlighter
-        codeTagProps={{
-          style: {
-            display: 'inline-block',
-            zIndex: 100,
-            cursor: 'text',
-            position: 'relative'
-          },
-          ref: codeRef
-        }}
-        customStyle={{
-          fontSize: 20,
-          fontWeight: 300,
-          letterSpacing: 0.5,
-          userSelect: 'none',
-          filter: started && !paused ? 'none' : 'saturate(0)',
-          fontFamily: 'monospace'
-        }}
-        language='js'
-        style={dracula}
-      >
-        {codeSample}
-      </SyntaxHighlighter>
       <textarea
         ref={inputRef}
         autoCapitalize='none'
@@ -234,7 +238,7 @@ export default function Challenger() {
           width: '100%',
           height: '100%',
           opacity: 0,
-          zIndex: 10,
+          zIndex: -1,
           cursor: 'default'
         }}
         tabIndex={-1}
@@ -242,6 +246,7 @@ export default function Challenger() {
         onChange={handleChange}
         onFocus={onFocus}
       />
+      {Highlighter}
       {(!started || paused) && (
         <div
           className={classes.previewMask}

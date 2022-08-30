@@ -98,10 +98,8 @@ $challenger
           const nextToken = getNextToken()
 
           if (nextToken) {
-            console.log('nextToken')
             return { ...state, currentToken: nextToken }
           } else {
-            console.log('finished')
             return { ...state, finished: true }
           }
         }

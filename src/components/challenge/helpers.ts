@@ -50,40 +50,65 @@ const getWhitespacesAfterWord = (str: string) => {
 }
 
 const filterTokenWithIndentSpaces = (tokenCollection: Element[]) => {
-  return tokenCollection.filter(el => !el.textContent?.match(/  +/))
+  return tokenCollection.filter(el => {
+    return !el.textContent?.match(/  +/)
+  })
 }
 
 const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
-  const tokenCollection = htmlCollection?.children
+  const htmlTokenCollection = htmlCollection?.children
+  const tokenCollection: Element[] = []
 
-  if (tokenCollection) {
-    const collectionArr = Object.values(tokenCollection)
-    for (const el of collectionArr) {
+  if (htmlTokenCollection) {
+    const collection = Object.values(htmlTokenCollection)
+
+    for (const el of collection) {
+      let whitespaceElements: {
+        before: null | Element
+        after: null | Element
+      } = {
+        before: null,
+        after: null
+      }
+
       const isTokenContainsWhitespace =
         el.textContent?.match(/[A-Za-z]/) && el.textContent.includes(WHITESPACE)
 
       if (el.textContent && isTokenContainsWhitespace) {
         if (el.textContent.startsWith(WHITESPACE)) {
-          const whitespaceBeforeElement = document.createElement('span')
+          const whitespaceBeforeWordElement = document.createElement('span')
           const whitespacesBeforeWord = getWhitespacesBeforeWord(el.textContent)
-          whitespaceBeforeElement.textContent = whitespacesBeforeWord
+          whitespaceBeforeWordElement.textContent = whitespacesBeforeWord
+          whitespaceElements.before = whitespaceBeforeWordElement
 
-          el.before(whitespaceBeforeElement)
+          el.before(whitespaceBeforeWordElement)
         }
 
         if (el.textContent.endsWith(WHITESPACE)) {
           const whitespaceAfterWordElement = document.createElement('span')
           const whitespaceAfterWord = getWhitespacesAfterWord(el.textContent)
-          whitespaceAfterWordElement.textContent = whitespaceAfterWord
 
-          el.after(whitespaceAfterWord)
+          whitespaceAfterWordElement.textContent = whitespaceAfterWord
+          whitespaceElements.after = whitespaceAfterWordElement
+
+          el.after(whitespaceAfterWordElement)
         }
 
         el.textContent = el.textContent.replaceAll(WHITESPACE, '')
       }
+
+      if (whitespaceElements.after && whitespaceElements.before) {
+        tokenCollection.push(whitespaceElements.before, el, whitespaceElements.after)
+      } else if (whitespaceElements.after) {
+        tokenCollection.push(el, whitespaceElements.after)
+      } else if (whitespaceElements.before) {
+        tokenCollection.push(whitespaceElements.before, el)
+      } else {
+        tokenCollection.push(el)
+      }
     }
 
-    const filteredTokenCollection = filterTokenWithIndentSpaces(collectionArr)
+    const filteredTokenCollection = filterTokenWithIndentSpaces(tokenCollection)
 
     for (const filteredToken of filteredTokenCollection) {
       if (filteredToken.textContent) {
@@ -112,8 +137,6 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
       .map((token, idx) => {
         let fullWord = ''
         let subTokens: SubToken[] = []
-        //console.log('token childnodes', token.childNodes)
-        console.log('id', idx)
 
         if (token.childNodes.length > 1) {
           Object.values(token.children).forEach((child, idx) => {
