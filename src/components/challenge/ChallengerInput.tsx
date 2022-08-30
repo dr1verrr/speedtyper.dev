@@ -60,7 +60,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         }}
         customStyle={{
           fontSize: 20,
-          fontWeight: 300,
           userSelect: 'none',
           filter: started && !paused ? 'none' : 'saturate(0)',
           fontFamily: 'monospace',
