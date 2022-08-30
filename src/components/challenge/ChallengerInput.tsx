@@ -1,23 +1,16 @@
-import { useEvent, useStore } from 'effector-react'
 import React, { createRef, useEffect, useMemo } from 'react'
 import { createUseStyles } from 'react-jss'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import './Challenger.css'
 
-import {
-  challengerChanged,
-  nextSubToken,
-  nextToken,
-  statusToggled,
-  tokensChanged
-} from './events'
+import { nextSubToken, nextToken } from './events'
 import { getSplittedTokens } from './helpers'
-import { $challenger, ChallengerStore, CurrentToken } from './store'
+import { $challenger } from './store'
+import useChallenger from './useChallengerInput'
 
 import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
-import { codeSample } from '@/views/ChallengePage/constants'
 
 type RuleNames = 'previewMask' | 'previewMaskInner'
 
@@ -38,19 +31,20 @@ const useStyles = createUseStyles<RuleNames, undefined, Theme>({
   previewMaskInner: {}
 })
 
-export default function Challenger() {
+type ChallengerInputProps = {
+  language: string
+  code: string
+}
+
+export default function ChallengerInput({ language, code }: ChallengerInputProps) {
   const inputRef = createRef<HTMLTextAreaElement>()
   const codeRef = createRef<HTMLElement>()
-  const challenger = useStore($challenger)
-  const { paused, started, currentToken, tokens } = challenger
+  const {
+    challenger: { paused, started, currentToken, tokens },
+    actions
+  } = useChallenger()
 
   const classes = useStyles()
-
-  const setTokens = useEvent(tokensChanged)
-  const updateChallenger = useEvent(challengerChanged)
-  const toggleStatus = useEvent(statusToggled)
-  const setNextToken = useEvent(nextToken)
-  const setNextSubToken = useEvent(nextSubToken)
 
   const Highlighter = useMemo(
     () => (
@@ -73,67 +67,14 @@ export default function Challenger() {
           fontFamily: 'monospace',
           maxHeight: '75vh'
         }}
-        language='js'
+        language={language}
         style={dracula}
       >
-        {codeSample}
+        {code}
       </SyntaxHighlighter>
     ),
     [paused, started]
   )
-
-  const actions = {
-    status: {
-      paused: {
-        toggle: () => toggleStatus('paused')
-      },
-      started: {
-        toggle: () => toggleStatus('started')
-      },
-      updateHighlights: (prevToken: CurrentToken) => {
-        const { tokens } = challenger
-        if (tokens) {
-          const getPrevElement = () => {
-            if (prevToken.subTokens && prevToken.subTokens.length) {
-              return prevToken.subTokens[0].element
-            } else {
-              return prevToken.element
-            }
-          }
-          const getNextElement = () => {
-            if (prevToken.subTokens && prevToken.subTokens.length > 1) {
-              return prevToken.subTokens[1].element
-            } else {
-              const nextToken = tokens[prevToken.id + 1]
-              if (nextToken) {
-                if (nextToken.subTokens.length >= 1) {
-                  return nextToken.subTokens[0].element
-                } else {
-                  prevToken.element.replaceChildren(prevToken.fullWord)
-                  return nextToken.element
-                }
-              }
-            }
-          }
-
-          const prev = getPrevElement()
-          const next = getNextElement()
-
-          prev.className = prev.className.replace('current', '')
-
-          if (next) {
-            next.className += ' current'
-          }
-        }
-      },
-      currentToken: {
-        next: () => setNextToken(),
-        nextSubToken: () => setNextSubToken()
-      },
-
-      set: (payload: Partial<ChallengerStore>) => updateChallenger(payload)
-    }
-  }
 
   useEffect(() => {
     console.log(tokens)
@@ -154,13 +95,8 @@ export default function Challenger() {
     document.addEventListener('keydown', handler)
 
     const onUnmount = () => {
-      actions.status.set({
-        paused: false,
-        started: false,
-        currentToken: null,
-        finished: false,
-        tokens: null
-      })
+      //actions.status.reset()
+      actions.reset()
       document.removeEventListener('keydown', handler)
     }
 
@@ -172,16 +108,20 @@ export default function Challenger() {
     const typedValue = e.target.value
 
     if (currentToken) {
-      const { subTokens, element, id, fullWord } = currentToken
+      const { subTokens, element } = currentToken
 
       if (subTokens.length) {
         const comparable = subTokens[0].element.textContent
+        actions.statistics.update(comparable === typedValue)
+
         if (comparable === typedValue) {
           actions.status.updateHighlights(currentToken)
           nextSubToken()
         }
       } else {
         const comparable = element.textContent
+        actions.statistics.update(comparable === typedValue)
+
         if (comparable === typedValue) {
           actions.status.updateHighlights(currentToken)
           nextToken()
@@ -193,28 +133,18 @@ export default function Challenger() {
     }
   }
 
-  useEffect(() => {
-    const currentToken = challenger.currentToken
-
-    if (currentToken) {
-      const { subTokens, element, id, fullWord } = currentToken
-      //console.log('word', fullWord, subTokens)
-    }
-  }, [challenger])
-
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
     if (!started) {
       const splittedTokens = getSplittedTokens(codeRef.current)
 
       if (splittedTokens) {
-        actions.status.set({ currentToken: splittedTokens[0] })
         if (splittedTokens[0].subTokens) {
           const children = splittedTokens[0].subTokens
           children[0].element.className += ' current'
         } else {
           splittedTokens[0].element.className += ' current'
         }
-        setTokens(splittedTokens)
+        actions.status.init({ currentToken: splittedTokens[0], tokens: splittedTokens })
       }
     }
   }
