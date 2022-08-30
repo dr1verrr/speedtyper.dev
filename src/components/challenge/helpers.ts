@@ -1,5 +1,5 @@
 import { WHITESPACE } from './constants'
-import { SubToken } from './store'
+import { CurrentToken, SubToken } from './store'
 
 // FIX: missing highlight token (incorrect id)
 
@@ -51,7 +51,10 @@ const getWhitespacesAfterWord = (str: string) => {
 
 const filterTokenWithIndentSpaces = (tokenCollection: Element[]) => {
   return tokenCollection.filter(el => {
-    return !el.textContent?.match(/  +/)
+    if (el.textContent && el.textContent.length > 1) {
+      return !el.textContent?.match(/^\s*$/)
+    }
+    return true
   })
 }
 
@@ -112,10 +115,7 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
 
     for (const filteredToken of filteredTokenCollection) {
       if (filteredToken.textContent) {
-        const isTokenValidToSplit =
-          filteredToken.textContent !== '\n' &&
-          filteredToken.textContent.length > 1 &&
-          !filteredToken.textContent.includes(' ')
+        const isTokenValidToSplit = filteredToken.textContent !== '\n'
 
         if (isTokenValidToSplit) {
           const splittedToken = filteredToken.textContent.split('')
@@ -152,9 +152,22 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
   }
 }
 
+const getTotal = (tokens: CurrentToken[]) => {
+  let total = 0
+  for (const token of tokens) {
+    if (token.subTokens.length) {
+      total += token.subTokens.length
+    } else {
+      total++
+    }
+  }
+  return total
+}
+
 export {
   getWhitespacesAfterWord,
   getWhitespacesBeforeWord,
   filterTokenWithIndentSpaces,
-  getSplittedTokens
+  getSplittedTokens,
+  getTotal
 }

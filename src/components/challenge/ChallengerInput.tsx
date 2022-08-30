@@ -7,7 +7,7 @@ import './Challenger.css'
 import { nextSubToken, nextToken } from './events'
 import { getSplittedTokens } from './helpers'
 import { $challenger } from './store'
-import useChallenger from './useChallengerInput'
+import useChallengerInput from './useChallengerInput'
 
 import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
@@ -42,7 +42,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const {
     challenger: { paused, started, currentToken, tokens },
     actions
-  } = useChallenger()
+  } = useChallengerInput()
 
   const classes = useStyles()
 

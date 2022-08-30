@@ -1,3 +1,4 @@
 const WHITESPACE = ' '
+const INCREMENT_TIME = 1000
 
-export { WHITESPACE }
+export { WHITESPACE, INCREMENT_TIME }
