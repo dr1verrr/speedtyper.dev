@@ -12,7 +12,7 @@ import {
 } from './events'
 import { $challenger, ChallengerStore, CurrentToken } from './store'
 
-const useChallenger = () => {
+const useChallengerInput = () => {
   const { currentToken, finished, started, paused, tokens } = useStore($challenger)
   const initChallenger = useEvent(challengerInited)
   const updateChallenger = useEvent(challengerChanged)
@@ -107,4 +107,4 @@ const useChallenger = () => {
   }
 }
 
-export default useChallenger
+export default useChallengerInput
