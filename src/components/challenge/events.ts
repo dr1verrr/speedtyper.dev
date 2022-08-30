@@ -1,10 +1,17 @@
 import { createEvent } from 'effector'
 
-import { ChallengerStore, CurrentToken } from './store'
+import { ChallengerStatisticsStore, ChallengerStore } from './store'
 
-const tokensChanged = createEvent<CurrentToken[]>()
+const challengerInited = createEvent<Partial<ChallengerStore>>()
 const challengerCleared = createEvent()
 const challengerChanged = createEvent<Partial<ChallengerStore>>()
+
+const challengerStatisticsFilled = createEvent<Partial<ChallengerStore>>()
+const challengerStatisticsChanged = createEvent<Partial<ChallengerStatisticsStore>>()
+
+type IsError = boolean
+
+const challengerStatisticUpdate = createEvent<IsError>()
 
 const nextToken = createEvent()
 const nextSubToken = createEvent()
@@ -19,9 +26,12 @@ const statusToggled = createEvent<
 
 export {
   challengerChanged,
-  tokensChanged,
+  challengerInited,
   challengerCleared,
   statusToggled,
   nextToken,
-  nextSubToken
+  nextSubToken,
+  challengerStatisticsFilled,
+  challengerStatisticUpdate,
+  challengerStatisticsChanged
 }
