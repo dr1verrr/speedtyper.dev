@@ -149,7 +149,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     if (!started && hasChildren) {
       const splittedTokens = getSplittedTokens(codeRef.current)
 
-      if (splittedTokens) {
+      if (splittedTokens && splittedTokens.length >= 1) {
         if (splittedTokens[0].subTokens) {
           const children = splittedTokens[0].subTokens
           children[0].element.className += ' current'
