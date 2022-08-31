@@ -103,22 +103,29 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     e.preventDefault()
     const typedValue = e.target.value
 
+    const getIsTrueTyped = (comparable: string | null) => {
+      if (comparable === typedValue || (comparable === '\n' && typedValue === ' ')) {
+        return true
+      }
+      return false
+    }
+
     if (currentToken) {
       const { subTokens, element } = currentToken
 
       if (subTokens.length) {
         const comparable = subTokens[0].element.textContent
-        actions.statistics.update(comparable === typedValue)
+        actions.statistics.update(getIsTrueTyped(comparable))
 
-        if (comparable === typedValue) {
+        if (getIsTrueTyped(comparable)) {
           actions.status.updateHighlights(currentToken)
           nextSubToken()
         }
       } else {
         const comparable = element.textContent
-        actions.statistics.update(comparable === typedValue)
+        actions.statistics.update(getIsTrueTyped(comparable))
 
-        if (comparable === typedValue) {
+        if (getIsTrueTyped(comparable)) {
           actions.status.updateHighlights(currentToken)
           nextToken()
         } else if (comparable === '') {
