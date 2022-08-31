@@ -1,9 +1,11 @@
 import { useEvent, useStore } from 'effector-react'
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { ThemeProvider } from 'react-jss'
 import { ToastContainer } from 'react-toastify'
 
 import FetchLoader from '../loaders/FetchLoader'
+import Spinner from '../loaders/Spinner'
+import { Box } from '../shared'
 
 import useMediaQuery from '@/hooks/useMediaQuery'
 import NavBar from '@/layout/NavBar'
@@ -13,6 +15,7 @@ import { themeChanged } from '@/store/theme/events'
 import $theme, { ThemeStore } from '@/store/theme/store'
 import { loadState } from '@/utils/localStorage'
 import 'react-toastify/dist/ReactToastify.min.css'
+import { NAVBAR_HEIGHT } from '@/layout/NavBar/constants'
 
 type LayoutProps = {
   children?: ReactNode
@@ -27,12 +30,23 @@ export default function Layout({ children }: LayoutProps) {
   const isPrefersModeChecked = useRef(false)
   const isFirstRender = useRef(true)
 
+  const memoizedNavBar = useMemo(() => <NavBar />, [])
+  const memoizedFetchLoader = useMemo(() => <FetchLoader />, [])
+
   const memoizedLayoutInner = useMemo(
     () => (
       <>
-        <NavBar />
-        <main style={{ position: 'relative', minHeight: 'inherit' }}>{children}</main>
-        <FetchLoader />
+        <main style={{ minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)` }}>
+          <Suspense
+            fallback={
+              <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
+                <Spinner size={35} />
+              </Box>
+            }
+          >
+            {children}
+          </Suspense>
+        </main>
       </>
     ),
     [children]
@@ -83,12 +97,13 @@ export default function Layout({ children }: LayoutProps) {
       <div
         style={{
           background: currentTheme.common.bg,
-          color: currentTheme.common.text,
-          minHeight: '100vh'
+          color: currentTheme.common.text
         }}
       >
+        {memoizedNavBar}
         {memoizedLayoutInner}
       </div>
+      {memoizedFetchLoader}
       <ToastContainer
         position='bottom-center'
         style={{ fontWeight: 'bold' }}
