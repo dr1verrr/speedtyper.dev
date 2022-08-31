@@ -12,11 +12,13 @@ import useChallenger from './useChallenger'
 import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
 
-type RuleNames = 'previewMask' | 'previewMaskInner'
+type RuleNames = 'previewMask'
 
 const useStyles = createUseStyles<RuleNames, undefined, Theme>({
   previewMask: {
+    transition: 'background 0.3s ease',
     position: 'absolute',
+    cursor: 'pointer',
     top: 0,
     left: 0,
     right: 0,
@@ -26,9 +28,12 @@ const useStyles = createUseStyles<RuleNames, undefined, Theme>({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 100
-  },
-  previewMaskInner: {}
+    zIndex: 100,
+    overflow: 'hidden',
+    '&:hover': {
+      background: 'rgba(255,255,255, 0.1)'
+    }
+  }
 })
 
 type ChallengerInputProps = {
@@ -46,7 +51,12 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
 
   const classes = useStyles()
 
-  const Highlighter = useMemo(
+  const startTyping = () => {
+    inputRef.current?.focus()
+    actions.status.set({ started: true })
+  }
+
+  const memoizedHighlighter = useMemo(
     () => (
       <SyntaxHighlighter
         codeTagProps={{
@@ -55,16 +65,18 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
             zIndex: 100,
             cursor: 'text',
             position: 'relative',
-            filter: started && !paused ? 'none' : 'saturate(0)'
+            filter: started && !paused ? 'none' : 'saturate(0)',
+            overflow: 'hidden'
           },
           ref: codeRef
         }}
         customStyle={{
           fontSize: 20,
           userSelect: 'none',
-          //filter: started && !paused ? 'none' : 'saturate(0)',
           fontFamily: 'monospace',
-          maxHeight: '75vh'
+          maxHeight: '75vh',
+          margin: 0,
+          overflow: 'hidden'
         }}
         language={language}
         style={dracula}
@@ -78,12 +90,11 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const { paused, started } = $challenger.getState()
+      const isReadyToStart = e.key === 'Enter' && !paused && !started
 
-      if (e.key === 'Enter' && !paused && !started) {
+      if (isReadyToStart) {
         e.preventDefault()
-
-        actions.status.set({ started: true })
-        inputRef.current?.focus()
+        startTyping()
       }
     }
 
@@ -97,10 +108,9 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }, [])
 
   const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = e => {
-    e.preventDefault()
     const typedValue = e.target.value
 
-    const getIsTrueTyped = (comparable: string | null) => {
+    const compareTyped = (comparable: string | null) => {
       if (comparable === typedValue || (comparable === '\n' && typedValue === ' ')) {
         return true
       }
@@ -112,17 +122,17 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
 
       if (subTokens.length) {
         const comparable = subTokens[0].element.textContent
-        actions.statistics.update(getIsTrueTyped(comparable))
+        actions.statistics.update(compareTyped(comparable))
 
-        if (getIsTrueTyped(comparable)) {
+        if (compareTyped(comparable)) {
           actions.status.updateHighlights(currentToken)
           nextSubToken()
         }
       } else {
         const comparable = element.textContent
-        actions.statistics.update(getIsTrueTyped(comparable))
+        actions.statistics.update(compareTyped(comparable))
 
-        if (getIsTrueTyped(comparable)) {
+        if (compareTyped(comparable)) {
           actions.status.updateHighlights(currentToken)
           nextToken()
         } else if (comparable === '') {
@@ -154,7 +164,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   return (
     <Box
       sx={{ position: 'relative' }}
-      onClick={() => inputRef.current?.focus()}
+      onClick={startTyping}
     >
       <textarea
         ref={inputRef}
@@ -178,18 +188,17 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         onChange={handleChange}
         onFocus={onFocus}
       />
-      {Highlighter}
+      {memoizedHighlighter}
       {(!started || paused) && (
-        <div
-          className={classes.previewMask}
-          onClick={() => actions.status.set({ started: true })}
-        >
-          <Box className={classes.previewMaskInner}>
+        <div className={classes.previewMask}>
+          <Box>
             <Button
               sx={{
                 padding: '12px 30px',
                 fontSize: 20,
-                boxShadow: '0 0 15px #999'
+                background: '#b794f4',
+                borderColor: '#fff',
+                color: '#000'
               }}
             >
               {paused && 'Press space to unpause'}

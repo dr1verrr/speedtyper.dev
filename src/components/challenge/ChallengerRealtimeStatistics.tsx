@@ -24,7 +24,7 @@ export default function ChallengerRealtimeStatistics() {
         >
           <Box
             sx={{
-              transition: 'width 0.1s ease',
+              transition: 'width 0.2s ease',
               background: '#b794f4',
               height: '100%',
               width: `${statistics.progress}%`,

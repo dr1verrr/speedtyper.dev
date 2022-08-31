@@ -230,9 +230,6 @@ $challengerWorkStatistics
     return { ...state, ...payload }
   })
   .reset(challengerReset)
-  .watch(state => {
-    console.log('work statistics changed', state)
-  })
 
 sample({
   clock: $challengerWorkStatistics,

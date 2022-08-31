@@ -66,10 +66,6 @@ export default function Challenger({ language, code }: ChallengerProps) {
     }
   }, [isStarted, isFinished])
 
-  useEffect(() => {
-    console.log('results', results)
-  }, [results])
-
   return useMemo(
     () => (
       <Stack
