@@ -1,8 +1,11 @@
-import Box from '../shared/Box'
-import SpinnerWave from './SpinnerWave'
-import $ui from '@/store/ui/store'
 import { useStore } from 'effector-react'
 import { createPortal } from 'react-dom'
+
+import Box from '../shared/Box'
+
+import SpinnerWave from './SpinnerWave'
+
+import $ui from '@/store/ui/store'
 
 export default function FetchingLoader() {
   const domElement = document.getElementById('root') as HTMLElement

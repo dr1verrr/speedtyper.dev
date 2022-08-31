@@ -20,7 +20,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
     <Stack
       direction='column'
       spacing={20}
-      sx={{ marginTop: 20, marginBottom: 20 }}
+      sx={{ paddingTop: 20, paddingBottom: 20 }}
     >
       <Stack
         spacing={15}
