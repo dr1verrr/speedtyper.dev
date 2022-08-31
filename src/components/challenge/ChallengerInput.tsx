@@ -54,14 +54,15 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
             display: 'inline-block',
             zIndex: 100,
             cursor: 'text',
-            position: 'relative'
+            position: 'relative',
+            filter: started && !paused ? 'none' : 'saturate(0)'
           },
           ref: codeRef
         }}
         customStyle={{
           fontSize: 20,
           userSelect: 'none',
-          filter: started && !paused ? 'none' : 'saturate(0)',
+          //filter: started && !paused ? 'none' : 'saturate(0)',
           fontFamily: 'monospace',
           maxHeight: '75vh'
         }}
@@ -133,7 +134,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }
 
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    console.log('code ref', codeRef.current)
     const hasChildren = codeRef.current?.children
 
     if (!started && hasChildren) {

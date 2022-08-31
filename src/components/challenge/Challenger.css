@@ -1,5 +1,13 @@
 .current {
-  background: purple;
-  outline: 1px solid #000;
+  background: #b794f4;
   padding: '3px';
+  color: #000 !important;
+}
+
+.subtoken {
+  color: #ccc;
+}
+
+.current .subtoken {
+  color: #000 !important;
 }

@@ -1,17 +1,15 @@
 import { codeSamples } from './constants'
 
 import Challenger from '@/components/challenge/Challenger'
-import { Typography } from '@/components/shared'
 import Box from '@/components/shared/Box'
 import Container from '@/components/shared/Container'
 
 export default function ChallengePage() {
   return (
-    <Container sx={{ maxWidth: 900 }}>
-      <Typography variant='h1'>Challenge</Typography>
-      <Box>
+    <Container sx={{ maxWidth: 1024 }}>
+      <Box sx={{ paddingTop: 75 }}>
         <Challenger
-          code={codeSamples.javascript[1].trim()}
+          code={codeSamples.javascript[0].trim()}
           language='javascript'
         />
       </Box>

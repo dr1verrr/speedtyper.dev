@@ -8,42 +8,103 @@ export default function ChallengerRealtimeStatistics() {
   const statistics = useStore($challengerStatistics)
 
   return (
-    <Box>
+    <Stack
+      direction='column'
+      spacing={15}
+    >
+      <Box sx={{ padding: '25px', background: '#282a36', borderRadius: 7 }}>
+        <Box
+          sx={{
+            width: '100%',
+            padding: 5,
+            position: 'relative',
+            borderRadius: 30,
+            background: '#fff'
+          }}
+        >
+          <Box
+            sx={{
+              transition: 'width 0.1s ease',
+              background: '#b794f4',
+              height: '100%',
+              width: `${statistics.progress}%`,
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              borderRadius: 'inherit'
+            }}
+          ></Box>
+        </Box>
+      </Box>
       <Stack
         direction='row'
         spacing={10}
-        sx={{ justifyContent: 'space-around', alignItems: 'center' }}
+        sx={{ fontSize: 24, fontWeight: 600 }}
       >
-        <Stack
-          direction='column'
-          spacing={10}
-          sx={{ width: '100%' }}
+        <Box
+          sx={{
+            width: '100%',
+            background: '#282a36',
+            color: '#fff',
+            padding: '25px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 10
+          }}
         >
-          <Typography sx={{ fontSize: 24 }}>Time: {statistics.time / 1000}s</Typography>
-          <Typography sx={{ fontSize: 24 }}>WPM: {statistics.wpm.toFixed(0)}</Typography>
-        </Stack>
-        <Stack
-          direction='column'
-          spacing={10}
-          sx={{ width: '100%' }}
+          <Typography>Time: </Typography>
+          <Typography sx={{ color: '#b794f4' }}>{statistics.time / 1000}s</Typography>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            background: '#282a36',
+            color: '#fff',
+            padding: '25px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 10
+          }}
         >
-          <Typography sx={{ fontSize: 24 }}>
-            Progress: {statistics.progress.toFixed(0)}%
+          <Typography>WPM: </Typography>
+          <Typography sx={{ color: '#b794f4' }}> {statistics.wpm.toFixed(0)}</Typography>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            background: '#282a36',
+            color: '#fff',
+            padding: '25px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 10
+          }}
+        >
+          <Typography>Combo: </Typography>
+          <Typography sx={{ color: '#b794f4' }}>{statistics.combo}</Typography>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            background: '#282a36',
+            color: '#fff',
+            padding: '25px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 10
+          }}
+        >
+          <Typography>Progress: </Typography>
+          <Typography sx={{ color: '#b794f4' }}>
+            {statistics.progress.toFixed(0)}%
           </Typography>
-
-          <Typography sx={{ fontSize: 24 }}>Combo: {statistics.combo}</Typography>
-        </Stack>
-        <Stack
-          direction='column'
-          spacing={10}
-          sx={{ width: '100%' }}
-        >
-          <Typography sx={{ fontSize: 24 }}>Max Combo: {statistics.maxCombo}</Typography>
-          <Typography sx={{ fontSize: 24 }}>
-            Max WPM: {statistics.maxWpm.toFixed(0)}
-          </Typography>
-        </Stack>
+        </Box>
       </Stack>
-    </Box>
+    </Stack>
   )
 }

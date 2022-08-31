@@ -1,6 +1,8 @@
 import { useEvent } from 'effector-react'
 import { useEffect, useMemo, useState } from 'react'
 
+import { Stack } from '../shared'
+
 import ChallengerRealtimeStatistics from './ChallengerRealtimeStatistics'
 import ChallengerInput from './ChallengerInput'
 import { INCREMENT_TIME } from './constants'
@@ -11,8 +13,6 @@ import {
   ChallengerStatisticsStore
 } from './store'
 import useChallenger from './useChallenger'
-
-import { Box } from '@/components/shared'
 
 type ChallengerProps = {
   language: string
@@ -72,13 +72,16 @@ export default function Challenger({ language, code }: ChallengerProps) {
 
   return useMemo(
     () => (
-      <Box>
+      <Stack
+        direction='column'
+        spacing={10}
+      >
         <ChallengerRealtimeStatistics />
         <ChallengerInput
           code={codeTrimmed}
           language={language}
         />
-      </Box>
+      </Stack>
     ),
     [codeTrimmed, language]
   )
