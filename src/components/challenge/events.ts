@@ -7,11 +7,13 @@ const challengerCleared = createEvent()
 const challengerChanged = createEvent<Partial<ChallengerStore>>()
 
 const challengerStatisticsFilled = createEvent<Partial<ChallengerStore>>()
-const challengerStatisticsChanged = createEvent<Partial<ChallengerStatisticsStore>>()
+const challengerWorkStatisticsChanged = createEvent<Partial<ChallengerStatisticsStore>>()
 
 type IsError = boolean
 
 const challengerStatisticUpdate = createEvent<IsError>()
+
+const challengerReset = createEvent()
 
 const nextToken = createEvent()
 const nextSubToken = createEvent()
@@ -33,5 +35,6 @@ export {
   nextSubToken,
   challengerStatisticsFilled,
   challengerStatisticUpdate,
-  challengerStatisticsChanged
+  challengerWorkStatisticsChanged,
+  challengerReset
 }

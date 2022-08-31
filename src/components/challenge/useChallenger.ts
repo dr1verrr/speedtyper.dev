@@ -8,19 +8,23 @@ import {
   challengerInited,
   challengerStatisticsFilled,
   challengerStatisticUpdate,
-  challengerStatisticsChanged
+  challengerWorkStatisticsChanged,
+  challengerReset
 } from './events'
-import { $challenger, ChallengerStore, CurrentToken } from './store'
+import { $challenger, ChallengerStore, CurrentToken, defaultStore } from './store'
 
-const useChallengerInput = () => {
+const useChallenger = () => {
   const { currentToken, finished, started, paused, tokens } = useStore($challenger)
   const initChallenger = useEvent(challengerInited)
   const updateChallenger = useEvent(challengerChanged)
   const toggleStatus = useEvent(statusToggled)
+
   const setNextToken = useEvent(nextToken)
   const setNextSubToken = useEvent(nextSubToken)
+
   const fillStatistics = useEvent(challengerStatisticsFilled)
-  const setStatistics = useEvent(challengerStatisticsChanged)
+  const setStatistics = useEvent(challengerWorkStatisticsChanged)
+  const resetChallenger = useEvent(challengerReset)
 
   const actions = {
     status: {
@@ -70,13 +74,7 @@ const useChallengerInput = () => {
         nextSubToken: () => setNextSubToken()
       },
       reset: () => {
-        actions.status.set({
-          currentToken: null,
-          tokens: null,
-          paused: false,
-          started: false,
-          finished: false
-        })
+        actions.status.set(defaultStore.$challenger)
       },
       init: (payload: Partial<ChallengerStore>) => {
         initChallenger(payload)
@@ -85,14 +83,14 @@ const useChallengerInput = () => {
       set: (payload: Partial<ChallengerStore>) => updateChallenger(payload)
     },
     statistics: {
-      update: (isError: boolean) => {
-        challengerStatisticUpdate(isError)
+      update: (trueTyped: boolean) => {
+        challengerStatisticUpdate(trueTyped)
+      },
+      reset: () => {
+        setStatistics(defaultStore.$challengerStatistics)
       }
     },
-    reset: () => {
-      setStatistics({ code: null, combo: 0, errors: 0, progress: 0, time: 0, wpm: 0 })
-      actions.status.reset()
-    }
+    reset: resetChallenger
   }
 
   return {
@@ -107,4 +105,4 @@ const useChallengerInput = () => {
   }
 }
 
-export default useChallengerInput
+export default useChallenger

@@ -7,7 +7,7 @@ import './Challenger.css'
 import { nextSubToken, nextToken } from './events'
 import { getSplittedTokens } from './helpers'
 import { $challenger } from './store'
-import useChallengerInput from './useChallengerInput'
+import useChallenger from './useChallenger'
 
 import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
@@ -42,7 +42,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const {
     challenger: { paused, started, currentToken, tokens },
     actions
-  } = useChallengerInput()
+  } = useChallenger()
 
   const classes = useStyles()
 
@@ -93,8 +93,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     document.addEventListener('keydown', handler)
 
     const onUnmount = () => {
-      //actions.status.reset()
-      actions.reset()
       document.removeEventListener('keydown', handler)
     }
 

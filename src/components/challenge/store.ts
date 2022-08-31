@@ -9,7 +9,8 @@ import {
   challengerInited,
   challengerStatisticsFilled,
   challengerStatisticUpdate,
-  challengerStatisticsChanged
+  challengerWorkStatisticsChanged,
+  challengerReset
 } from './events'
 import { getTotal } from './helpers'
 
@@ -33,7 +34,7 @@ type BaseChallengerStatistics = {
   wpm: number
   combo: number
   progress: number
-  errors: number
+  errors: CurrentToken[]
   keyboard: {
     pressed: number
   }
@@ -54,6 +55,8 @@ type ChallengerStatisticsTimeline = BaseChallengerStatistics & {
 
 type ChallengerStatisticsStore = BaseChallengerStatistics & {
   timeline: ChallengerStatisticsTimeline[]
+  maxWpm: BaseChallengerStatistics['wpm']
+  maxCombo: BaseChallengerStatistics['combo']
 }
 
 type ChallengerWorkStatisticsStore = BaseChallengerStatistics
@@ -72,7 +75,7 @@ const baseChallengerStatistics = {
   combo: 0,
   time: 0,
   progress: 0,
-  errors: 0,
+  errors: [],
   keyboard: {
     pressed: 0
   }
@@ -88,14 +91,19 @@ const defaultStore = {
   },
   $challengerStatistics: {
     ...baseChallengerStatistics,
-    timeline: []
+    timeline: [],
+    maxWpm: 0,
+    maxCombo: 0
   },
   $challengerWorkStatistics: baseChallengerStatistics
 }
 
+export { baseChallengerStatistics, defaultStore }
+
 const $challenger = createStore<ChallengerStore>(defaultStore.$challenger)
 
 $challenger
+  .reset(challengerReset)
   .on(challengerInited, (state, payload) => ({ ...state, ...payload }))
   .on(challengerCleared, () => defaultStore.$challenger)
   .on(challengerChanged, (state, payload) => ({ ...state, ...payload }))
@@ -171,7 +179,10 @@ const $challengerStatistics = createStore<ChallengerStatisticsStore>(
   defaultStore.$challengerStatistics
 )
 
+$challengerStatistics.reset(challengerReset)
+
 $challengerWorkStatistics
+  .reset(challengerReset)
   .on(challengerStatisticsFilled, (state, payload) => {
     if (payload.tokens) {
       const total = getTotal(payload.tokens)
@@ -191,9 +202,16 @@ $challengerWorkStatistics
       const left = getLeft()
 
       if (!trueTyped) {
+        const { currentToken } = $challenger.getState()
+        const errors = [...state.errors]
+        const existedErrorIndex = state.errors.findIndex(e => e.id === currentToken?.id)
+        if (currentToken && existedErrorIndex === -1) {
+          errors.push(currentToken)
+        }
         return {
           ...state,
-          errors: state.errors + 1,
+          errors,
+          combo: 0,
           code: { ...state.code, left }
         }
       }
@@ -201,14 +219,19 @@ $challengerWorkStatistics
       return {
         ...state,
         code: { ...state.code, left },
+        combo: state.combo + 1,
         keyboard: {
           pressed: state.keyboard.pressed + 1
         }
       }
     }
   })
-  .on(challengerStatisticsChanged, (state, payload) => {
+  .on(challengerWorkStatisticsChanged, (state, payload) => {
     return { ...state, ...payload }
+  })
+  .reset(challengerReset)
+  .watch(state => {
+    console.log('work statistics changed', state)
   })
 
 sample({
@@ -223,32 +246,56 @@ sample({
     }
 
     const getWpm = () => {
-      if (state.time < 1000) {
-        return 0
-      }
       const timeinMinutes = state.time / 1000 / 60
-      let pressed: number = state.keyboard.pressed
+      const pressed = state.keyboard.pressed
+      if (state.time < 1000) {
+        return pressed / 5 / (1 / 60)
+      }
 
       return pressed / 5 / timeinMinutes
     }
 
+    const getBestStats = (wpm: number) => {
+      const challengerStats = $challengerStatistics.getState()
+      let maxCombo = challengerStats.maxCombo
+      let maxWpm = challengerStats.maxWpm
+      if (challengerStats.maxCombo < state.combo) {
+        maxCombo = state.combo
+      }
+      if (challengerStats.maxWpm < wpm) {
+        maxWpm = wpm
+      }
+      return { maxCombo, maxWpm }
+    }
+
     const progress = getProgress()
     const wpm = getWpm()
+    const bestStats = getBestStats(wpm)
+    const { maxWpm, maxCombo } = bestStats
 
     const timeline = $challengerStatistics.getState().timeline
+    const updatedStats = { ...state, wpm, progress, maxCombo, maxWpm }
+    const timelineExistedIndex = timeline.findIndex(t => t.time === state.time)
 
-    const updatedStats = { ...state, wpm, progress }
+    const getUpdatedTimeline = () => {
+      const updatedTimeline = [...timeline]
+      if (timelineExistedIndex !== -1) {
+        const existedTimelineItem = updatedTimeline[timelineExistedIndex]
+        updatedTimeline[timelineExistedIndex] = {
+          ...existedTimelineItem,
+          ...updatedStats
+        }
+      } else {
+        updatedTimeline.push({ ...updatedStats, second: updatedStats.time / 1000 })
+      }
+      return updatedTimeline
+    }
 
-    const updatedTimeline = [
-      ...timeline,
-      { ...updatedStats, second: updatedStats.time / 1000 }
-    ]
+    const updatedTimeline = getUpdatedTimeline()
 
     return { ...updatedStats, timeline: updatedTimeline }
   },
   target: $challengerStatistics
-}).watch(state => {
-  console.log('timeline', state.time / 1000, state.timeline)
 })
 
 export { $challenger, $challengerWorkStatistics, $challengerStatistics }
