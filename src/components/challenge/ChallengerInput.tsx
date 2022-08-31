@@ -5,9 +5,9 @@ import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import './Challenger.css'
 
 import { nextSubToken, nextToken } from './events'
-import { getSplittedTokens } from './helpers'
 import { $challenger } from './store'
 import useChallenger from './useChallenger'
+import { getSplittedTokens } from './helpers'
 
 import { Box, Button } from '@/components/shared'
 import { Theme } from '@/services/theme/types'
@@ -146,17 +146,34 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
     const hasChildren = codeRef.current?.children
 
-    if (!started && hasChildren) {
-      const splittedTokens = getSplittedTokens(codeRef.current)
-
-      if (splittedTokens && splittedTokens.length >= 1) {
-        if (splittedTokens[0].subTokens) {
-          const children = splittedTokens[0].subTokens
-          children[0].element.className += ' current'
-        } else {
-          splittedTokens[0].element.className += ' current'
+    const getTotal = () => {
+      let total = 0
+      const tokens = Object.values(codeRef.current?.children!)
+      for (const token of tokens) {
+        if (token.textContent) {
+          if (token.textContent.length > 1) {
+            total += token.textContent.length
+          } else {
+            total++
+          }
         }
-        actions.status.init({ currentToken: splittedTokens[0], tokens: splittedTokens })
+      }
+      return total
+    }
+
+    if (!started && hasChildren) {
+      const total = getTotal()
+      if (total === code.length) {
+        const splittedTokens = getSplittedTokens(codeRef.current)
+        if (splittedTokens) {
+          if (splittedTokens[0].subTokens) {
+            const children = splittedTokens[0].subTokens
+            children[0].element.className += ' current'
+          } else {
+            splittedTokens[0].element.className += ' current'
+          }
+          actions.status.init({ currentToken: splittedTokens[0], tokens: splittedTokens })
+        }
       }
     }
   }
