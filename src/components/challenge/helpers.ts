@@ -124,7 +124,7 @@ const getSplittedTokens = (htmlCollection: HTMLElement | null) => {
           for (const token of splittedToken) {
             const splittedTokenLetterElement = document.createElement('span')
             splittedTokenLetterElement.textContent = token
-            splittedTokenLetterElement.style.cssText = 'color: #d3d3d3;'
+            splittedTokenLetterElement.className = 'subtoken'
 
             filteredToken.appendChild(splittedTokenLetterElement)
           }
