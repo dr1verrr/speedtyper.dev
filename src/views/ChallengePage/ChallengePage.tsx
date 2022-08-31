@@ -11,7 +11,7 @@ export default function ChallengePage() {
       <Typography variant='h1'>Challenge</Typography>
       <Box>
         <Challenger
-          code={codeSamples.javascript.trim()}
+          code={codeSamples.javascript[1].trim()}
           language='javascript'
         />
       </Box>
