@@ -1,10 +1,12 @@
 import { useEvent } from 'effector-react'
 import { Link } from 'react-router-dom'
 
+import { NAVBAR_HEIGHT } from './constants'
+
 import SwitchTheme from '@/components/buttons/SwitchTheme'
 import About from '@/components/icons/About'
 import KeyboardLogo from '@/components/icons/KeyboardLogo'
-import { Button, Typography } from '@/components/shared'
+import { Button, Stack, Typography } from '@/components/shared'
 import UserAvatar from '@/components/shared/Avatar'
 import Box from '@/components/shared/Box'
 import Container from '@/components/shared/Container'
@@ -42,7 +44,11 @@ export default function NavBar() {
       style={{
         borderBottom: `1px solid ${theme.common.border}`,
         position: 'sticky',
+        maxHeight: NAVBAR_HEIGHT - 1,
+        height: '100%',
         top: 0,
+        right: 0,
+        left: 0,
         zIndex: 500,
         background: 'inherit'
       }}
@@ -72,12 +78,12 @@ export default function NavBar() {
               </Box>
             </Box>
           </Link>
-          <Box
+          <Stack
+            spacing={15}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: 15
+              justifyContent: 'center'
             }}
           >
             <SwitchTheme
@@ -91,7 +97,7 @@ export default function NavBar() {
                 <About />
               </IconButton>
             </Link>
-          </Box>
+          </Stack>
         </Box>
       </Container>
     </nav>

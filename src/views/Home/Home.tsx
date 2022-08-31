@@ -14,7 +14,7 @@ export default function Home() {
         <Stack
           direction='column'
           spacing={15}
-          sx={{ marginTop: 20, marginBottom: 50, alignItems: 'center' }}
+          sx={{ paddingTop: 20, paddingBottom: 50, alignItems: 'center' }}
         >
           <Stack
             direction='column'
@@ -22,7 +22,7 @@ export default function Home() {
           >
             <KeyboardLogo size={100} />
             <Typography
-              sx={{ fontWeight: 400, marginTop: 0 }}
+              sx={{ fontWeight: 400, paddingTop: 0 }}
               variant='h1'
             >
               Grow your coding speed by own code snippets.

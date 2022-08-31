@@ -67,7 +67,7 @@ export default function SignIn() {
           </Stack>
         </Stack>
         <Stack
-          style={{ marginTop: 15, justifyContent: 'space-between' }}
+          style={{ paddingTop: 15, justifyContent: 'space-between' }}
           spacing={10}
         >
           <Button
@@ -81,7 +81,7 @@ export default function SignIn() {
           </Stack>
         </Stack>
         <Stack
-          sx={{ marginTop: 15 }}
+          sx={{ paddingTop: 15 }}
           spacing={3}
         >
           <div>Not registered yet ?</div>

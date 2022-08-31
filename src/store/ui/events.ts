@@ -1,5 +1,8 @@
 import { createEvent } from 'effector'
 
-const loadingChanged = createEvent<boolean>()
+import { UIStore } from './store'
 
-export { loadingChanged }
+const loadingChanged = createEvent<boolean>()
+const uiChanged = createEvent<Partial<UIStore>>()
+
+export { loadingChanged, uiChanged }

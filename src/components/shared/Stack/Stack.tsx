@@ -1,6 +1,7 @@
-import { Theme } from '@/services/theme/types'
 import { CSSProperties, ReactNode } from 'react'
 import { createUseStyles } from 'react-jss'
+
+import { Theme } from '@/services/theme/types'
 
 type StackProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -22,7 +23,8 @@ const useStyles = (props: StackStyledProps) =>
     stack: {
       display: 'flex',
       flexDirection: props.direction,
-      gap: props.spacing,
+      rowGap: props.spacing,
+      columnGap: props.spacing,
       ...props.sx
     }
   })(props)
