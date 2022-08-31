@@ -40,7 +40,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const inputRef = createRef<HTMLTextAreaElement>()
   const codeRef = createRef<HTMLElement>()
   const {
-    challenger: { paused, started, currentToken, tokens },
+    challenger: { paused, started, currentToken },
     actions
   } = useChallenger()
 
@@ -73,10 +73,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     ),
     [paused, started]
   )
-
-  useEffect(() => {
-    console.log(tokens)
-  }, [tokens])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -137,7 +133,10 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }
 
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    if (!started) {
+    console.log('code ref', codeRef.current)
+    const hasChildren = codeRef.current?.children
+
+    if (!started && hasChildren) {
       const splittedTokens = getSplittedTokens(codeRef.current)
 
       if (splittedTokens) {
