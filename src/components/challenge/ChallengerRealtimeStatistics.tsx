@@ -1,109 +1,99 @@
 import { useStore } from 'effector-react'
+import { useEffect, useRef, useState } from 'react'
+import { createUseStyles } from 'react-jss'
 
-import { Box, Stack, Typography } from '../shared'
+import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
 
-import { $challengerStatistics } from './store'
+import Metrics from '../metrics/Metrics'
+import { Box, Stack } from '../shared'
+import { $challenger, $challengerStatistics, ChallengerStatisticsStore } from './store'
 
-export default function ChallengerRealtimeStatistics() {
+type RuleNames = 'progressBar' | 'progressBarWrapper'
+
+const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
+  progressBar: ({ theme, progress }) => ({
+    width: '100%',
+    padding: 5,
+    position: 'relative',
+    borderRadius: 30,
+    background: theme.highlighter.progressBar.noFilled.color,
+    '&::after': {
+      content: '""',
+      transition: 'width 0.2s ease',
+      background: theme.highlighter.progressBar.filled.color,
+      height: '100%',
+      width: `${Math.floor(progress)}%`,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      borderRadius: 'inherit'
+    }
+  }),
+  progressBarWrapper: ({ theme }) => ({
+    padding: '25px',
+    borderRadius: 7,
+    background: theme.highlighter.background
+  })
+})
+
+type ChallengerRealtimeStatisticsProps = {
+  finished: boolean
+}
+
+export default function ChallengerRealtimeStatistics({
+  finished
+}: ChallengerRealtimeStatisticsProps) {
   const statistics = useStore($challengerStatistics)
+  const challengerStatus = useStore($challenger)
+  const theme = useTheme()
+  const classes = useStyles({ theme, ...statistics })
+  const interval = useRef<NodeJS.Timer>()
+
+  const [delayedStats, setDelayedStats] = useState({
+    wpm: $challengerStatistics.getState().wpm
+  })
+
+  useEffect(() => {
+    if (challengerStatus.started) {
+      interval.current = setInterval(() => {
+        const statistics = $challengerStatistics.getState()
+        setDelayedStats({
+          wpm: statistics.wpm
+        })
+      }, 1000)
+    }
+
+    if (challengerStatus.finished) {
+      clearInterval(interval.current)
+    }
+
+    return () => {
+      clearInterval(interval.current)
+    }
+  }, [challengerStatus])
 
   return (
     <Stack
       direction='column'
       spacing={15}
     >
-      <Box sx={{ padding: '25px', background: '#282a36', borderRadius: 7 }}>
-        <Box
-          sx={{
-            width: '100%',
-            padding: 5,
-            position: 'relative',
-            borderRadius: 30,
-            background: '#fff'
-          }}
-        >
-          <Box
-            sx={{
-              transition: 'width 0.2s ease',
-              background: '#b794f4',
-              height: '100%',
-              width: `${statistics.progress}%`,
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              borderRadius: 'inherit'
-            }}
-          ></Box>
-        </Box>
+      <Box className={classes.progressBarWrapper}>
+        <Box className={classes.progressBar}></Box>
       </Box>
       <Stack
         direction='row'
-        spacing={10}
-        sx={{ fontSize: 24, fontWeight: 600 }}
+        spacing={20}
       >
-        <Box
-          sx={{
-            width: '100%',
-            background: '#282a36',
-            color: '#fff',
-            padding: '25px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderRadius: 10
-          }}
-        >
-          <Typography>Time: </Typography>
-          <Typography sx={{ color: '#b794f4' }}>{statistics.time / 1000}s</Typography>
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            background: '#282a36',
-            color: '#fff',
-            padding: '25px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderRadius: 10
-          }}
-        >
-          <Typography>WPM: </Typography>
-          <Typography sx={{ color: '#b794f4' }}> {statistics.wpm.toFixed(0)}</Typography>
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            background: '#282a36',
-            color: '#fff',
-            padding: '25px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderRadius: 10
-          }}
-        >
-          <Typography>Combo: </Typography>
-          <Typography sx={{ color: '#b794f4' }}>{statistics.combo}</Typography>
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            background: '#282a36',
-            color: '#fff',
-            padding: '25px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderRadius: 10
-          }}
-        >
-          <Typography>Progress: </Typography>
-          <Typography sx={{ color: '#b794f4' }}>
-            {statistics.progress.toFixed(0)}%
-          </Typography>
-        </Box>
+        <Metrics
+          data={[
+            ['Time', `${statistics.time / 1000}s`],
+            ['WPM', `${delayedStats.wpm.toFixed(0)}`],
+            ['Combo', `${statistics.combo}`],
+            ['Progress', `${Math.floor(statistics.progress).toFixed(0)}%`]
+          ]}
+        />
       </Stack>
     </Stack>
   )
