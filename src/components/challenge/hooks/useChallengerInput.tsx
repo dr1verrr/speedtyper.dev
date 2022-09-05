@@ -1,6 +1,6 @@
 import { useEvent } from 'effector-react'
 import _ from 'lodash'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { challengerWorkStatisticsChanged } from '../events'
 import { getHighlighted, Highlighted } from '../helpers'
@@ -26,13 +26,20 @@ type useChallengerProps = ChallengerInputProps & {
   }
 }
 
+// FIX: make correct plain text tokenization cuz it removes first letter and not resplitting at all
+
 const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
   const highlighted = useRef<Highlighted>()
   const [originalHighlighted, setOriginalHighlighted] = useState<Highlighted>()
   const [loading, setLoading] = useState<Loading>(defaults.loading)
   const currentTokenIndex = useRef(0)
+  const [cursorClassName, setCursorClassName] = useState('')
 
-  console.log('original highlighted', originalHighlighted)
+  useEffect(() => {
+    if (refs.cursorRef.current) {
+      setCursorClassName(refs.cursorRef.current.className)
+    }
+  }, [refs])
 
   const { actions: challengerActions } = useChallenger()
 
@@ -87,7 +94,7 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
       const typedValue = e.currentTarget.value
 
       if (refs.highlightedRef.current && refs.cursorRef.current && highlighted.current) {
-        const { code, language, tokens } = highlighted.current
+        const { tokens } = highlighted.current
 
         const current = {
           index: currentTokenIndex.current,
@@ -97,14 +104,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             1
           )
         }
-
-        // FIX: token sometimes has no classname
-
-        //if (!refs.highlightedRef.current.children[current.index]) {
-        //  refs.highlightedRef.current.lastElementChild?.after(current.token.element)
-        //}
-
-        console.log('current', current, current.symbol)
 
         const updateToken = (newIndex: number) => {
           currentTokenIndex.current = newIndex
@@ -151,12 +150,10 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             refs.cursorRef.current!.textContent = newSymbol
           }
 
-          if (refs.cursorRef.current!.textContent === '\n') {
-            refs.cursorRef.current!.classList.add('new-row')
+          if (current.token.type) {
+            refs.cursorRef.current!.className = cursorClassName + ' ' + current.token.type
           } else {
-            if (refs.cursorRef.current?.className.includes('new-row')) {
-              refs.cursorRef.current!.classList.remove('new-row')
-            }
+            refs.cursorRef.current!.className = cursorClassName
           }
         }
 
@@ -165,8 +162,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
         }
 
         challengerActions.statistics.update(isEqualToTyped(current.symbol))
-
-        console.log('current', current, current.index, current.symbol.split(''))
 
         if (!refs.highlightedRef.current.children[current.index]) {
           const highlightedChildren = refs.highlightedRef.current.children
@@ -194,7 +189,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             currentTokenIndex.current = 0
             challengerActions.reset()
             challengerActions.status.set({ finished: true })
-            console.log('finished')
           } else {
             nextToken()
           }
