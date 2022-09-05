@@ -64,7 +64,7 @@ const useStyles = {
       fontWeight: 300,
       //padding: '25px 50px',
       //paddingLeft: 25,
-      fontFamily: 'Hack',
+      fontFamily: 'monospace',
       lineHeight: 1.4,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-all',

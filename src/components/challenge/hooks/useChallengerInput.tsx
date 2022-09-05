@@ -13,6 +13,8 @@ const defaults = {
   }
 }
 
+// WATCH PREVIOUS PR! IT HAS NEEDED BEHAVIOR
+
 type Loading = {
   highlighting: boolean
 }
