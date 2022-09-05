@@ -36,7 +36,17 @@ end
   javascriptreact: `
   const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<h1>Hello, world!</h1>);`,
-  short: `const foo = () => {}`
+  short: `const foo = () => {}`,
+  plain: `
+
+
+  const foo = () => {
+
+
+           return    Date.now()
+  }
+
+  `
 }
 
 export { codeSamples }

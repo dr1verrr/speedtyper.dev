@@ -108,9 +108,7 @@ const $challengerStatistics = createStore<ChallengerStatisticsStore>(
   defaultStore.$challengerStatistics
 )
 
-$challengerStatistics.reset(challengerStatisticsCleared).watch(state => {
-  console.log('stats changed', state)
-})
+$challengerStatistics.reset(challengerStatisticsCleared).watch(state => {})
 
 $challengerWorkStatistics
   .reset(challengerReset)

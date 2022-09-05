@@ -1,3 +1,6 @@
+//Prism.plugins.autoloader.languages_path = ''
+import 'prism-themes/themes/prism-one-dark.css'
+
 import { MouseEventHandler, useEffect, useRef } from 'react'
 
 import { Box, Button } from '@/components/shared'
@@ -75,7 +78,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }, [started, paused, originalHighlighted])
 
   useEffect(() => {
-    console.log('tokenize', 'ref', highlightedRef, codeRef, cursorRef, inputRef)
     actions.status.tokenize()
   }, [])
 
@@ -112,7 +114,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         onChange={handlers.handleChange}
       />
 
-      <div>
+      <div className={`language-${language}`}>
         <pre className={classes.highlighter}>
           <span
             ref={highlightedRef}
