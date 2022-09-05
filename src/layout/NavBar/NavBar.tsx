@@ -1,7 +1,6 @@
 import { useEvent } from 'effector-react'
+import { createUseStyles } from 'react-jss'
 import { Link } from 'react-router-dom'
-
-import { NAVBAR_HEIGHT } from './constants'
 
 import SwitchTheme from '@/components/buttons/SwitchTheme'
 import About from '@/components/icons/About'
@@ -13,7 +12,23 @@ import Container from '@/components/shared/Container'
 import IconButton from '@/components/shared/IconButton'
 import RequireAuthentication from '@/hoc/RequireAuth'
 import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
 import { themeToggled } from '@/store/theme/events'
+
+type RuleNames = 'NavBar'
+
+const useStyles = createUseStyles<RuleNames, unknown, Theme>({
+  NavBar: ({ theme }) => ({
+    borderBottom: `1px solid ${theme.common.border}`,
+    position: 'sticky',
+    top: 0,
+    right: 0,
+    left: 0,
+    zIndex: 500,
+    color: theme.common.text,
+    background: theme.common.bg
+  })
+})
 
 export default function NavBar() {
   const AuthenticationButton = RequireAuthentication(
@@ -38,21 +53,10 @@ export default function NavBar() {
   const toggleTheme = useEvent(themeToggled)
 
   const theme = useTheme()
+  const classes = useStyles({ theme })
 
   return (
-    <nav
-      style={{
-        borderBottom: `1px solid ${theme.common.border}`,
-        position: 'sticky',
-        maxHeight: NAVBAR_HEIGHT - 1,
-        height: '100%',
-        top: 0,
-        right: 0,
-        left: 0,
-        zIndex: 500,
-        background: 'inherit'
-      }}
-    >
+    <nav className={classes.NavBar}>
       <Container maxWidth='md'>
         <Box
           sx={{
