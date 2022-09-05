@@ -1,5 +1,5 @@
-import { lazy } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { lazy, useLayoutEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
 
 import AuthenticatedRoute from './AuthenticatedRoute'
 import PublicRoute from './PublicRoute'
@@ -12,6 +12,12 @@ const Profile = lazy(() => import('@/views/Profile'))
 const ChallengePage = lazy(() => import('@/views/ChallengePage'))
 
 function AppRoutes() {
+  const location = useLocation()
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [location])
+
   return (
     <Routes>
       <Route
