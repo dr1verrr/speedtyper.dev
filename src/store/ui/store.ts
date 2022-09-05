@@ -4,22 +4,12 @@ import { loadingChanged, uiChanged } from './events'
 
 type UIStore = {
   loading: boolean
-  dimensions: {
-    navBar: {
-      height: null | number
-    }
-  }
 }
 
 export type { UIStore }
 
 const defaultStore = {
-  loading: false,
-  dimensions: {
-    navBar: {
-      height: null
-    }
-  }
+  loading: false
 }
 
 const $ui = createStore<UIStore>(defaultStore)
