@@ -11,10 +11,14 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "prettier", "unused-imports"],
+  "plugins": ["react", "prettier", "unused-imports", "simple-import-sort"],
   "rules": {
-    "unused-imports/no-unused-imports": "error",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "import/no-duplicates": ["error", { "considerQueryString": true }],
+    "simple-import-sort/imports": "warn",
+    "unused-imports/no-unused-imports": "warn",
+    "prettier/prettier": ["warn", { "endOfLine": "auto" }],
+    "import/first": "off",
+    "no-fallthrough": "off",
     "no-unused-vars": "warn",
     "no-console": "warn",
     "jsx-quotes": "off",
@@ -23,19 +27,6 @@
     "curly": "off",
     "react/react-in-jsx-scope": "off",
     "no-mixed-spaces-and-tabs": "error",
-    "import/order": [
-      "warn",
-      {
-        "pathGroups": [
-          {
-            "pattern": "~/**",
-            "group": "external",
-            "position": "after"
-          }
-        ],
-        "newlines-between": "always"
-      }
-    ],
     "react/jsx-sort-props": [
       "warn",
       {
