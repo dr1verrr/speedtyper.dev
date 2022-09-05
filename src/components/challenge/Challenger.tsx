@@ -1,6 +1,8 @@
 import { useEvent } from 'effector-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { useTheme } from '@/services/theme/actions'
+
 import { Stack } from '../shared'
 import ChallengerInput from './ChallengerInput'
 import ChallengerRealtimeStatistics from './ChallengerRealtimeStatistics'
@@ -25,6 +27,19 @@ export default function Challenger({ language, code }: ChallengerProps) {
   const [isFinished, setFinished] = useState(false)
   const [results, setResults] = useState<ChallengerStatisticsStore>()
   const interval = useRef<NodeJS.Timer>()
+
+  const theme = useTheme()
+
+  useEffect(() => {
+    const fetchCodeTheme = async () => {
+      if (theme.mode === 'light') {
+        return await import('prism-themes/themes/prism-one-light.css')
+      } else {
+        return await import('prism-themes/themes/prism-dracula.css')
+      }
+    }
+    const fetchedTheme = fetchCodeTheme()
+  }, [theme])
 
   const setStatistics = useEvent(challengerWorkStatisticsChanged)
 
