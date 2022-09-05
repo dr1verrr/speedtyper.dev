@@ -2,12 +2,12 @@ import { createEvent } from 'effector'
 
 import { ChallengerStatisticsStore, ChallengerStore } from './store'
 
-const challengerInited = createEvent<Partial<ChallengerStore>>()
 const challengerCleared = createEvent()
 const challengerChanged = createEvent<Partial<ChallengerStore>>()
 
 const challengerStatisticsFilled = createEvent<Partial<ChallengerStore>>()
 const challengerWorkStatisticsChanged = createEvent<Partial<ChallengerStatisticsStore>>()
+const challengerStatisticsCleared = createEvent()
 
 type IsError = boolean
 
@@ -28,7 +28,6 @@ const statusToggled = createEvent<
 
 export {
   challengerChanged,
-  challengerInited,
   challengerCleared,
   statusToggled,
   nextToken,
@@ -36,5 +35,6 @@ export {
   challengerStatisticsFilled,
   challengerStatisticUpdate,
   challengerWorkStatisticsChanged,
-  challengerReset
+  challengerReset,
+  challengerStatisticsCleared
 }

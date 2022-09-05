@@ -1,40 +1,26 @@
 import { createStore, sample } from 'effector'
 
 import {
-  statusToggled,
-  challengerCleared,
   challengerChanged,
-  nextToken,
-  nextSubToken,
-  challengerInited,
-  challengerStatisticsFilled,
-  challengerStatisticUpdate,
+  challengerCleared,
+  challengerReset,
+  challengerStatisticsCleared,
+  challengerStatisticUpdate as challengerWorkStatisticUpdate,
   challengerWorkStatisticsChanged,
-  challengerReset
+  statusToggled
 } from './events'
-import { getTotal } from './helpers'
-
-type SubToken = {
-  element: Element
-  id: number
-}
-
-type CurrentToken = {
-  element: Element
-  id: number
-  subTokens: SubToken[]
-  fullWord: string
-}
+import { Highlighted } from './helpers'
 
 type BaseChallengerStatistics = {
   code: null | {
     total: number
     left: number
   }
+  currentId: number
   wpm: number
   combo: number
   progress: number
-  errors: CurrentToken[]
+  errors: number[]
   keyboard: {
     pressed: number
   }
@@ -44,9 +30,8 @@ type BaseChallengerStatistics = {
 type ChallengerStore = {
   paused: boolean
   started: boolean
-  tokens: CurrentToken[] | null
-  currentToken: CurrentToken | null
   finished: boolean
+  highlighted: Highlighted
 }
 
 type ChallengerStatisticsTimeline = BaseChallengerStatistics & {
@@ -61,13 +46,7 @@ type ChallengerStatisticsStore = BaseChallengerStatistics & {
 
 type ChallengerWorkStatisticsStore = BaseChallengerStatistics
 
-export type {
-  ChallengerStore,
-  ChallengerWorkStatisticsStore,
-  ChallengerStatisticsStore,
-  CurrentToken,
-  SubToken
-}
+export type { ChallengerStore, ChallengerWorkStatisticsStore, ChallengerStatisticsStore }
 
 const baseChallengerStatistics = {
   code: null,
@@ -75,6 +54,7 @@ const baseChallengerStatistics = {
   combo: 0,
   time: 0,
   progress: 0,
+  currentId: 0,
   errors: [],
   keyboard: {
     pressed: 0
@@ -85,9 +65,8 @@ const defaultStore = {
   $challenger: {
     paused: false,
     started: false,
-    tokens: null,
-    currentToken: null,
-    finished: false
+    finished: false,
+    highlighted: {} as Highlighted
   },
   $challengerStatistics: {
     ...baseChallengerStatistics,
@@ -100,11 +79,10 @@ const defaultStore = {
 
 export { baseChallengerStatistics, defaultStore }
 
-const $challenger = createStore<ChallengerStore>(defaultStore.$challenger)
+const $challenger = createStore<ChallengerStore>({ ...defaultStore.$challenger })
 
 $challenger
   .reset(challengerReset)
-  .on(challengerInited, (state, payload) => ({ ...state, ...payload }))
   .on(challengerCleared, () => defaultStore.$challenger)
   .on(challengerChanged, (state, payload) => ({ ...state, ...payload }))
   .on(statusToggled, (state, key) => {
@@ -121,55 +99,6 @@ $challenger
 
     return { ...state, ...status }
   })
-  .on(nextToken, state => {
-    if (state.tokens) {
-      if (state.tokens[state.tokens.length - 1].id === state.currentToken?.id) {
-        return { ...defaultStore.$challenger, finished: true }
-      }
-      const next = state.tokens[state.currentToken?.id! + 1]
-      return { ...state, currentToken: next }
-    }
-  })
-  .on(nextSubToken, state => {
-    if (state.tokens && state.currentToken) {
-      const subTokens = state.currentToken.subTokens
-
-      if (subTokens.length) {
-        const currentSubToken = state.currentToken.subTokens[0]
-
-        if (currentSubToken.id !== subTokens[subTokens.length - 1].id) {
-          const getNotTypedYed = () => {
-            const result = subTokens.filter(s => s.id !== currentSubToken.id)
-            return result
-          }
-
-          return {
-            ...state,
-            currentToken: { ...state.currentToken, subTokens: getNotTypedYed() }
-          }
-        } else {
-          const getNextToken = () => {
-            if (state.currentToken) {
-              const currentTokenId = state.currentToken?.id
-              const next = state.tokens?.find(t => t.id === currentTokenId + 1)
-              return next
-            }
-          }
-
-          const nextToken = getNextToken()
-
-          if (nextToken) {
-            return { ...state, currentToken: nextToken }
-          } else {
-            return {
-              ...state,
-              finished: true
-            }
-          }
-        }
-      }
-    }
-  })
 
 const $challengerWorkStatistics = createStore<ChallengerWorkStatisticsStore>(
   defaultStore.$challengerWorkStatistics
@@ -179,18 +108,13 @@ const $challengerStatistics = createStore<ChallengerStatisticsStore>(
   defaultStore.$challengerStatistics
 )
 
-$challengerStatistics.reset(challengerReset)
+$challengerStatistics.reset(challengerStatisticsCleared).watch(state => {
+  console.log('stats changed', state)
+})
 
 $challengerWorkStatistics
   .reset(challengerReset)
-  .on(challengerStatisticsFilled, (state, payload) => {
-    if (payload.tokens) {
-      const total = getTotal(payload.tokens)
-
-      return { ...state, code: { left: total, total } }
-    }
-  })
-  .on(challengerStatisticUpdate, (state, trueTyped) => {
+  .on(challengerWorkStatisticUpdate, (state, trueTyped) => {
     if (state.code) {
       const getLeft = (): number => {
         if (trueTyped) {
@@ -202,12 +126,15 @@ $challengerWorkStatistics
       const left = getLeft()
 
       if (!trueTyped) {
-        const { currentToken } = $challenger.getState()
         const errors = [...state.errors]
-        const existedErrorIndex = state.errors.findIndex(e => e.id === currentToken?.id)
-        if (currentToken && existedErrorIndex === -1) {
-          errors.push(currentToken)
+        const existedErrorIndex = state.errors.findIndex(
+          errId => errId === state.currentId
+        )
+
+        if (existedErrorIndex === -1) {
+          errors.push(state.currentId)
         }
+
         return {
           ...state,
           errors,
@@ -222,7 +149,8 @@ $challengerWorkStatistics
         combo: state.combo + 1,
         keyboard: {
           pressed: state.keyboard.pressed + 1
-        }
+        },
+        currentId: state.currentId + 1
       }
     }
   })
@@ -232,7 +160,7 @@ $challengerWorkStatistics
   .reset(challengerReset)
 
 sample({
-  clock: $challengerWorkStatistics,
+  clock: [challengerWorkStatisticUpdate, challengerWorkStatisticsChanged],
   source: { state: $challengerWorkStatistics },
   fn: ({ state }) => {
     const getProgress = () => {
