@@ -359,3 +359,10 @@ html {
 #root {
   height: 100%;
 }
+
+@font-face {
+  font-family: 'Hack';
+  src: url('/fonts/Hack.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
