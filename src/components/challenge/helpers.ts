@@ -24,6 +24,7 @@ type ResplittedToken = {
 const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar) => {
   const tokens = Prism.tokenize(code, grammar || Prism.languages[language])
   const resplittedTokens: ResplittedToken[] = []
+  console.log('tokens', tokens)
 
   const getSplittedTokens = (token: string | Prism.Token, prefix?: string) => {
     let splittedTokens: ResplittedToken[] = []
@@ -144,6 +145,8 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
     }
   }
 
+  console.log('resplitted tokens', resplittedTokens)
+
   return {
     code,
     language,
@@ -153,8 +156,14 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
         element.textContent = tkn.indentSpaces
       }
 
-      if (tkn.type !== 'plain') {
-        element.className = tkn.type
+      if (tkn.type && tkn.type !== 'plain') {
+        //console.log('element', element, 'classname', element.className, 'token', tkn)
+
+        if (tkn.type.includes('-')) {
+          tkn.type = tkn.type.split('-').join(' ')
+        }
+
+        element.className = 'token ' + tkn.type
       } else if (tkn.content === '\n') {
         element.className = 'new-row'
       }

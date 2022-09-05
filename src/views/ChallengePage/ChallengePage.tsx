@@ -9,7 +9,7 @@ export default function ChallengePage() {
     <Container sx={{ maxWidth: 1024 }}>
       <Box sx={{ paddingTop: 75 }}>
         <Challenger
-          code={codeSamples.ruby}
+          code={codeSamples.javascript[1]}
           language='javascript'
         />
       </Box>

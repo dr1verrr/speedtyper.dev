@@ -32,6 +32,8 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
   const [loading, setLoading] = useState<Loading>(defaults.loading)
   const currentTokenIndex = useRef(0)
 
+  console.log('original highlighted', originalHighlighted)
+
   const { actions: challengerActions } = useChallenger()
 
   const setStatistics = useEvent(challengerWorkStatisticsChanged)
@@ -96,6 +98,14 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
           )
         }
 
+        // FIX: token sometimes has no classname
+
+        //if (!refs.highlightedRef.current.children[current.index]) {
+        //  refs.highlightedRef.current.lastElementChild?.after(current.token.element)
+        //}
+
+        console.log('current', current, current.symbol)
+
         const updateToken = (newIndex: number) => {
           currentTokenIndex.current = newIndex
           current.index = newIndex
@@ -114,10 +124,8 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
 
         const insertIndentSpaces = (spaces: string) => {
           const highlightedChildren = refs.highlightedRef.current!.children
-          const indentSpacesElement = document.createElement('span')
+          highlightedChildren[highlightedChildren.length - 1].textContent = '\n' + spaces
 
-          indentSpacesElement.textContent = '' + spaces
-          highlightedChildren[highlightedChildren.length - 1].after(indentSpacesElement)
           refs.codeRef.current!.textContent = refs.codeRef.current!.textContent!.slice(
             spaces.length
           )
@@ -158,17 +166,20 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
 
         challengerActions.statistics.update(isEqualToTyped(current.symbol))
 
+        console.log('current', current, current.index, current.symbol.split(''))
+
         if (!refs.highlightedRef.current.children[current.index]) {
           const highlightedChildren = refs.highlightedRef.current.children
-          if (!highlightedChildren.length) {
-            refs.highlightedRef.current.replaceChildren(current.token.element)
-          } else {
-            const lastHighlightedElement =
-              highlightedChildren[highlightedChildren.length - 1]
+          const lastHighlightedElement =
+            highlightedChildren[highlightedChildren.length - 1]
 
+          if (highlightedChildren.length) {
             lastHighlightedElement.after(current.token.element)
+          } else {
+            refs.highlightedRef.current.replaceChildren(current.token.element)
           }
         }
+
         if (isEqualToTyped(current.symbol)) {
           if (current.token.content.length <= 1 && !tokens[current.index + 1]) {
             highlighted.current = _.cloneDeep(originalHighlighted)
