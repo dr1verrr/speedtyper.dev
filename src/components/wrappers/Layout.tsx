@@ -1,11 +1,9 @@
+import 'react-toastify/dist/ReactToastify.min.css'
+
 import { useEvent, useStore } from 'effector-react'
 import { ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { ThemeProvider } from 'react-jss'
 import { ToastContainer } from 'react-toastify'
-
-import FetchLoader from '../loaders/FetchLoader'
-import Spinner from '../loaders/Spinner'
-import { Box } from '../shared'
 
 import useMediaQuery from '@/hooks/useMediaQuery'
 import NavBar from '@/layout/NavBar'
@@ -14,19 +12,22 @@ import { LocalStorageKeys } from '@/store/theme/constants'
 import { themeChanged } from '@/store/theme/events'
 import $theme, { ThemeStore } from '@/store/theme/store'
 import { loadState } from '@/utils/localStorage'
-import 'react-toastify/dist/ReactToastify.min.css'
-import { NAVBAR_HEIGHT } from '@/layout/NavBar/constants'
+
+import FetchLoader from '../loaders/FetchLoader'
+import Spinner from '../loaders/Spinner'
+import { Box } from '../shared'
 
 type LayoutProps = {
   children?: ReactNode
 }
+
+//jss.use(vendorPrefixer())
 
 export default function Layout({ children }: LayoutProps) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const localTheme: ThemeStore = loadState(LocalStorageKeys.theme || 'light')
   const themeMode = useStore($theme)
   const updateTheme = useEvent(themeChanged)
-
   const isPrefersModeChecked = useRef(false)
   const isFirstRender = useRef(true)
 
@@ -36,7 +37,7 @@ export default function Layout({ children }: LayoutProps) {
   const memoizedLayoutInner = useMemo(
     () => (
       <>
-        <main style={{ minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)` }}>
+        <main style={{ height: '100%' }}>
           <Suspense
             fallback={
               <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
@@ -71,10 +72,6 @@ export default function Layout({ children }: LayoutProps) {
   }, [currentTheme])
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-color-mode', currentTheme.mode)
-  }, [currentTheme])
-
-  useEffect(() => {
     if (isPrefersModeChecked.current || !localTheme) {
       const mode = prefersDarkMode ? 'dark' : 'light'
       setCurrentTheme(getTheme(mode))
@@ -97,7 +94,8 @@ export default function Layout({ children }: LayoutProps) {
       <div
         style={{
           background: currentTheme.common.bg,
-          color: currentTheme.common.text
+          color: currentTheme.common.text,
+          minHeight: '100vh'
         }}
       >
         {memoizedNavBar}

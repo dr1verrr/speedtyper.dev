@@ -1,227 +1,145 @@
-import React, { createRef, useEffect, useMemo } from 'react'
-import { createUseStyles } from 'react-jss'
-import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import './Challenger.css'
-
-import { nextSubToken, nextToken } from './events'
-import { $challenger } from './store'
-import useChallenger from './useChallenger'
-import { getSplittedTokens } from './helpers'
+import { MouseEventHandler, useEffect, useRef } from 'react'
 
 import { Box, Button } from '@/components/shared'
-import { Theme } from '@/services/theme/types'
+import { useTheme } from '@/services/theme/actions'
+import { rgba } from '@/utils/styles'
 
-type RuleNames = 'previewMask'
-
-const useStyles = createUseStyles<RuleNames, undefined, Theme>({
-  previewMask: {
-    transition: 'background 0.3s ease',
-    position: 'absolute',
-    cursor: 'pointer',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 100,
-    overflow: 'hidden',
-    '&:hover': {
-      background: 'rgba(255,255,255, 0.1)'
-    }
-  }
-})
-
-type ChallengerInputProps = {
-  language: string
-  code: string
-}
+import { useChallenger } from './hooks'
+import useChallengerInput from './hooks/useChallengerInput'
+import { useStyles } from './styles/styles.jss'
+import { ChallengerInputProps } from './types'
 
 export default function ChallengerInput({ language, code }: ChallengerInputProps) {
-  const inputRef = createRef<HTMLTextAreaElement>()
-  const codeRef = createRef<HTMLElement>()
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const cursorRef = useRef<HTMLSpanElement>(null)
+  const codeRef = useRef<HTMLElement>(null)
+  const highlightedRef = useRef<HTMLSpanElement>(null)
+
   const {
-    challenger: { paused, started, currentToken },
-    actions
+    actions: challengerActions,
+    challenger: { started, paused }
   } = useChallenger()
 
-  const classes = useStyles()
+  const { actions, handlers, highlighted, loading, originalHighlighted } =
+    useChallengerInput({
+      code,
+      language,
+      refs: {
+        inputRef,
+        cursorRef,
+        codeRef,
+        highlightedRef
+      }
+    })
 
-  const startTyping = () => {
-    inputRef.current?.focus()
-    actions.status.set({ started: true })
+  const theme = useTheme()
+  const classes = useStyles.challenger({ theme, language, code })
+  console.log('loading', loading)
+
+  const onClick: MouseEventHandler<HTMLDivElement> = e => {
+    if (!started && !loading.highlighting && originalHighlighted) {
+      return actions.status.startTyping(originalHighlighted)
+    }
+    if (started) {
+      inputRef.current?.focus()
+    }
   }
-
-  const memoizedHighlighter = useMemo(
-    () => (
-      <SyntaxHighlighter
-        codeTagProps={{
-          style: {
-            display: 'inline-block',
-            zIndex: 100,
-            cursor: 'text',
-            position: 'relative',
-            filter: started && !paused ? 'none' : 'saturate(0)',
-            overflow: 'hidden'
-          },
-          ref: codeRef
-        }}
-        customStyle={{
-          fontSize: 20,
-          userSelect: 'none',
-          fontFamily: 'monospace',
-          maxHeight: '75vh',
-          margin: 0,
-          overflow: 'hidden'
-        }}
-        language={language}
-        style={dracula}
-      >
-        {code}
-      </SyntaxHighlighter>
-    ),
-    [paused, started]
-  )
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const { paused, started } = $challenger.getState()
-      const isReadyToStart = e.key === 'Enter' && !paused && !started
+    const keydownHandler = (e: KeyboardEvent) => {
+      const preesedKey = e.code
 
-      if (isReadyToStart) {
+      if (preesedKey === 'Enter' || preesedKey === 'Space') {
         e.preventDefault()
-        startTyping()
+        switch (preesedKey) {
+          case 'Enter':
+            if (!started && !paused && originalHighlighted) {
+              actions.status.startTyping(originalHighlighted)
+            }
+
+          case 'Space':
+            if (started) challengerActions.status.togglePause()
+        }
       }
     }
 
-    document.addEventListener('keydown', handler)
+    if (!started) {
+      document.addEventListener('keydown', keydownHandler)
+    }
 
     const onUnmount = () => {
-      document.removeEventListener('keydown', handler)
+      document.removeEventListener('keydown', keydownHandler)
     }
 
-    return () => onUnmount()
+    return onUnmount
+  }, [started, paused, originalHighlighted])
+
+  useEffect(() => {
+    console.log('tokenize', 'ref', highlightedRef, codeRef, cursorRef, inputRef)
+    actions.status.tokenize()
   }, [])
 
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = e => {
-    const typedValue = e.target.value
-
-    const compareTyped = (comparable: string | null) => {
-      if (comparable === typedValue || (comparable === '\n' && typedValue === ' ')) {
-        return true
-      }
-      return false
+  useEffect(() => {
+    if (!loading.highlighting && originalHighlighted) {
+      cursorRef.current!.textContent = originalHighlighted.code.slice(0, 1)
+      codeRef.current!.textContent = originalHighlighted.code.slice(1)
     }
+  }, [loading, originalHighlighted])
 
-    if (currentToken) {
-      const { subTokens, element } = currentToken
-
-      if (subTokens.length) {
-        const comparable = subTokens[0].element.textContent
-        actions.statistics.update(compareTyped(comparable))
-
-        if (compareTyped(comparable)) {
-          actions.status.updateHighlights(currentToken)
-          nextSubToken()
-        }
-      } else {
-        const comparable = element.textContent
-        actions.statistics.update(compareTyped(comparable))
-
-        if (compareTyped(comparable)) {
-          actions.status.updateHighlights(currentToken)
-          nextToken()
-        } else if (comparable === '') {
-          actions.status.updateHighlights(currentToken)
-          nextToken()
-        }
-      }
-    }
-  }
-
-  const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    const hasChildren = codeRef.current?.children
-
-    const getTotal = () => {
-      let total = 0
-      const tokens = Object.values(codeRef.current?.children!)
-      for (const token of tokens) {
-        if (token.textContent) {
-          if (token.textContent.length > 1) {
-            total += token.textContent.length
-          } else {
-            total++
-          }
-        }
-      }
-      return total
-    }
-
-    if (!started && hasChildren) {
-      const total = getTotal()
-      if (total === code.length) {
-        const splittedTokens = getSplittedTokens(codeRef.current)
-        if (splittedTokens) {
-          if (splittedTokens[0].subTokens) {
-            const children = splittedTokens[0].subTokens
-            children[0].element.className += ' current'
-          } else {
-            splittedTokens[0].element.className += ' current'
-          }
-          actions.status.init({ currentToken: splittedTokens[0], tokens: splittedTokens })
-        }
-      }
-    }
-  }
+  if (loading.highlighting) return null
 
   return (
     <Box
-      sx={{ position: 'relative' }}
-      onClick={startTyping}
+      sx={{
+        position: 'relative',
+        maxHeight: '55vh',
+        overflow: !started || paused ? 'hidden' : 'auto',
+        display: 'flex',
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        background: rgba(theme.highlighter.color, 0.07),
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none'
+      }}
+      onClick={onClick}
     >
       <textarea
         ref={inputRef}
         autoCapitalize='none'
-        style={{
-          margin: 0,
-          padding: 0,
-          position: 'absolute',
-          display: 'inline-block',
-          top: 0,
-          right: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          opacity: 0,
-          zIndex: -1,
-          cursor: 'default'
-        }}
+        className={classes.hiddenInput}
         tabIndex={-1}
         value=''
-        onChange={handleChange}
-        onFocus={onFocus}
+        onChange={handlers.handleChange}
       />
-      {memoizedHighlighter}
+
+      <div>
+        <pre className={classes.highlighter}>
+          <span
+            ref={highlightedRef}
+            className='hl'
+          ></span>
+          <span
+            ref={cursorRef}
+            className={classes.cursor}
+          ></span>
+          <span
+            ref={codeRef}
+            style={{ wordBreak: 'break-all', display: 'inline' }}
+          ></span>
+        </pre>
+      </div>
       {(!started || paused) && (
         <div className={classes.previewMask}>
-          <Box>
-            <Button
-              sx={{
-                padding: '12px 30px',
-                fontSize: 20,
-                background: '#b794f4',
-                borderColor: '#fff',
-                color: '#000'
-              }}
-            >
-              {paused && 'Press space to unpause'}
-              {!started && 'Press enter to start typing'}
-            </Button>
-          </Box>
+          <Button className={classes.previewMaskButton}>
+            {loading.highlighting ? (
+              'Loading...'
+            ) : (
+              <>
+                {paused && 'Press space to unpause'}
+                {!started && 'Press enter to start typing'}
+              </>
+            )}
+          </Button>
         </div>
       )}
     </Box>

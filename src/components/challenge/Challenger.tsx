@@ -1,18 +1,17 @@
 import { useEvent } from 'effector-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Stack } from '../shared'
-
-import ChallengerRealtimeStatistics from './ChallengerRealtimeStatistics'
 import ChallengerInput from './ChallengerInput'
+import ChallengerRealtimeStatistics from './ChallengerRealtimeStatistics'
 import { INCREMENT_TIME } from './constants'
 import { challengerWorkStatisticsChanged } from './events'
+import useChallenger from './hooks/useChallenger'
 import {
   $challengerStatistics,
   $challengerWorkStatistics,
   ChallengerStatisticsStore
 } from './store'
-import useChallenger from './useChallenger'
 
 type ChallengerProps = {
   language: string
@@ -25,6 +24,7 @@ export default function Challenger({ language, code }: ChallengerProps) {
   const [isStarted, setStarted] = useState(false)
   const [isFinished, setFinished] = useState(false)
   const [results, setResults] = useState<ChallengerStatisticsStore>()
+  const interval = useRef<NodeJS.Timer>()
 
   const setStatistics = useEvent(challengerWorkStatisticsChanged)
 
@@ -32,53 +32,48 @@ export default function Challenger({ language, code }: ChallengerProps) {
     const onUnmount = () => {
       actions.reset()
     }
-    return () => {
-      onUnmount()
-    }
+    return onUnmount
   }, [])
 
   useEffect(() => {
-    if (challenger.started && !isStarted) {
-      setStarted(true)
-    }
-    if (challenger.finished && !isFinished) {
-      setFinished(true)
-    }
+    setStarted(challenger.started)
+    setFinished(challenger.finished)
   }, [challenger])
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined = undefined
     if (isFinished) {
       const statistics = $challengerStatistics.getState()
       setResults(statistics)
       actions.reset()
-      return clearInterval(interval)
+      return clearInterval(interval.current)
     }
 
+    const onUnmount = () => clearInterval(interval.current)
+
     if (isStarted) {
-      interval = setInterval(() => {
+      interval.current = setInterval(() => {
         const time = $challengerWorkStatistics.getState().time
         setStatistics({ time: time + INCREMENT_TIME })
       }, 1000)
-      return () => {
-        clearInterval(interval)
-      }
     }
+
+    return onUnmount
   }, [isStarted, isFinished])
 
-  return useMemo(
-    () => (
-      <Stack
-        direction='column'
-        spacing={10}
-      >
-        <ChallengerRealtimeStatistics />
-        <ChallengerInput
-          code={codeTrimmed}
-          language={language}
-        />
-      </Stack>
-    ),
-    [codeTrimmed, language]
+  useEffect(() => {
+    console.log('results', results)
+  }, [results])
+
+  return (
+    <Stack
+      direction='column'
+      spacing={15}
+    >
+      <ChallengerRealtimeStatistics finished={isFinished} />
+      <ChallengerInput
+        code={codeTrimmed}
+        language={language}
+      />
+    </Stack>
   )
 }

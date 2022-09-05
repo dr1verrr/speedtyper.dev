@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import Typography from '../Typography'
-
 import useAuthUser from '@/hooks/useAuthUser'
+
+import Typography from '../Typography'
 
 export default function UserAvatar() {
   const { user } = useAuthUser()

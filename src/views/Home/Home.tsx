@@ -20,9 +20,9 @@ export default function Home() {
             direction='column'
             sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <KeyboardLogo size={100} />
+            <KeyboardLogo size={120} />
             <Typography
-              sx={{ fontWeight: 400, paddingTop: 0 }}
+              sx={{ fontWeight: 400, marginTop: 0 }}
               variant='h1'
             >
               Grow your coding speed by own code snippets.

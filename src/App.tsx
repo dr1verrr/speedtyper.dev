@@ -1,4 +1,5 @@
 import './App.css'
+
 import { useEvent } from 'effector-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'

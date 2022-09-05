@@ -9,10 +9,10 @@ end
     `function createMicrobrewery(name) {
   const breweryName = name || "Hipster Brew Co.";
 }`,
-    `const binarySearch = (nums: any[], target: any) => {
+    `const binarySearch = (nums, target) => {
   let left = 0
   let right = nums.length - 1
-  let mid: number
+  let mid
 
   const getMiddle = () => {
     return Math.round((right - left) / 2 + left)
@@ -35,7 +35,8 @@ end
   ],
   javascriptreact: `
   const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<h1>Hello, world!</h1>);`
+root.render(<h1>Hello, world!</h1>);`,
+  short: `const foo = () => {}`
 }
 
 export { codeSamples }

@@ -33,6 +33,19 @@ const lightTheme = {
   },
   status: {
     ghost: '#ccc'
+  },
+  highlighter: {
+    background: '#F5F5F5',
+    accent: '#b794f4',
+    color: '#000',
+    progressBar: {
+      filled: {
+        color: '#b794f4'
+      },
+      noFilled: {
+        color: '#E6E6FA'
+      }
+    }
   }
 }
 
@@ -71,6 +84,19 @@ const darkTheme = {
   },
   status: {
     ghost: ''
+  },
+  highlighter: {
+    background: '#222',
+    color: '#fff',
+    accent: '#b794f4',
+    progressBar: {
+      filled: {
+        color: '#ccc'
+      },
+      noFilled: {
+        color: '#333'
+      }
+    }
   }
 }
 

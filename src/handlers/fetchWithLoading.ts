@@ -1,5 +1,6 @@
-import { loadingChanged } from '@/store/ui/events'
 import { toast } from 'react-toastify'
+
+import { loadingChanged } from '@/store/ui/events'
 
 const fetchWithLoading = async <T extends (...args: any) => any>(
   func: T extends (...args: any) => infer R ? R : any
