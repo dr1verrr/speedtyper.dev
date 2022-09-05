@@ -1,7 +1,9 @@
-import { useTheme } from '@/services/theme/actions'
-import { Theme } from '@/services/theme/types'
+import clsx from 'clsx'
 import React from 'react'
 import { createUseStyles } from 'react-jss'
+
+import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
 
 type RuleNames = 'button'
 type Variants = 'primary' | 'action' | 'default'
@@ -39,10 +41,10 @@ export default function Button({ variant = 'default', ...props }: ButtonProps) {
 
   return (
     <button
-      type='button'
-      className={classes.button}
       {...props}
+      className={clsx(classes.button, props.className)}
       style={{ ...props.style, ...props.sx }}
+      type='button'
     >
       {props.children}
     </button>

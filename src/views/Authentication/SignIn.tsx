@@ -1,3 +1,6 @@
+import { FormEvent, useRef } from 'react'
+import { Link } from 'react-router-dom'
+
 import { signin } from '@/app/auth'
 import AuthButtons from '@/components/buttons/AuthButtons'
 import { Button } from '@/components/shared'
@@ -5,8 +8,6 @@ import Container from '@/components/shared/Container'
 import Stack from '@/components/shared/Stack/Stack'
 import TextField from '@/components/shared/TextField'
 import fetchWithToastify from '@/handlers/fetchWithToastify'
-import { FormEvent, useRef } from 'react'
-import { Link } from 'react-router-dom'
 
 export default function SignIn() {
   const formData = useRef({ email: '', password: '' })
@@ -31,13 +32,13 @@ export default function SignIn() {
     <Container maxWidth='sm'>
       <form
         autoComplete='on'
-        onSubmit={onSubmit}
         style={{ padding: 15 }}
+        onSubmit={onSubmit}
       >
         <Stack
-          sx={{ fontSize: 20 }}
           direction='column'
           spacing={10}
+          sx={{ fontSize: 20 }}
         >
           <Stack
             direction='column'
@@ -45,9 +46,9 @@ export default function SignIn() {
           >
             <label htmlFor='email'>Email:</label>
             <TextField
+              id='email'
               minLength={3}
               name='email'
-              id='email'
               type='email'
               onChange={onChange}
             />
@@ -58,17 +59,17 @@ export default function SignIn() {
           >
             <label htmlFor='password'>Password:</label>
             <TextField
-              name='password'
               id='password'
-              type='password'
               minLength={6}
+              name='password'
+              type='password'
               onChange={onChange}
             />
           </Stack>
         </Stack>
         <Stack
-          style={{ paddingTop: 15, justifyContent: 'space-between' }}
           spacing={10}
+          style={{ paddingTop: 15, justifyContent: 'space-between' }}
         >
           <Button
             style={{ fontSize: 20, padding: '10px 20px' }}
@@ -81,8 +82,8 @@ export default function SignIn() {
           </Stack>
         </Stack>
         <Stack
-          sx={{ paddingTop: 15 }}
           spacing={3}
+          sx={{ paddingTop: 15 }}
         >
           <div>Not registered yet ?</div>
           <Link to='/sign-up'>
