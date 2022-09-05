@@ -46,7 +46,10 @@ root.render(<h1>Hello, world!</h1>);`,
            return    Date.now()
   }
 
-  `
+  `,
+  test: `const foo = () => {
+    return Date.now()
+  }`
 }
 
 export { codeSamples }
