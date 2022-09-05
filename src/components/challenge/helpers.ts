@@ -24,9 +24,76 @@ type ResplittedToken = {
 const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar) => {
   const tokens = Prism.tokenize(code, grammar || Prism.languages[language])
   const resplittedTokens: ResplittedToken[] = []
-  console.log('tokens', tokens)
 
-  const getSplittedTokens = (token: string | Prism.Token, prefix?: string) => {
+  if (language === 'plain' && typeof tokens[0] === 'string') {
+    const splittedByNewRow = tokens[0].split('\n')
+    const plainTokens = []
+
+    for (let idx = 0; idx < splittedByNewRow.length; idx++) {
+      const splittedTkn = splittedByNewRow[idx]
+      const element = document.createElement('span')
+
+      if (splittedTkn.startsWith(' ')) {
+        const spacesBefore = ' '.repeat(
+          splittedTkn.length - splittedTkn.trimStart().length
+        )
+        plainTokens.push(
+          {
+            content: '\n',
+            type: 'new-row',
+            element,
+            indentSpaces: spacesBefore
+          },
+          {
+            content: splittedTkn.trimStart(),
+            type: 'plain',
+            element: document.createElement('span')
+          }
+        )
+      } else if (idx > 0) {
+        if (splittedTkn.trim() === '') {
+          plainTokens.push({
+            content: '\n',
+            indentSpaces: splittedTkn.repeat(splittedTkn.length),
+            type: 'new-row',
+            element
+          })
+        } else {
+          plainTokens.push(
+            {
+              content: '\n',
+              type: 'new-row',
+              element,
+              indentSpaces: ''
+            },
+            {
+              content: splittedTkn,
+              type: 'plain',
+              element: document.createElement('span')
+            }
+          )
+        }
+      } else {
+        plainTokens.push({ content: splittedTkn, type: 'plain', element })
+      }
+    }
+
+    return {
+      code,
+      language,
+      tokens: plainTokens.map((pt, idx) => {
+        return {
+          ...pt,
+          id: idx
+        }
+      }),
+      total: plainTokens.reduce((acc, current) => {
+        return acc + current.content.length
+      }, 0)
+    }
+  }
+
+  function getSplittedTokens(token: string | Prism.Token, prefix?: string) {
     let splittedTokens: ResplittedToken[] = []
 
     if (typeof token === 'string') {
@@ -145,8 +212,6 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
     }
   }
 
-  console.log('resplitted tokens', resplittedTokens)
-
   return {
     code,
     language,
@@ -157,8 +222,6 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
       }
 
       if (tkn.type && tkn.type !== 'plain') {
-        //console.log('element', element, 'classname', element.className, 'token', tkn)
-
         if (tkn.type.includes('-')) {
           tkn.type = tkn.type.split('-').join(' ')
         }

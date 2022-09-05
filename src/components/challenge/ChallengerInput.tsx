@@ -1,6 +1,3 @@
-//Prism.plugins.autoloader.languages_path = ''
-import 'prism-themes/themes/prism-one-dark.css'
-
 import { MouseEventHandler, useEffect, useRef } from 'react'
 
 import { Box, Button } from '@/components/shared'
@@ -23,21 +20,19 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     challenger: { started, paused }
   } = useChallenger()
 
-  const { actions, handlers, highlighted, loading, originalHighlighted } =
-    useChallengerInput({
-      code,
-      language,
-      refs: {
-        inputRef,
-        cursorRef,
-        codeRef,
-        highlightedRef
-      }
-    })
+  const { actions, handlers, loading, originalHighlighted } = useChallengerInput({
+    code,
+    language,
+    refs: {
+      inputRef,
+      cursorRef,
+      codeRef,
+      highlightedRef
+    }
+  })
 
   const theme = useTheme()
   const classes = useStyles.challenger({ theme, language, code })
-  console.log('loading', loading)
 
   const onClick: MouseEventHandler<HTMLDivElement> = e => {
     if (!started && !loading.highlighting && originalHighlighted) {
@@ -95,13 +90,10 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
       sx={{
         position: 'relative',
         maxHeight: '55vh',
-        overflow: !started || paused ? 'hidden' : 'auto',
         display: 'flex',
         alignItems: 'stretch',
         justifyContent: 'center',
-        background: rgba(theme.highlighter.color, 0.07),
-        msOverflowStyle: 'none',
-        scrollbarWidth: 'none'
+        background: rgba(theme.highlighter.color, 0.07)
       }}
       onClick={onClick}
     >
@@ -124,10 +116,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
             ref={cursorRef}
             className={classes.cursor}
           ></span>
-          <span
-            ref={codeRef}
-            style={{ wordBreak: 'break-all', display: 'inline' }}
-          ></span>
+          <span ref={codeRef}></span>
         </pre>
       </div>
       {(!started || paused) && (

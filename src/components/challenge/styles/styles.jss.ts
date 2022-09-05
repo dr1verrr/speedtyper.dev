@@ -28,7 +28,6 @@ const useStyles = {
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 100,
-      overflow: 'hidden',
       '&:hover': {
         background: rgba(theme.highlighter.accent, 0.1)
       },
@@ -50,8 +49,7 @@ const useStyles = {
       height: '100%',
       opacity: 0,
       zIndex: -1,
-      cursor: 'default',
-      overflowY: 'auto'
+      cursor: 'default'
     },
     previewMaskButton: ({ theme }) => ({
       padding: '12px 30px',
@@ -62,41 +60,37 @@ const useStyles = {
     highlighter: ({ theme }) => ({
       color: theme.highlighter.color,
       background: theme.highlighter.background,
-      fontSize: 18,
+      fontSize: 17,
       fontWeight: 300,
-      padding: '25px 50px',
+      //padding: '25px 50px',
+      //paddingLeft: 25,
+      fontFamily: 'Hack',
       lineHeight: 1.4,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-all',
-      margin: 0,
-      overflow: 'auto',
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      msOverflowStyle: 'none',
-      scrollbarWidth: 'none'
+      margin: 0
     }),
     cursor: ({ theme }) => ({
       background: theme.highlighter.accent,
       color: '#000',
       outline: `1px solid ${'#000'}`,
+      display: 'inline-block',
       '&.new-row': {
+        display: 'inline',
         position: 'relative',
         outline: 'none',
-        color: theme.highlighter.accent
+        color: theme.highlighter.color
       },
       '&.new-row:after': {
         width: '100%',
         height: '100%',
         display: 'block',
-        background: theme.highlighter.accent,
         position: 'absolute',
         content: '"↵"',
         whiteSpace: 'nowrap',
-        top: 0,
-        left: 5,
-        right: 0,
-        bottom: 18
+        right: -5,
+        bottom: 5,
+        top: 0
       }
     })
   })
