@@ -5,6 +5,7 @@ import { useTheme } from '@/services/theme/actions'
 
 import { useChallenger } from './hooks'
 import useChallengerInput from './hooks/useChallengerInput'
+import useCodeThemeStyles from './hooks/useCodeThemeStyles'
 import { useStyles } from './styles/styles.jss'
 import { ChallengerInputProps } from './types'
 
@@ -15,6 +16,9 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const highlightedRef = useRef<HTMLSpanElement>(null)
   const [isFocused, setFocused] = useState(false)
   const listenersAdded = useRef({ onPressedEnter: false, onPressedPauseHotkey: false })
+  const theme = useTheme()
+
+  useCodeThemeStyles()
 
   const {
     actions: challengerActions,
@@ -32,7 +36,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     }
   })
 
-  const theme = useTheme()
   const classes = useStyles.challenger({
     theme,
     language,
@@ -66,7 +69,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   )
 
   const onPressedPauseHotkey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'p' && e.altKey) {
+    if (e.code === 'Backquote' && e.altKey) {
       e.preventDefault()
       challengerActions.status.togglePause()
     }
@@ -148,7 +151,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         onFocus={onFocus}
       />
 
-      <div className={`language-${language}`}>
+      <div className={`language-${language} ${classes.highlighterWrapper}`}>
         <pre className={classes.highlighter}>
           <span
             ref={highlightedRef}
@@ -166,16 +169,17 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
       </div>
       {(!started || paused) && (
         <div className={classes.previewMask}>
-          <Button className={classes.previewMaskButton}>
-            {loading.highlighting ? (
-              'Loading...'
-            ) : (
-              <>
-                {paused && 'Press Alt+P to continue'}
-                {!started && 'Press Enter to start typing'}
-              </>
-            )}
-          </Button>
+          {loading.highlighting && (
+            <Button className={classes.previewMaskButton}>Tokenization...</Button>
+          )}
+          {!started && (
+            <Button className={classes.previewMaskButton}>Press Enter to start.</Button>
+          )}
+          {paused && (
+            <Button sx={{ fontSize: 20 }}>
+              Press <span style={{ fontWeight: 'bold' }}>Alt+`</span> to continue.
+            </Button>
+          )}
         </div>
       )}
     </Box>
