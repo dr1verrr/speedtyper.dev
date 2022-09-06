@@ -23,8 +23,6 @@ type ChallengerProps = {
 export default function Challenger({ language, code }: ChallengerProps) {
   const codeTrimmed = code.trim()
   const { actions, challenger } = useChallenger()
-  const [isStarted, setStarted] = useState(false)
-  const [isFinished, setFinished] = useState(false)
   const [results, setResults] = useState<ChallengerStatisticsStore>()
   const interval = useRef<NodeJS.Timer>()
 
@@ -44,19 +42,8 @@ export default function Challenger({ language, code }: ChallengerProps) {
   const setStatistics = useEvent(challengerWorkStatisticsChanged)
 
   useEffect(() => {
-    const onUnmount = () => {
-      actions.reset()
-    }
-    return onUnmount
-  }, [])
-
-  useEffect(() => {
-    setStarted(challenger.started)
-    setFinished(challenger.finished)
-  }, [challenger])
-
-  useEffect(() => {
-    if (isFinished) {
+    const { finished, paused, started } = challenger
+    if (finished) {
       const statistics = $challengerStatistics.getState()
       setResults(statistics)
       actions.reset()
@@ -65,15 +52,32 @@ export default function Challenger({ language, code }: ChallengerProps) {
 
     const onUnmount = () => clearInterval(interval.current)
 
-    if (isStarted) {
-      interval.current = setInterval(() => {
-        const time = $challengerWorkStatistics.getState().time
-        setStatistics({ time: time + INCREMENT_TIME })
-      }, 1000)
+    const updateTimer = () => {
+      const time = $challengerWorkStatistics.getState().time
+      setStatistics({ time: time + INCREMENT_TIME })
+    }
+
+    if (started && !interval.current) {
+      interval.current = setInterval(updateTimer, 1000)
+    } else if (started && !paused && interval.current) {
+      interval.current = setInterval(updateTimer, 1000)
+    }
+
+    if (paused) {
+      clearInterval(interval.current)
     }
 
     return onUnmount
-  }, [isStarted, isFinished])
+  }, [challenger])
+
+  useEffect(() => {
+    const onUnmount = () => {
+      actions.reset()
+      actions.statistics.reset()
+    }
+
+    return () => onUnmount()
+  }, [])
 
   useEffect(() => {
     console.log('results', results)
@@ -84,7 +88,7 @@ export default function Challenger({ language, code }: ChallengerProps) {
       direction='column'
       spacing={15}
     >
-      <ChallengerRealtimeStatistics finished={isFinished} />
+      <ChallengerRealtimeStatistics />
       <ChallengerInput
         code={codeTrimmed}
         language={language}

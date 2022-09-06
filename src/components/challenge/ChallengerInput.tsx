@@ -1,8 +1,7 @@
-import { MouseEventHandler, useEffect, useRef } from 'react'
+import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Box, Button } from '@/components/shared'
 import { useTheme } from '@/services/theme/actions'
-import { rgba } from '@/utils/styles'
 
 import { useChallenger } from './hooks'
 import useChallengerInput from './hooks/useChallengerInput'
@@ -14,10 +13,12 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const cursorRef = useRef<HTMLSpanElement>(null)
   const codeRef = useRef<HTMLElement>(null)
   const highlightedRef = useRef<HTMLSpanElement>(null)
+  const [isFocused, setFocused] = useState(false)
+  const listenersAdded = useRef({ onPressedEnter: false, onPressedPauseHotkey: false })
 
   const {
     actions: challengerActions,
-    challenger: { started, paused }
+    challenger: { started, paused, finished }
   } = useChallenger()
 
   const { actions, handlers, loading, originalHighlighted } = useChallengerInput({
@@ -32,48 +33,84 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   })
 
   const theme = useTheme()
-  const classes = useStyles.challenger({ theme, language, code })
+  const classes = useStyles.challenger({
+    theme,
+    language,
+    code,
+    finished,
+    paused,
+    started,
+    focused: isFocused
+  })
 
   const onClick: MouseEventHandler<HTMLDivElement> = e => {
     if (!started && !loading.highlighting && originalHighlighted) {
       return actions.status.startTyping(originalHighlighted)
+    }
+    if (paused) {
+      challengerActions.status.togglePause()
     }
     if (started) {
       inputRef.current?.focus()
     }
   }
 
-  useEffect(() => {
-    const keydownHandler = (e: KeyboardEvent) => {
-      const preesedKey = e.code
-
-      if (preesedKey === 'Enter' || preesedKey === 'Space') {
-        e.preventDefault()
-        switch (preesedKey) {
-          case 'Enter':
-            if (!started && !paused && originalHighlighted) {
-              actions.status.startTyping(originalHighlighted)
-            }
-
-          case 'Space':
-            if (started) challengerActions.status.togglePause()
-        }
+  const onPressedEnter = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && originalHighlighted) {
+        actions.status.startTyping(originalHighlighted)
       }
-    }
+    },
+    [originalHighlighted]
+  )
 
-    if (!started) {
-      document.addEventListener('keydown', keydownHandler)
-    }
-
-    const onUnmount = () => {
-      document.removeEventListener('keydown', keydownHandler)
-    }
-
-    return onUnmount
-  }, [started, paused, originalHighlighted])
+  const onPressedPauseHotkey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'p' && e.altKey) {
+        challengerActions.status.togglePause()
+      }
+    },
+    [paused]
+  )
 
   useEffect(() => {
+    if (paused) {
+      inputRef.current?.blur()
+    }
+
+    if (started && !paused) {
+      inputRef.current?.focus()
+    }
+
+    if (started && !listenersAdded.current.onPressedPauseHotkey) {
+      listenersAdded.current = { onPressedEnter: false, onPressedPauseHotkey: true }
+      document.addEventListener('keydown', onPressedPauseHotkey)
+      document.removeEventListener('keydown', onPressedEnter)
+    }
+
+    if (!started && !listenersAdded.current.onPressedEnter && originalHighlighted) {
+      listenersAdded.current.onPressedEnter = true
+      document.addEventListener('keydown', onPressedEnter)
+    }
+
+    if (finished) {
+      listenersAdded.current = { onPressedEnter: true, onPressedPauseHotkey: false }
+      document.addEventListener('keydown', onPressedEnter)
+      document.removeEventListener('keydown', onPressedPauseHotkey)
+    }
+  }, [started, paused, finished, originalHighlighted])
+
+  useEffect(() => {
+    const onUnmount = () => {
+      document.removeEventListener('keydown', onPressedEnter)
+      document.removeEventListener('keydown', onPressedPauseHotkey)
+    }
+
     actions.status.tokenize()
+
+    return () => {
+      onUnmount()
+    }
   }, [])
 
   useEffect(() => {
@@ -83,18 +120,27 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     }
   }, [loading, originalHighlighted])
 
+  //useEffect(() => {
+  //  console.log('added listenrs', listenersAdded.current)
+  //}, [isFocused])
+
   if (loading.highlighting) return null
+
+  const onBlur: React.FocusEventHandler<HTMLTextAreaElement> = e => {
+    if (isFocused) {
+      setFocused(false)
+    }
+  }
+
+  const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
+    if (!isFocused) {
+      setFocused(true)
+    }
+  }
 
   return (
     <Box
-      sx={{
-        position: 'relative',
-        maxHeight: '55vh',
-        display: 'flex',
-        alignItems: 'stretch',
-        justifyContent: 'center',
-        background: rgba(theme.highlighter.color, 0.07)
-      }}
+      className={classes.wrapper}
       onClick={onClick}
     >
       <textarea
@@ -103,7 +149,9 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         className={classes.hiddenInput}
         tabIndex={-1}
         value=''
+        onBlur={onBlur}
         onChange={handlers.handleChange}
+        onFocus={onFocus}
       />
 
       <div className={`language-${language}`}>
@@ -116,7 +164,10 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
             ref={cursorRef}
             className={classes.cursor}
           ></span>
-          <span ref={codeRef}></span>
+          <span
+            ref={codeRef}
+            className={classes.codeLeft}
+          ></span>
         </pre>
       </div>
       {(!started || paused) && (
@@ -126,7 +177,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
               'Loading...'
             ) : (
               <>
-                {paused && 'Press space to unpause'}
+                {paused && 'Press Alt+P to continue'}
                 {!started && 'Press enter to start typing'}
               </>
             )}

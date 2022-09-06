@@ -11,9 +11,18 @@ type ChallengerRuleNames =
   | 'previewMaskButton'
   | 'highlighter'
   | 'cursor'
+  | 'codeLeft'
+  | 'wrapper'
+
+type ChallengerStyledProps = ChallengerInputProps & {
+  finished: boolean
+  started: boolean
+  paused: boolean
+  focused: boolean
+}
 
 const useStyles = {
-  challenger: createUseStyles<ChallengerRuleNames, ChallengerInputProps, Theme>({
+  challenger: createUseStyles<ChallengerRuleNames, ChallengerStyledProps, Theme>({
     previewMask: ({ theme }) => ({
       transition: 'background 0.3s ease',
       position: 'absolute',
@@ -60,20 +69,29 @@ const useStyles = {
     highlighter: ({ theme }) => ({
       color: theme.highlighter.color,
       background: theme.highlighter.background,
-      fontSize: 17,
-      fontWeight: 300,
-      //padding: '25px 50px',
-      //paddingLeft: 25,
+      fontSize: 18,
       fontFamily: 'monospace',
       lineHeight: 1.4,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-all',
       margin: 0
     }),
-    cursor: ({ theme }) => ({
-      background: theme.highlighter.accent,
-      color: '#000',
-      outline: `1px solid ${'#000'}`,
+    codeLeft: ({ theme }) => ({
+      color: rgba(theme.highlighter.color, 0.75)
+    }),
+    wrapper: ({ theme, focused }) => ({
+      position: 'relative',
+      maxHeight: '55vh',
+      display: 'flex',
+      alignItems: 'stretch',
+      justifyContent: 'center',
+      background: rgba(theme.highlighter.color, 0.07),
+      outline: !focused ? `2px dashed ${theme.highlighter.color}` : 'none',
+      borderRadius: 10
+    }),
+    cursor: ({ theme, focused }) => ({
+      color: focused ? theme.highlighter.color : rgba(theme.highlighter.color, 0.75),
+      outline: focused ? `1px solid ${theme.highlighter.color}` : 'none',
       display: 'inline-block',
       '&.new-row': {
         display: 'inline',
@@ -88,7 +106,7 @@ const useStyles = {
         position: 'absolute',
         content: '"↵"',
         whiteSpace: 'nowrap',
-        right: -5,
+        right: -10,
         bottom: 5,
         top: 0
       }

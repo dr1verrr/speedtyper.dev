@@ -38,13 +38,7 @@ const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
   })
 })
 
-type ChallengerRealtimeStatisticsProps = {
-  finished: boolean
-}
-
-export default function ChallengerRealtimeStatistics({
-  finished
-}: ChallengerRealtimeStatisticsProps) {
+export default function ChallengerRealtimeStatistics() {
   const statistics = useStore($challengerStatistics)
   const challengerStatus = useStore($challenger)
   const theme = useTheme()
@@ -56,13 +50,21 @@ export default function ChallengerRealtimeStatistics({
   })
 
   useEffect(() => {
-    if (challengerStatus.started) {
-      interval.current = setInterval(() => {
-        const statistics = $challengerStatistics.getState()
-        setDelayedStats({
-          wpm: statistics.wpm
-        })
-      }, 1000)
+    const updateDelayedStats = () => {
+      const statistics = $challengerStatistics.getState()
+      setDelayedStats({
+        wpm: statistics.wpm
+      })
+    }
+
+    if (challengerStatus.started && !interval.current) {
+      interval.current = setInterval(updateDelayedStats, 1000)
+    }
+
+    if (challengerStatus.paused && interval.current) {
+      clearInterval(interval.current)
+    } else if (!challengerStatus.paused && challengerStatus.started && interval.current) {
+      interval.current = setInterval(updateDelayedStats, 1000)
     }
 
     if (challengerStatus.finished) {

@@ -217,9 +217,9 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
     language,
     tokens: resplittedTokens.map((tkn, idx) => {
       const element = document.createElement('span')
-      if (tkn.indentSpaces) {
-        element.textContent = tkn.indentSpaces
-      }
+      //if (tkn.indentSpaces) {
+      //  element.textContent = '\n' + tkn.indentSpaces
+      //}
 
       if (tkn.type && tkn.type !== 'plain') {
         if (tkn.type.includes('-')) {

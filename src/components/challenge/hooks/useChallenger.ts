@@ -41,7 +41,10 @@ const useChallenger = () => {
         setStatistics(defaultStore.$challengerStatistics)
       }
     },
-    reset: resetChallenger
+    reset: () => {
+      resetChallenger()
+      actions.statistics.reset()
+    }
   }
 
   return {
