@@ -83,7 +83,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
         highlighted.current = _.cloneDeep(tokenized)
 
         actions.status.toggleLoading({ highlighting: false })
-
         setOriginalHighlighted(_.cloneDeep(tokenized))
       }
     }
@@ -188,7 +187,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             }
 
             currentTokenIndex.current = 0
-            challengerActions.reset()
             challengerActions.status.set({ finished: true })
           } else {
             nextToken()
