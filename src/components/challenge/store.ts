@@ -99,6 +99,9 @@ $challenger
 
     return { ...state, ...status }
   })
+  .watch(state => {
+    console.log(state)
+  })
 
 const $challengerWorkStatistics = createStore<ChallengerWorkStatisticsStore>(
   defaultStore.$challengerWorkStatistics

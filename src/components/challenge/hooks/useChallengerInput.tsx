@@ -38,7 +38,7 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
   const [cursorClassName, setCursorClassName] = useState('')
 
   useEffect(() => {
-    if (refs.cursorRef.current) {
+    if (refs.cursorRef.current && !cursorClassName) {
       setCursorClassName(refs.cursorRef.current.className)
     }
   }, [refs])
@@ -69,7 +69,6 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
         setLoading(loadingChanged)
       },
       startTyping: (tokenized: Highlighted) => {
-        refs.inputRef.current?.focus()
         challengerActions.status.set({
           finished: false,
           highlighted: tokenized,
