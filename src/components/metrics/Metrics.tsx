@@ -3,6 +3,7 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
+import { rgba } from '@/utils/styles'
 
 import { Box, Typography } from '../shared'
 
@@ -22,10 +23,11 @@ const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
     width: '100%',
     background: theme.highlighter.background,
     color: '#fff',
-    padding: '25px',
+    padding: '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`,
     borderRadius: 10,
     fontSize: 20,
     fontWeight: 600
@@ -34,7 +36,7 @@ const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
     color: theme.highlighter.color
   }),
   metricValue: ({ theme }) => ({
-    color: theme.highlighter.accent
+    color: rgba(theme.highlighter.color, 0.5)
   })
 })
 

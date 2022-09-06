@@ -4,6 +4,7 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
+import { rgba } from '@/utils/styles'
 
 import Metrics from '../metrics/Metrics'
 import { Box, Stack } from '../shared'
@@ -14,14 +15,15 @@ type RuleNames = 'progressBar' | 'progressBarWrapper'
 const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
   progressBar: ({ theme, progress }) => ({
     width: '100%',
-    padding: 5,
+    padding: 2,
     position: 'relative',
+    border: `1px solid ${rgba(theme.highlighter.color, 0.2)}`,
     borderRadius: 30,
-    background: theme.highlighter.progressBar.noFilled.color,
+    background: rgba(theme.highlighter.color, 0),
     '&::after': {
       content: '""',
       transition: 'width 0.2s ease',
-      background: theme.highlighter.progressBar.filled.color,
+      background: rgba(theme.highlighter.color, 0.85),
       height: '100%',
       width: `${Math.floor(progress)}%`,
       position: 'absolute',
@@ -32,7 +34,8 @@ const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
     }
   }),
   progressBarWrapper: ({ theme }) => ({
-    padding: '25px',
+    padding: '20px',
+    border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`,
     borderRadius: 7,
     background: theme.highlighter.background
   })
@@ -70,6 +73,8 @@ export default function ChallengerRealtimeStatistics() {
     if (challengerStatus.finished) {
       clearInterval(interval.current)
     }
+
+    console.log('current inverval', interval.current)
 
     return () => {
       clearInterval(interval.current)

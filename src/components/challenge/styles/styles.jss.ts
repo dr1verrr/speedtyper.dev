@@ -13,6 +13,7 @@ type ChallengerRuleNames =
   | 'cursor'
   | 'codeLeft'
   | 'wrapper'
+  | 'highlighterWrapper'
 
 type ChallengerStyledProps = ChallengerInputProps & {
   finished: boolean
@@ -73,8 +74,24 @@ const useStyles = {
       fontFamily: 'monospace',
       lineHeight: 1.4,
       whiteSpace: 'pre-wrap',
+      margin: 0,
+      maxHeight: '100%',
+      padding: 50,
+      paddingBottom: 50,
       wordBreak: 'break-all',
-      margin: 0
+      marginTop: 50,
+      tabSize: 2,
+      border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`
+    }),
+    highlighterWrapper: ({ theme, paused }) => ({
+      transition: 'filter 0.2s ease',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'auto',
+      width: '100%',
+      background: rgba(theme.highlighter.background, 0.86),
+      filter: paused ? 'blur(7px)' : 'none'
     }),
     codeLeft: ({ theme }) => ({
       color: rgba(theme.highlighter.color, 0.75)
@@ -86,12 +103,16 @@ const useStyles = {
       alignItems: 'stretch',
       justifyContent: 'center',
       background: rgba(theme.highlighter.color, 0.07),
-      outline: !focused ? `2px dashed ${theme.highlighter.color}` : 'none',
-      borderRadius: 10
+      outline: !focused ? `2px dashed ${rgba(theme.highlighter.color, 0.7)}` : 'none',
+      borderRadius: 10,
+      overflow: 'hidden',
+      border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`
     }),
     cursor: ({ theme, focused }) => ({
-      color: focused ? theme.highlighter.color : rgba(theme.highlighter.color, 0.75),
-      outline: focused ? `1px solid ${theme.highlighter.color}` : 'none',
+      //color: focused ? theme.highlighter.color : rgba(theme.highlighter.background, 0.75),
+      color: rgba(theme.highlighter.background, 1),
+      background: rgba(theme.highlighter.color, 0.85),
+      //outline: focused ? `1px solid ${theme.highlighter.color}` : 'none',
       display: 'inline-block',
       '&.new-row': {
         display: 'inline',
@@ -100,14 +121,13 @@ const useStyles = {
         color: theme.highlighter.color
       },
       '&.new-row:after': {
-        width: '100%',
-        height: '100%',
-        display: 'block',
+        width: '0',
+        height: '0',
         position: 'absolute',
         content: '"↵"',
         whiteSpace: 'nowrap',
-        right: -10,
-        bottom: 5,
+        right: -3,
+        bottom: 0,
         top: 0
       }
     })

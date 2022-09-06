@@ -49,6 +49,10 @@ root.render(<h1>Hello, world!</h1>);`,
   `,
   test: `const foo = () => {
     return Date.now()
+
+
+    return null
+
   }`
 }
 
