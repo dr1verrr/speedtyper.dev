@@ -21,6 +21,21 @@ type ResplittedToken = {
   indentSpaces?: string
 }
 
+const getSpecialCharsBeforeWord = (str: string) => {
+  let filteredWord = str
+  let letters = ''
+
+  for (let idx = 0; idx < str.length; idx++) {
+    const ltr = str[idx]
+    if (ltr === ' ' || ltr === '\t') {
+      letters += ltr
+      filteredWord = filteredWord.slice(1)
+    } else break
+  }
+
+  return { letters, filteredWord }
+}
+
 const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar) => {
   const tokens = Prism.tokenize(code, grammar || Prism.languages[language])
   const resplittedTokens: ResplittedToken[] = []
@@ -29,52 +44,97 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
     const splittedByNewRow = tokens[0].split('\n')
     const plainTokens = []
 
+    console.log('splitted by new row', splittedByNewRow, 'tokens', tokens)
+
     for (let idx = 0; idx < splittedByNewRow.length; idx++) {
       const splittedTkn = splittedByNewRow[idx]
       const element = document.createElement('span')
 
-      if (splittedTkn.startsWith(' ')) {
-        const spacesBefore = ' '.repeat(
-          splittedTkn.length - splittedTkn.trimStart().length
-        )
-        plainTokens.push(
-          {
-            content: '\n',
-            type: 'new-row',
-            element,
-            indentSpaces: spacesBefore
-          },
-          {
-            content: splittedTkn.trimStart(),
-            type: 'plain',
-            element: document.createElement('span')
-          }
-        )
-      } else if (idx > 0) {
-        if (splittedTkn.trim() === '') {
+      if (splittedTkn === '') {
+        plainTokens.push({ content: '\n', indentSpaces: '', type: 'new-row', element })
+      } else if (
+        !splittedTkn.includes('\t') &&
+        !splittedTkn.startsWith(' ') &&
+        splittedTkn.trim().length
+      ) {
+        plainTokens.push({ content: splittedTkn, type: 'plain', element })
+      } else {
+        if (splittedTkn.startsWith(' ') || splittedTkn.startsWith('\t')) {
+          const indentChars = getSpecialCharsBeforeWord(splittedTkn)
+
           plainTokens.push({
             content: '\n',
-            indentSpaces: splittedTkn.repeat(splittedTkn.length),
+            indentSpaces: indentChars.letters,
             type: 'new-row',
             element
           })
-        } else {
-          plainTokens.push(
-            {
-              content: '\n',
-              type: 'new-row',
-              element,
-              indentSpaces: ''
-            },
-            {
-              content: splittedTkn,
+
+          if (indentChars.filteredWord) {
+            console.log('filteed word', indentChars.filteredWord)
+            plainTokens.push({
+              content: indentChars.filteredWord,
               type: 'plain',
               element: document.createElement('span')
-            }
-          )
+            })
+          }
         }
-      } else {
-        plainTokens.push({ content: splittedTkn, type: 'plain', element })
+      }
+
+      //if (splittedTkn.startsWith(' ')) {
+      //  const spacesBefore = ' '.repeat(
+      //    splittedTkn.length - splittedTkn.trimStart().length
+      //  )
+      //  plainTokens.push(
+      //    {
+      //      content: '\n',
+      //      type: 'new-row',
+      //      element,
+      //      indentSpaces: spacesBefore
+      //    },
+      //    {
+      //      content: splittedTkn.trimStart(),
+      //      type: 'plain',
+      //      element: document.createElement('span')
+      //    }
+      //  )
+      //} else if (idx > 0) {
+      //  if (splittedTkn.trim() === '') {
+      //    plainTokens.push({
+      //      content: '\n',
+      //      indentSpaces: splittedTkn.repeat(splittedTkn.length),
+      //      type: 'new-row',
+      //      element
+      //    })
+      //  } else {
+      //    plainTokens.push(
+      //      {
+      //        content: '\n',
+      //        type: 'new-row',
+      //        element,
+      //        indentSpaces: ''
+      //      },
+      //      {
+      //        content: splittedTkn,
+      //        type: 'plain',
+      //        element: document.createElement('span')
+      //      }
+      //    )
+      //  }
+      //} else {
+      //  plainTokens.push({ content: splittedTkn, type: 'plain', element })
+      //}
+    }
+
+    console.log('plain tokens', plainTokens)
+
+    if (tokens[0].includes('\t')) {
+      if (plainTokens[plainTokens.length - 2].content !== '\n') {
+        plainTokens.splice(plainTokens.length - 2, 0, {
+          content: '\n',
+          indentSpaces: '',
+          element: document.createElement('span'),
+          type: 'new-row'
+        })
       }
     }
 
@@ -217,9 +277,6 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
     language,
     tokens: resplittedTokens.map((tkn, idx) => {
       const element = document.createElement('span')
-      //if (tkn.indentSpaces) {
-      //  element.textContent = '\n' + tkn.indentSpaces
-      //}
 
       if (tkn.type && tkn.type !== 'plain') {
         if (tkn.type.includes('-')) {

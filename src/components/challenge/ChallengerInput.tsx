@@ -58,20 +58,19 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const onPressedEnter = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Enter' && originalHighlighted) {
+        e.preventDefault()
         actions.status.startTyping(originalHighlighted)
       }
     },
     [originalHighlighted]
   )
 
-  const onPressedPauseHotkey = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'p' && e.altKey) {
-        challengerActions.status.togglePause()
-      }
-    },
-    [paused]
-  )
+  const onPressedPauseHotkey = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'p' && e.altKey) {
+      e.preventDefault()
+      challengerActions.status.togglePause()
+    }
+  }, [])
 
   useEffect(() => {
     if (paused) {
@@ -94,8 +93,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     }
 
     if (finished) {
-      listenersAdded.current = { onPressedEnter: true, onPressedPauseHotkey: false }
-      document.addEventListener('keydown', onPressedEnter)
+      listenersAdded.current = { onPressedEnter: false, onPressedPauseHotkey: false }
       document.removeEventListener('keydown', onPressedPauseHotkey)
     }
   }, [started, paused, finished, originalHighlighted])
@@ -119,10 +117,6 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
       codeRef.current!.textContent = originalHighlighted.code.slice(1)
     }
   }, [loading, originalHighlighted])
-
-  //useEffect(() => {
-  //  console.log('added listenrs', listenersAdded.current)
-  //}, [isFocused])
 
   if (loading.highlighting) return null
 
@@ -178,7 +172,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
             ) : (
               <>
                 {paused && 'Press Alt+P to continue'}
-                {!started && 'Press enter to start typing'}
+                {!started && 'Press Enter to start typing'}
               </>
             )}
           </Button>

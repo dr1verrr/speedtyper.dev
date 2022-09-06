@@ -99,9 +99,6 @@ $challenger
 
     return { ...state, ...status }
   })
-  .watch(state => {
-    console.log(state)
-  })
 
 const $challengerWorkStatistics = createStore<ChallengerWorkStatisticsStore>(
   defaultStore.$challengerWorkStatistics
@@ -111,7 +108,7 @@ const $challengerStatistics = createStore<ChallengerStatisticsStore>(
   defaultStore.$challengerStatistics
 )
 
-$challengerStatistics.reset(challengerStatisticsCleared).watch(state => {})
+$challengerStatistics.reset(challengerStatisticsCleared)
 
 $challengerWorkStatistics
   .reset(challengerReset)
@@ -158,7 +155,6 @@ $challengerWorkStatistics
   .on(challengerWorkStatisticsChanged, (state, payload) => {
     return { ...state, ...payload }
   })
-  .reset(challengerReset)
 
 sample({
   clock: [challengerWorkStatisticUpdate, challengerWorkStatisticsChanged],
