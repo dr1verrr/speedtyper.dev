@@ -50,6 +50,9 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     if (paused) {
       challengerActions.status.togglePause()
     }
+    if (started) {
+      inputRef.current?.focus()
+    }
   }
 
   const onPressedEnter = useCallback(
