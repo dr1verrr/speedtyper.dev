@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Stack } from '../shared'
 import ChallengerInput from './ChallengerInput'
 import ChallengerRealtimeStatistics from './ChallengerRealtimeStatistics'
-import { INCREMENT_TIME } from './constants'
+import { CHALLENGER_STATS_TIME_INCREMENT } from './constants'
 import { challengerWorkStatisticsChanged } from './events'
 import useChallenger from './hooks/useChallenger'
 import {
@@ -21,35 +21,49 @@ type ChallengerProps = {
 export default function Challenger({ language, code }: ChallengerProps) {
   const codeTrimmed = code.trim()
   const { actions, challenger } = useChallenger()
-  const [results, setResults] = useState<ChallengerStatisticsStore>()
-  const interval = useRef<NodeJS.Timer>()
+  const [resultStats, setResultStats] = useState<ChallengerStatisticsStore>()
+  const timerInterval = useRef<NodeJS.Timer>()
 
   const setStatistics = useEvent(challengerWorkStatisticsChanged)
+
+  const getResults = (resStats: ChallengerStatisticsStore) => {
+    //const {} = resStats
+  }
 
   useEffect(() => {
     const { finished, paused, started } = challenger
     if (finished) {
       const statistics = $challengerStatistics.getState()
-      setResults(statistics)
+      setResultStats(statistics)
       actions.reset()
-      return clearInterval(interval.current)
+      return clearInterval(timerInterval.current)
     }
 
-    const onUnmount = () => clearInterval(interval.current)
+    const timer = {
+      set: () => {
+        timerInterval.current = setInterval(updateTimer, 1000)
+      },
+      clear: () => {
+        clearTimeout(timerInterval.current)
+      }
+    }
+
+    const onUnmount = () => timer.clear()
 
     const updateTimer = () => {
       const time = $challengerWorkStatistics.getState().time
-      setStatistics({ time: time + INCREMENT_TIME })
+      setStatistics({ time: time + CHALLENGER_STATS_TIME_INCREMENT })
     }
 
-    if (started && !interval.current) {
-      interval.current = setInterval(updateTimer, 1000)
-    } else if (started && !paused && interval.current) {
-      interval.current = setInterval(updateTimer, 1000)
+    if (
+      (started && !timerInterval.current) ||
+      (started && !paused && timerInterval.current)
+    ) {
+      timer.set()
     }
 
     if (paused) {
-      clearInterval(interval.current)
+      clearInterval(timerInterval.current)
     }
 
     return onUnmount
@@ -65,8 +79,12 @@ export default function Challenger({ language, code }: ChallengerProps) {
   }, [])
 
   useEffect(() => {
-    console.log('results', results)
-  }, [results])
+    if (resultStats) {
+      const results = getResults(resultStats)
+      console.log('results', results)
+    }
+    //console.log('result stats', resultStats)
+  }, [resultStats])
 
   return (
     <Stack
