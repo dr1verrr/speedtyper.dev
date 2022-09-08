@@ -7,35 +7,35 @@ type LightThemeProps = {
 export default function LightTheme({ style }: LightThemeProps) {
   return (
     <svg
-      width='36px'
-      height='36px'
       fill='inherit'
-      viewBox='0 0 36 36'
-      xmlns='http://www.w3.org/2000/svg'
+      height='36px'
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         ...style
       }}
+      viewBox='0 0 36 36'
+      width='36px'
+      xmlns='http://www.w3.org/2000/svg'
     >
       <g
-        id='Lager_93'
         data-name='Lager 93'
+        id='Lager_93'
         transform='translate(2 2)'
       >
         <g
-          id='Sun_3_Brightness_3'
           data-name='Sun 3, Brightness 3'
+          id='Sun_3_Brightness_3'
         >
           <path
-            id='Path_68'
-            data-name='Path 68'
             d='M32,14H27.033c-2,1.769-.779,4,.967,4h4.967C34.966,16.231,33.746,14,32,14Z'
+            data-name='Path 68'
+            id='Path_68'
           />
           <g
-            id='Path_69'
             data-name='Path 69'
+            id='Path_69'
             strokeMiterlimit='10'
           >
             <path
@@ -48,87 +48,87 @@ export default function LightTheme({ style }: LightThemeProps) {
             />
           </g>
           <rect
-            id='Rectangle_26'
             data-name='Rectangle 26'
-            width='8'
             height='4'
+            id='Rectangle_26'
             rx='1.993'
             transform='translate(26 14)'
+            width='8'
           />
           <rect
-            id='Rectangle_27'
             data-name='Rectangle 27'
-            width='8'
             height='4'
+            id='Rectangle_27'
             rx='1.993'
             transform='translate(18 26) rotate(90)'
+            width='8'
           />
           <rect
-            id='Rectangle_28'
             data-name='Rectangle 28'
-            width='8'
             height='4'
+            id='Rectangle_28'
             rx='1.993'
             transform='translate(18 -2) rotate(90)'
+            width='8'
           />
           <rect
-            id='Rectangle_29'
             data-name='Rectangle 29'
-            width='8'
             height='4'
+            id='Rectangle_29'
             rx='1.993'
             transform='translate(-2 14)'
+            width='8'
           />
           <g
-            id='Group_22'
             data-name='Group 22'
+            id='Group_22'
           >
             <rect
-              id='Rectangle_30'
               data-name='Rectangle 30'
-              width='6.925'
               height='3.766'
+              id='Rectangle_30'
               rx='1.883'
               transform='translate(23.22 6.117) rotate(-45)'
+              width='6.925'
             />
           </g>
           <g
-            id='Group_23'
             data-name='Group 23'
+            id='Group_23'
           >
             <rect
-              id='Rectangle_31'
               data-name='Rectangle 31'
-              width='3.766'
               height='6.925'
+              id='Rectangle_31'
               rx='1.883'
               transform='matrix(0.707, -0.707, 0.707, 0.707, 23.22, 25.883)'
+              width='3.766'
             />
           </g>
           <g
-            id='Group_24'
             data-name='Group 24'
+            id='Group_24'
           >
             <rect
-              id='Rectangle_32'
               data-name='Rectangle 32'
-              width='3.766'
               height='6.925'
+              id='Rectangle_32'
               rx='1.883'
               transform='translate(1.22 3.883) rotate(-45)'
+              width='3.766'
             />
           </g>
           <g
-            id='Group_25'
             data-name='Group 25'
+            id='Group_25'
           >
             <rect
-              id='Rectangle_33'
               data-name='Rectangle 33'
-              width='6.925'
               height='3.766'
+              id='Rectangle_33'
               rx='1.883'
               transform='translate(1.22 28.117) rotate(-45)'
+              width='6.925'
             />
           </g>
         </g>

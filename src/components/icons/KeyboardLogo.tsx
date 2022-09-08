@@ -1,20 +1,15 @@
 /* eslint-disable no-tabs */
 import { CSSProperties } from 'react'
 
-import { useTheme } from '@/services/theme/actions'
-
 type KeyboardLogoProps = {
   style?: CSSProperties
   size?: number
 }
 
 export default function KeyboardLogo({ style, size = 50 }: KeyboardLogoProps) {
-  const theme = useTheme()
-  const color = theme.common.text
-
   return (
     <svg
-      fill={color}
+      fill='inherit'
       height={size}
       id='Layer_1'
       style={{

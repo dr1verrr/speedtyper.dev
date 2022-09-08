@@ -20,12 +20,18 @@ type BaseChallengerStatistics = {
   wpm: number
   combo: number
   progress: number
+  timeStarted: Date | null
   errors: number[]
   keyboard: {
     pressed: number
   }
   time: number
 }
+
+type ChallengerResults = Omit<
+  BaseChallengerStatistics,
+  'code' | 'currentId' | 'keyboard' | 'progress'
+> & {}
 
 type ChallengerStore = {
   paused: boolean
@@ -46,7 +52,12 @@ type ChallengerStatisticsStore = BaseChallengerStatistics & {
 
 type ChallengerWorkStatisticsStore = BaseChallengerStatistics
 
-export type { ChallengerStore, ChallengerWorkStatisticsStore, ChallengerStatisticsStore }
+export type {
+  ChallengerStore,
+  ChallengerWorkStatisticsStore,
+  ChallengerStatisticsStore,
+  ChallengerResults
+}
 
 const baseChallengerStatistics = {
   code: null,
@@ -55,6 +66,7 @@ const baseChallengerStatistics = {
   time: 0,
   progress: 0,
   currentId: 0,
+  timeStarted: null,
   errors: [],
   keyboard: {
     pressed: 0
@@ -168,11 +180,12 @@ sample({
     }
 
     const getWpm = () => {
-      const timeinMinutes = state.time / 1000 / 60
       const pressed = state.keyboard.pressed
-      if (state.time < 1000) {
+      if (state.time < 1) {
         return pressed / 5 / (1 / 60)
       }
+
+      const timeinMinutes = state.time / 60
 
       return pressed / 5 / timeinMinutes
     }
@@ -208,7 +221,7 @@ sample({
           ...updatedStats
         }
       } else {
-        updatedTimeline.push({ ...updatedStats, second: updatedStats.time / 1000 })
+        updatedTimeline.push({ ...updatedStats, second: updatedStats.time })
       }
       return updatedTimeline
     }

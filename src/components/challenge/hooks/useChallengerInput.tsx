@@ -13,8 +13,6 @@ const defaults = {
   }
 }
 
-// WATCH PREVIOUS PR! IT HAS NEEDED BEHAVIOR
-
 type Loading = {
   highlighting: boolean
 }
@@ -25,23 +23,43 @@ type useChallengerProps = ChallengerInputProps & {
     codeRef: React.RefObject<HTMLSpanElement>
     highlightedRef: React.RefObject<HTMLSpanElement>
     cursorRef: React.RefObject<HTMLSpanElement>
+    highlightedWrapperRef: React.RefObject<HTMLElement>
   }
 }
 
-// FIX: make correct plain text tokenization cuz it removes first letter and not resplitting at all
-
 const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
   const highlighted = useRef<Highlighted>()
+  const currentTokenIndex = useRef(0)
   const [originalHighlighted, setOriginalHighlighted] = useState<Highlighted>()
   const [loading, setLoading] = useState<Loading>(defaults.loading)
-  const currentTokenIndex = useRef(0)
   const [cursorClassName, setCursorClassName] = useState('')
+  const height = useRef<number>(0)
 
   useEffect(() => {
     if (refs.cursorRef.current && !cursorClassName) {
       setCursorClassName(refs.cursorRef.current.className)
     }
+    if (refs.highlightedRef.current) {
+      height.current = refs.highlightedRef.current?.clientHeight
+    }
   }, [refs])
+
+  const doesNeedScroll = () => {
+    const highlightedWrapperEl = refs.highlightedWrapperRef.current
+    const highlightedEl = refs.highlightedRef.current
+
+    if (
+      highlightedWrapperEl!.clientHeight / 1.5 -
+        (highlightedEl!.offsetHeight - height.current) <=
+      0
+    ) {
+      height.current = highlightedEl!.offsetHeight
+      console.log('need scroll')
+      return true
+    }
+
+    return false
+  }
 
   const { actions: challengerActions } = useChallenger()
 
@@ -76,7 +94,10 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
           started: true
         })
 
-        setStatistics({ code: { left: tokenized.total, total: tokenized.total } })
+        setStatistics({
+          code: { left: tokenized.total, total: tokenized.total },
+          timeStarted: new Date()
+        })
       },
       tokenize: () => {
         const tokenized = getHighlighted(code, language)
@@ -135,8 +156,13 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             current.symbol
           refs.codeRef.current!.textContent = refs.codeRef.current!.textContent!.slice(1)
 
-          if (current.token.indentSpaces) {
-            insertIndentSpaces(current.token.indentSpaces)
+          if (current.token.type === 'new-row') {
+            if (current.token.indentSpaces) {
+              insertIndentSpaces(current.token.indentSpaces)
+            }
+            if (doesNeedScroll()) {
+              refs.codeRef.current?.scrollIntoView({ block: 'start' })
+            }
           }
 
           const newSymbol = current.token.content.slice(1, 2)
@@ -187,6 +213,8 @@ const useChallengerInput = ({ code, language, refs }: useChallengerProps) => {
             }
 
             currentTokenIndex.current = 0
+            height.current = 0
+            refs.highlightedWrapperRef.current?.scroll({ top: 0 })
             challengerActions.status.set({ finished: true })
           } else {
             nextToken()

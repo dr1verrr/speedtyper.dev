@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 
 import SwitchTheme from '@/components/buttons/SwitchTheme'
 import About from '@/components/icons/About'
-import KeyboardLogo from '@/components/icons/KeyboardLogo'
-import { Button, Stack, Typography } from '@/components/shared'
+import HomePageLogo from '@/components/navigation/HomePageLogo'
+import { Button, Stack } from '@/components/shared'
 import UserAvatar from '@/components/shared/Avatar'
 import Box from '@/components/shared/Box'
 import Container from '@/components/shared/Container'
@@ -19,7 +19,7 @@ type RuleNames = 'NavBar'
 
 const useStyles = createUseStyles<RuleNames, unknown, Theme>({
   NavBar: ({ theme }) => ({
-    borderBottom: `1px solid ${theme.common.border}`,
+    borderBottom: `1px solid ${theme.divider}`,
     position: 'sticky',
     top: 0,
     right: 0,
@@ -67,20 +67,7 @@ export default function NavBar() {
           }}
         >
           <Link to='/'>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0 10px'
-              }}
-            >
-              <Box sx={{ marginRight: 8 }}>
-                <KeyboardLogo size={40} />
-              </Box>
-              <Box>
-                <Typography variant='h3'>keyboard-trainer.dev</Typography>
-              </Box>
-            </Box>
+            <HomePageLogo />
           </Link>
           <Stack
             spacing={15}

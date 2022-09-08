@@ -20,20 +20,23 @@ type StyledMetricsProps = {
 
 const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
   metric: ({ theme }) => ({
-    width: '100%',
     background: theme.highlighter.background,
+    minWidth: 150,
+    width: '100%',
+    maxWidth: '33.333%',
     color: '#fff',
     padding: '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`,
+    border: `1px solid ${theme.divider}`,
     borderRadius: 10,
     fontSize: 20,
     fontWeight: 600
   }),
   metricName: ({ theme }) => ({
-    color: theme.highlighter.color
+    color: theme.highlighter.color,
+    marginRight: 10
   }),
   metricValue: ({ theme }) => ({
     color: rgba(theme.highlighter.color, 0.5)

@@ -14,6 +14,7 @@ type ChallengerRuleNames =
   | 'codeLeft'
   | 'wrapper'
   | 'highlighterWrapper'
+  | 'highlighterInner'
 
 type ChallengerStyledProps = ChallengerInputProps & {
   finished: boolean
@@ -39,12 +40,12 @@ const useStyles = {
       alignItems: 'center',
       zIndex: 100,
       '&:hover': {
-        background: rgba(theme.highlighter.accent, 0.1)
+        background: rgba(theme.highlighter.hover, 0.1)
       },
       '&:hover $previewMaskButton': {
-        background: rgba(theme.highlighter.accent, 0.75),
-        color: rgba(theme.highlighter.color, 0.75),
-        borderColor: rgba(theme.highlighter.color, 0.75)
+        //background: rgba(theme.highlighter.accent, 0.75),
+        //color: rgba(theme.highlighter.color, 0.75),
+        //borderColor: rgba(theme.highlighter.color, 0.75)
       }
     }),
     hiddenInput: {
@@ -70,52 +71,48 @@ const useStyles = {
     highlighter: ({ theme }) => ({
       color: theme.highlighter.color,
       background: theme.highlighter.background,
+      position: 'relative',
       fontSize: 18,
       fontFamily: 'monospace',
       lineHeight: 1.4,
       whiteSpace: 'pre-wrap',
-      margin: 0,
-      maxHeight: '100%',
-      padding: 50,
-      paddingBottom: 50,
       wordBreak: 'break-all',
-      marginTop: 50,
       tabSize: 2,
-      border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`
+      borderLeft: `1px solid ${theme.divider}`,
+      borderRight: `1px solid ${theme.divider}`,
+      margin: 'auto auto'
+    }),
+    highlighterInner: ({ theme }) => ({
+      padding: '25px 50px'
     }),
     highlighterWrapper: ({ theme, paused }) => ({
+      position: 'relative',
       transition: 'filter 0.2s ease',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      overflow: 'auto',
       width: '100%',
-      background: rgba(theme.highlighter.background, 0.86),
-      filter: paused ? 'blur(7px)' : 'none'
+      overflow: 'auto',
+      maxHeight: '55vh',
+      filter: paused ? 'blur(7px)' : 'none',
+      display: 'flex',
+      justifyContent: 'center'
     }),
     codeLeft: ({ theme }) => ({
       color: rgba(theme.highlighter.color, 0.75)
     }),
     wrapper: ({ theme, focused }) => ({
       position: 'relative',
-      maxHeight: '55vh',
       display: 'flex',
       alignItems: 'stretch',
       justifyContent: 'center',
-      background: rgba(theme.highlighter.color, 0.07),
-      outline: !focused ? `2px dashed ${rgba(theme.highlighter.color, 0.7)}` : 'none',
-      borderRadius: 10,
+      background: theme.highlighter.background,
       overflow: 'hidden',
-      border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`
+      outline: !focused ? `1px dashed ${rgba(theme.highlighter.color, 0.7)}` : 'none',
+      borderRadius: 15,
+      border: `1px solid ${theme.divider}`
     }),
     cursor: ({ theme, focused }) => ({
-      //color: focused ? theme.highlighter.color : rgba(theme.highlighter.background, 0.75),
       color: rgba(theme.highlighter.background, 1),
       background: rgba(theme.highlighter.color, 0.85),
-      //outline: focused ? `1px solid ${theme.highlighter.color}` : 'none',
-      display: 'inline-block',
       '&.new-row': {
-        display: 'inline',
         position: 'relative',
         outline: 'none',
         color: theme.highlighter.color

@@ -4,7 +4,6 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
-import { rgba } from '@/utils/styles'
 
 import Metrics from '../metrics/Metrics'
 import { Box, Stack } from '../shared'
@@ -17,13 +16,12 @@ const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
     width: '100%',
     padding: 2,
     position: 'relative',
-    border: `1px solid ${rgba(theme.highlighter.color, 0.2)}`,
     borderRadius: 30,
-    background: rgba(theme.highlighter.color, 0),
+    background: theme.highlighter.progressBar.noFilled,
     '&::after': {
       content: '""',
       transition: 'width 0.2s ease',
-      background: rgba(theme.highlighter.color, 0.85),
+      background: theme.highlighter.progressBar.filled,
       height: '100%',
       width: `${Math.floor(progress)}%`,
       position: 'absolute',
@@ -35,7 +33,7 @@ const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
   }),
   progressBarWrapper: ({ theme }) => ({
     padding: '20px',
-    border: `1px solid ${rgba(theme.highlighter.color, 0.1)}`,
+    border: `1px solid ${theme.divider}`,
     borderRadius: 7,
     background: theme.highlighter.background
   })
@@ -74,8 +72,6 @@ export default function ChallengerRealtimeStatistics() {
       clearInterval(interval.current)
     }
 
-    console.log('current inverval', interval.current)
-
     return () => {
       clearInterval(interval.current)
     }
@@ -92,10 +88,11 @@ export default function ChallengerRealtimeStatistics() {
       <Stack
         direction='row'
         spacing={20}
+        sx={{ overflow: 'auto' }}
       >
         <Metrics
           data={[
-            ['Time', `${statistics.time / 1000}s`],
+            ['Time', `${statistics.time}s`],
             ['WPM', `${delayedStats.wpm.toFixed(0)}`],
             ['Combo', `${statistics.combo}`],
             ['Progress', `${Math.floor(statistics.progress).toFixed(0)}%`]
