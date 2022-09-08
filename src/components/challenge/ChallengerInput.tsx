@@ -2,10 +2,10 @@ import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } fr
 
 import { Box, Button } from '@/components/shared'
 import { useTheme } from '@/services/theme/actions'
+import usePrismStyles from '@/services/theme/prism-themes'
 
 import { useChallenger } from './hooks'
 import useChallengerInput from './hooks/useChallengerInput'
-import useCodeThemeStyles from './hooks/useCodeThemeStyles'
 import { useStyles } from './styles/styles.jss'
 import { ChallengerInputProps } from './types'
 
@@ -18,8 +18,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const [isFocused, setFocused] = useState(false)
   const listenersAdded = useRef({ onPressedEnter: false, onPressedPauseHotkey: false })
   const theme = useTheme()
-
-  useCodeThemeStyles()
+  const prismClasses = usePrismStyles({ theme })
 
   const {
     actions: challengerActions,
@@ -139,7 +138,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
 
   return (
     <Box
-      className={classes.wrapper}
+      className={`${classes.wrapper} ${prismClasses[theme.mode as 'light']}`}
       onClick={onClick}
     >
       <textarea
