@@ -145,60 +145,60 @@ const oneLight = {
     {
       color: 'hsl(230, 8%, 24%)'
     },
-  '.language-css .token.selector': {
+  '& .language-css .token.selector': {
     color: 'hsl(5, 74%, 59%)'
   },
-  '.language-css .token.property': {
+  '& .language-css .token.property': {
     color: 'hsl(230, 8%, 24%)'
   },
-  '.language-css .token.function, .language-css .token.url > .token.function': {
+  '& .language-css .token.function, .language-css .token.url > .token.function': {
     color: 'hsl(198, 99%, 37%)'
   },
-  '.language-css .token.url > .token.string.url': {
+  '& .language-css .token.url > .token.string.url': {
     color: 'hsl(119, 34%, 47%)'
   },
-  '.language-css .token.important, .language-css .token.atrule .token.rule': {
+  '& .language-css .token.important, .language-css .token.atrule .token.rule': {
     color: 'hsl(301, 63%, 40%)'
   },
-  '.language-javascript .token.operator': {
+  '& .language-javascript .token.operator': {
     color: 'hsl(301, 63%, 40%)'
   },
-  '.language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation':
+  '& .language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation':
     {
       color: 'hsl(344, 84%, 43%)'
     },
-  '.language-json .token.operator': {
+  '& .language-json .token.operator': {
     color: 'hsl(230, 8%, 24%)'
   },
-  '.language-json .token.null.keyword': {
+  '& .language-json .token.null.keyword': {
     color: 'hsl(35, 99%, 36%)'
   },
-  '.language-markdown .token.url, .language-markdown .token.url > .token.operator, .language-markdown .token.url-reference.url > .token.string':
+  '& .language-markdown .token.url, .language-markdown .token.url > .token.operator, .language-markdown .token.url-reference.url > .token.string':
     {
       color: 'hsl(230, 8%, 24%)'
     },
-  '.language-markdown .token.url > .token.content': {
+  '& .language-markdown .token.url > .token.content': {
     color: 'hsl(221, 87%, 60%)'
   },
-  '.language-markdown .token.url > .token.url, .language-markdown .token.url-reference.url':
+  '& .language-markdown .token.url > .token.url, .language-markdown .token.url-reference.url':
     {
       color: 'hsl(198, 99%, 37%)'
     },
-  '.language-markdown .token.blockquote.punctuation, .language-markdown .token.hr.punctuation':
+  '& .language-markdown .token.blockquote.punctuation, .language-markdown .token.hr.punctuation':
     {
       color: 'hsl(230, 4%, 64%)',
       fontStyle: 'italic'
     },
-  '.language-markdown .token.code-snippet': {
+  '& .language-markdown .token.code-snippet': {
     color: 'hsl(119, 34%, 47%)'
   },
-  '.language-markdown .token.bold .token.content': {
+  '& .language-markdown .token.bold .token.content': {
     color: 'hsl(35, 99%, 36%)'
   },
-  '.language-markdown .token.italic .token.content': {
+  '& .language-markdown .token.italic .token.content': {
     color: 'hsl(301, 63%, 40%)'
   },
-  '.language-markdown .token.strike .token.content, .language-markdown .token.strike .token.punctuation, .language-markdown .token.list.punctuation, .language-markdown .token.title.important > .token.punctuation':
+  '& .language-markdown .token.strike .token.content, .language-markdown .token.strike .token.punctuation, .language-markdown .token.list.punctuation, .language-markdown .token.title.important > .token.punctuation':
     {
       color: 'hsl(5, 74%, 59%)'
     },
@@ -218,80 +218,43 @@ const oneLight = {
     {
       color: 'hsla(230, 8%, 24%, 0.2)'
     },
-  'div.code-toolbar > .toolbar.toolbar > .toolbar-item': {
-    marginRight: '0.4em'
-  },
-  'div.code-toolbar > .toolbar.toolbar > .toolbar-item > button, div.code-toolbar > .toolbar.toolbar > .toolbar-item > a, div.code-toolbar > .toolbar.toolbar > .toolbar-item > span':
-    {
-      background: 'hsl(230, 1%, 90%)',
-      color: 'hsl(230, 6%, 44%)',
-      padding: '0.1em 0.4em',
-      borderRadius: '0.3em'
-    },
-  'div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:hover, div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:focus, div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover, div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus, div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover, div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus':
-    {
-      background: 'hsl(230, 1%, 78%)',
-      color: 'hsl(230, 8%, 24%)'
-    },
-  '.line-highlight.line-highlight': {
-    background: 'hsla(230, 8%, 24%, 0.05)'
-  },
-  '.line-highlight.line-highlight:before, .line-highlight.line-highlight[data-end]:after':
-    {
-      background: 'hsl(230, 1%, 90%)',
-      color: 'hsl(230, 8%, 24%)',
-      padding: '0.1em 0.6em',
-      borderRadius: '0.3em',
-      boxShadow: '0 2px 0 0 rgba(0, 0, 0, 0.2)'
-    },
-  'pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before':
-    {
-      backgroundColor: 'hsla(230, 8%, 24%, 0.05)'
-    },
-  '.line-numbers.line-numbers .line-numbers-rows, .command-line .command-line-prompt': {
-    borderRightColor: 'hsla(230, 8%, 24%, 0.2)'
-  },
-  '.line-numbers .line-numbers-rows > span:before, .command-line .command-line-prompt > span:before':
-    {
-      color: 'hsl(230, 1%, 62%)'
-    },
-  '.rainbow-braces .token.token.punctuation.brace-level-1, .rainbow-braces .token.token.punctuation.brace-level-5, .rainbow-braces .token.token.punctuation.brace-level-9':
+  '& .rainbow-braces .token.token.punctuation.brace-level-1, .rainbow-braces .token.token.punctuation.brace-level-5, .rainbow-braces .token.token.punctuation.brace-level-9':
     {
       color: 'hsl(5, 74%, 59%)'
     },
-  '.rainbow-braces .token.token.punctuation.brace-level-2, .rainbow-braces .token.token.punctuation.brace-level-6, .rainbow-braces .token.token.punctuation.brace-level-10':
+  '& .rainbow-braces .token.token.punctuation.brace-level-2, .rainbow-braces .token.token.punctuation.brace-level-6, .rainbow-braces .token.token.punctuation.brace-level-10':
     {
       color: 'hsl(119, 34%, 47%)'
     },
-  '.rainbow-braces .token.token.punctuation.brace-level-3, .rainbow-braces .token.token.punctuation.brace-level-7, .rainbow-braces .token.token.punctuation.brace-level-11':
+  '& .rainbow-braces .token.token.punctuation.brace-level-3, .rainbow-braces .token.token.punctuation.brace-level-7, .rainbow-braces .token.token.punctuation.brace-level-11':
     {
       color: 'hsl(221, 87%, 60%)'
     },
-  '.rainbow-braces .token.token.punctuation.brace-level-4, .rainbow-braces .token.token.punctuation.brace-level-8, .rainbow-braces .token.token.punctuation.brace-level-12':
+  '& .rainbow-braces .token.token.punctuation.brace-level-4, .rainbow-braces .token.token.punctuation.brace-level-8, .rainbow-braces .token.token.punctuation.brace-level-12':
     {
       color: 'hsl(301, 63%, 40%)'
     },
-  'pre.diff-highlight > code .token.token.deleted:not(.prefix), pre > code.diff-highlight .token.token.deleted:not(.prefix)':
+  '& pre.diff-highlight > code .token.token.deleted:not(.prefix), pre > code.diff-highlight .token.token.deleted:not(.prefix)':
     {
       backgroundColor: 'hsla(353, 100%, 66%, 0.15)'
     },
-  'pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection, pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection, pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection, pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection':
+  '& pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection, pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection, pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection, pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection':
     {
       backgroundColor: 'hsla(353, 95%, 66%, 0.25)'
     },
-  'pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection, pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection, pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection, pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection':
+  '& pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection, pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection, pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection, pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection':
     {
       backgroundColor: 'hsla(353, 95%, 66%, 0.25)'
     },
-  'pre.diff-highlight > code .token.token.inserted:not(.prefix), pre > code.diff-highlight .token.token.inserted:not(.prefix)':
+  '& pre.diff-highlight > code .token.token.inserted:not(.prefix), pre > code.diff-highlight .token.token.inserted:not(.prefix)':
     {
       backgroundColor: 'hsla(137, 100%, 55%, 0.15)'
     },
-  'pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection, pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection, pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection, pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection':
+  '& pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection, pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection, pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection, pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection':
     {
       backgroundColor: 'hsla(135, 73%, 55%, 0.25)'
     },
-  'pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection, pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection, pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection, pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection':
+  '& pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection, pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection, pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection, pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection':
     {
       backgroundColor: 'hsla(135, 73%, 55%, 0.25)'
     },
