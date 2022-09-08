@@ -14,6 +14,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const cursorRef = useRef<HTMLSpanElement>(null)
   const codeRef = useRef<HTMLElement>(null)
   const highlightedRef = useRef<HTMLSpanElement>(null)
+  const highlightedWrapperRef = useRef<HTMLEmbedElement>(null)
   const [isFocused, setFocused] = useState(false)
   const listenersAdded = useRef({ onPressedEnter: false, onPressedPauseHotkey: false })
   const theme = useTheme()
@@ -32,7 +33,8 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
       inputRef,
       cursorRef,
       codeRef,
-      highlightedRef
+      highlightedRef,
+      highlightedWrapperRef
     }
   })
 
@@ -151,20 +153,25 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         onFocus={onFocus}
       />
 
-      <div className={`language-${language} ${classes.highlighterWrapper}`}>
+      <div
+        ref={highlightedWrapperRef}
+        className={`language-${language} ${classes.highlighterWrapper}`}
+      >
         <pre className={classes.highlighter}>
-          <span
-            ref={highlightedRef}
-            className='hl'
-          ></span>
-          <span
-            ref={cursorRef}
-            className={classes.cursor}
-          ></span>
-          <span
-            ref={codeRef}
-            className={classes.codeLeft}
-          ></span>
+          <div className={classes.highlighterInner}>
+            <span
+              ref={highlightedRef}
+              className='hl'
+            ></span>
+            <span
+              ref={cursorRef}
+              className={classes.cursor}
+            ></span>
+            <span
+              ref={codeRef}
+              className={classes.codeLeft}
+            ></span>
+          </div>
         </pre>
       </div>
       {(!started || paused) && (
