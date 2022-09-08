@@ -1,18 +1,13 @@
 import { CSSProperties } from 'react'
 
-import { useTheme } from '@/services/theme/actions'
-
 type GithubIconProps = {
   style?: CSSProperties
 }
 
 export default function Github({ style }: GithubIconProps) {
-  const theme = useTheme()
-  const color = theme.common.bg
-
   return (
     <svg
-      fill={color}
+      fill='inherit'
       height='24'
       style={{
         display: 'flex',

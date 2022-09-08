@@ -1,51 +1,53 @@
-import { useTheme } from '@/services/theme/actions'
-import { Theme } from '@/services/theme/types'
-import { ReactNode } from 'react'
 import { createUseStyles } from 'react-jss'
 
+import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
+
 interface TextFieldProps
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+  extends React.AllHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   sx?: React.CSSProperties
-  children?: ReactNode
+  multiline?: boolean
 }
 
 type RuleNames = 'input'
 
 const useStyles = createUseStyles<RuleNames, TextFieldProps, Theme>({
-  input: {
+  input: ({ theme }) => ({
     display: 'inline-block',
     zIndex: 1,
     transition: 'background .2s ease',
-    border: ({ theme }) => `2px solid ${theme.input.border}`,
+    border: `2px solid ${theme.input.border.color}`,
     fontSize: 'inherit',
     padding: 10,
+    background: theme.input.bg,
     borderRadius: 5,
+    color: theme.input.text,
     outline: 'none',
+    '&:autofill': {
+      background: theme.input.bg
+    },
     '&:hover,  &:focus': {
-      borderColor: ({ theme }) => theme.input.hover
+      borderColor: theme.input.border.hover
     },
     '&:invalid': {
-      borderColor: 'red !important'
-    },
-    '&:before': {
-      display: 'block',
-      content: '""',
-      position: 'absolute',
-      background: 'red',
-      width: 15,
-      height: 15,
-      top: 0,
-      left: 0
+      borderColor: 'red'
     }
-  }
+  })
 })
 
-export default function TextField({ sx, ...props }: TextFieldProps) {
+export default function TextField({ sx, multiline = false, ...props }: TextFieldProps) {
   const theme = useTheme()
-  const classes = useStyles({ theme })
+  const classes = useStyles({ theme, ...props })
+
+  if (multiline) {
+    return (
+      <textarea
+        className={classes.input}
+        {...props}
+        style={sx}
+      />
+    )
+  }
 
   return (
     <input

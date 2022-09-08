@@ -1,18 +1,24 @@
 const lightTheme = {
   mode: 'light',
   input: {
-    border: '#ccc',
-    hover: 'blue'
+    bg: '#f5f5f5',
+    hover: 'blue',
+    text: '#333',
+    border: {
+      color: '#dcdcdc',
+      hover: '#333'
+    }
   },
   action: {
-    hover: '#333'
+    hover: '#ececec'
   },
+  divider: '#dcdcdc',
   button: {
     variant: {
       default: {
-        bg: '#000',
-        text: '#fff',
-        border: '#ccc'
+        bg: '#f5f5f5',
+        text: '#333',
+        border: '#dcdcdc'
       },
       primary: {
         bg: '#000',
@@ -29,21 +35,25 @@ const lightTheme = {
   common: {
     bg: '#fff',
     text: '#000',
-    border: '#ccc'
+    border: '#ccc',
+    textColors: {
+      primary: '#000',
+      secondary: '#7a7a7a'
+    }
   },
   status: {
     ghost: '#ccc'
   },
   highlighter: {
     background: '#F5F5F5',
-    accent: '#b794f4',
     color: '#000',
+    hover: '#333',
     progressBar: {
       filled: {
-        color: '#b794f4'
+        color: '#212121'
       },
       noFilled: {
-        color: '#E6E6FA'
+        color: '#dcdcdc'
       }
     }
   }
@@ -52,18 +62,24 @@ const lightTheme = {
 const darkTheme = {
   mode: 'dark',
   input: {
-    border: '#ccc',
-    hover: 'blue'
+    hover: 'blue',
+    bg: '#222',
+    text: '#fff',
+    border: {
+      color: '#3e3e3e',
+      hover: '#ccc'
+    }
   },
   action: {
-    hover: '#ccc'
+    hover: '#333'
   },
+  divider: '#3e3e3e',
   button: {
     variant: {
       default: {
-        bg: '#fff',
-        text: '#000',
-        border: '#ccc'
+        bg: '#222',
+        text: '#fff',
+        border: '#3e3e3e'
       },
       primary: {
         bg: '#000',
@@ -80,7 +96,11 @@ const darkTheme = {
   common: {
     bg: '#333',
     text: '#fff',
-    border: '#555'
+    border: '#555',
+    textColors: {
+      primary: '#fff',
+      secondary: '#919191'
+    }
   },
   status: {
     ghost: ''
@@ -88,13 +108,13 @@ const darkTheme = {
   highlighter: {
     background: '#222',
     color: '#fff',
-    accent: '#b794f4',
+    hover: '#ccc',
     progressBar: {
       filled: {
-        color: '#ccc'
+        color: '#e1e1e1'
       },
       noFilled: {
-        color: '#333'
+        color: '#393939'
       }
     }
   }

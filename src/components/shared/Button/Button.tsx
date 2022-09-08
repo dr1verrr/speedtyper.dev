@@ -4,6 +4,7 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
+import { rgba } from '@/utils/styles'
 
 type RuleNames = 'button'
 type Variants = 'primary' | 'action' | 'default'
@@ -24,8 +25,9 @@ const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
   button: {
     transition: 'background .2s ease',
     background: ({ theme, variant }) => theme.button.variant[variant].bg,
-    color: ({ theme, variant }) => theme.button.variant[variant].text,
+    color: ({ theme, variant }) => rgba(theme.button.variant[variant].text, 0.9),
     border: ({ theme, variant }) => `2px solid ${theme.button.variant[variant].border}`,
+    fontSize: 16,
     padding: '7px 10px',
     borderRadius: 10,
     cursor: 'pointer',
@@ -44,7 +46,6 @@ export default function Button({ variant = 'default', ...props }: ButtonProps) {
       {...props}
       className={clsx(classes.button, props.className)}
       style={{ ...props.style, ...props.sx }}
-      type='button'
     >
       {props.children}
     </button>

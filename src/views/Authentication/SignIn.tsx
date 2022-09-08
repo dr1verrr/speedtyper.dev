@@ -15,6 +15,7 @@ export default function SignIn() {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
     const { email, password } = formData.current
+    console.log('submit data', email, password)
     if (email && password) {
       fetchWithToastify(() => signin(email, password), {
         pending: 'Signing in...',
@@ -74,6 +75,7 @@ export default function SignIn() {
           <Button
             style={{ fontSize: 20, padding: '10px 20px' }}
             type='submit'
+            value='submit'
           >
             Login
           </Button>

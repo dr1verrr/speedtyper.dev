@@ -3,6 +3,7 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
+import { rgba } from '@/utils/styles'
 
 type RuleNames = 'button'
 
@@ -26,33 +27,31 @@ type IconButtonStyledProps = Omit<IconButtonProps, 'variant'> & {
 export type { IconButtonProps }
 
 const useStyles = createUseStyles<RuleNames, IconButtonStyledProps, Theme>({
-  button: {
+  button: ({ theme, styledSize, variant }) => ({
     transition: 'background .2s ease',
-    background: ({ theme, variant }) => theme.button.variant[variant].bg,
-    color: ({ theme, variant }) => theme.button.variant[variant].text,
-    minWidth: ({ styledSize }) => styledSize,
-    minHeight: ({ styledSize }) => styledSize,
-    maxHeight: ({ styledSize }) => styledSize,
-    maxWidth: ({ styledSize }) => styledSize,
+    minWidth: styledSize,
+    minHeight: styledSize,
+    maxHeight: styledSize,
+    maxWidth: styledSize,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     overflow: 'hidden',
     height: '100%',
-    border: ({ theme, variant }) => `2px solid ${theme.button.variant[variant].border}`,
+    background: theme.button.variant[variant].bg,
+    color: rgba(theme.button.variant[variant].text, 0.9),
+    border: `2px solid ${theme.button.variant[variant].border}`,
     padding: 7,
     borderRadius: '100%',
     cursor: 'pointer',
-    '& svg': {
-      width: '100% !important',
-      height: 'auto !important',
-      fill: 'inherit'
-    },
     '&:hover': {
-      background: ({ theme }) => theme.action.hover
+      background: theme.action.hover
+    },
+    '& svg': {
+      fill: rgba(theme.common.text, 0.9)
     }
-  }
+  })
 })
 
 const SIZES = {
