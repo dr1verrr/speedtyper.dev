@@ -1,4 +1,4 @@
-# Keyboard Trainer
+# ⌨ Keyboard Trainer
 
 This is a React.js keyboard trainer application.
 
