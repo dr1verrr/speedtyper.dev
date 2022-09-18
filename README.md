@@ -10,8 +10,7 @@ This is a React.js keyboard trainer application.
 
 ### 1. ⚙️ Preferences
 
-<video>
-  <source src="https://user-images.githubusercontent.com/67706933/190857577-dba442a0-de2f-4ef6-a055-a2019adf80ab.mp4" type="video/mp4">
+<video src="https://user-images.githubusercontent.com/67706933/190857577-dba442a0-de2f-4ef6-a055-a2019adf80ab.mp4">
 </video>
 
 ### 2. 📝 Manage data
