@@ -4,8 +4,11 @@ import {
   challengerChanged,
   challengerCleared,
   challengerReset,
+  challengerResetAll,
   challengerStatisticsCleared,
   challengerStatisticUpdate as challengerWorkStatisticUpdate,
+  challengerStatsProgressUpdate,
+  challengerStatsReset,
   challengerWorkStatisticsChanged,
   statusToggled
 } from './events'
@@ -28,36 +31,26 @@ type BaseChallengerStatistics = {
   time: number
 }
 
-type ChallengerResults = Omit<
-  BaseChallengerStatistics,
-  'code' | 'currentId' | 'keyboard' | 'progress'
-> & {}
-
 type ChallengerStore = {
+  id: string
   paused: boolean
   started: boolean
   finished: boolean
-  highlighted: Highlighted
+  highlighted: Highlighted | null
 }
 
-type ChallengerStatisticsTimeline = BaseChallengerStatistics & {
-  second: number
-}
+type ChallengerStatistics = Omit<BaseChallengerStatistics, 'currentId' | 'keyboard'>
+type ChallengerStatisticsTimeline = ChallengerStatistics
 
-type ChallengerStatisticsStore = BaseChallengerStatistics & {
+type ChallengerStatisticsStore = ChallengerStatistics & {
   timeline: ChallengerStatisticsTimeline[]
-  maxWpm: BaseChallengerStatistics['wpm']
   maxCombo: BaseChallengerStatistics['combo']
 }
 
 type ChallengerWorkStatisticsStore = BaseChallengerStatistics
 
-export type {
-  ChallengerStore,
-  ChallengerWorkStatisticsStore,
-  ChallengerStatisticsStore,
-  ChallengerResults
-}
+export type { ChallengerStore, ChallengerWorkStatisticsStore, ChallengerStatisticsStore }
+export type { BaseChallengerStatistics }
 
 const baseChallengerStatistics = {
   code: null,
@@ -73,28 +66,43 @@ const baseChallengerStatistics = {
   }
 }
 
+const { currentId, keyboard, ...challengerStats } = baseChallengerStatistics
+
 const defaultStore = {
   $challenger: {
+    id: '',
     paused: false,
     started: false,
     finished: false,
-    highlighted: {} as Highlighted
+    highlighted: null
   },
   $challengerStatistics: {
-    ...baseChallengerStatistics,
+    ...challengerStats,
     timeline: [],
-    maxWpm: 0,
     maxCombo: 0
   },
   $challengerWorkStatistics: baseChallengerStatistics
 }
 
-export { baseChallengerStatistics, defaultStore }
+const getProgress = (code: BaseChallengerStatistics['code']) => {
+  if (!code) {
+    return 0
+  }
+  return 100 - (code?.left / code?.total) * 100
+}
+
+const getLeft = (code: BaseChallengerStatistics['code'], trueTyped: boolean): number => {
+  if (trueTyped) {
+    return code?.left! - 1
+  }
+  return code?.left as number
+}
 
 const $challenger = createStore<ChallengerStore>({ ...defaultStore.$challenger })
 
 $challenger
   .reset(challengerReset)
+  .reset(challengerResetAll)
   .on(challengerCleared, () => defaultStore.$challenger)
   .on(challengerChanged, (state, payload) => ({ ...state, ...payload }))
   .on(statusToggled, (state, key) => {
@@ -120,20 +128,22 @@ const $challengerStatistics = createStore<ChallengerStatisticsStore>(
   defaultStore.$challengerStatistics
 )
 
-$challengerStatistics.reset(challengerStatisticsCleared)
+$challengerStatistics
+  .on(challengerStatsProgressUpdate, (state, trueTyped) => {
+    if (state.code) {
+      const left = getLeft(state.code, trueTyped)
+      const progress = getProgress({ ...state.code, left })
+
+      return { ...state, code: { ...state.code, left }, progress }
+    }
+  })
+  .reset([challengerStatisticsCleared, challengerStatsReset])
 
 $challengerWorkStatistics
-  .reset(challengerReset)
+  .reset([challengerStatsReset, challengerResetAll])
   .on(challengerWorkStatisticUpdate, (state, trueTyped) => {
     if (state.code) {
-      const getLeft = (): number => {
-        if (trueTyped) {
-          return state.code?.left! - 1
-        }
-        return state.code?.left as number
-      }
-
-      const left = getLeft()
+      const left = getLeft(state.code, trueTyped)
 
       if (!trueTyped) {
         const errors = [...state.errors]
@@ -172,44 +182,34 @@ sample({
   clock: [challengerWorkStatisticUpdate, challengerWorkStatisticsChanged],
   source: { state: $challengerWorkStatistics },
   fn: ({ state }) => {
-    const getProgress = () => {
-      if (!state.code) {
-        return 0
-      }
-      return 100 - (state.code?.left / state.code?.total) * 100
-    }
-
     const getWpm = () => {
       const pressed = state.keyboard.pressed
-      if (state.time < 1) {
+      if (state.time < 1000) {
         return pressed / 5 / (1 / 60)
       }
 
-      const timeinMinutes = state.time / 60
+      const timeinMinutes = state.time / 1000 / 60
 
       return pressed / 5 / timeinMinutes
     }
 
-    const getBestStats = (wpm: number) => {
+    const getBestStats = () => {
       const challengerStats = $challengerStatistics.getState()
       let maxCombo = challengerStats.maxCombo
-      let maxWpm = challengerStats.maxWpm
       if (challengerStats.maxCombo < state.combo) {
         maxCombo = state.combo
       }
-      if (challengerStats.maxWpm < wpm) {
-        maxWpm = wpm
-      }
-      return { maxCombo, maxWpm }
+      return { maxCombo }
     }
 
-    const progress = getProgress()
+    const progress = getProgress(state.code)
     const wpm = getWpm()
-    const bestStats = getBestStats(wpm)
-    const { maxWpm, maxCombo } = bestStats
+    const bestStats = getBestStats()
+    const { maxCombo } = bestStats
 
     const timeline = $challengerStatistics.getState().timeline
-    const updatedStats = { ...state, wpm, progress, maxCombo, maxWpm }
+    const { currentId, keyboard, ...onlyStats } = state
+    const updatedStats = { ...onlyStats, wpm, progress, maxCombo }
     const timelineExistedIndex = timeline.findIndex(t => t.time === state.time)
 
     const getUpdatedTimeline = () => {
@@ -221,7 +221,7 @@ sample({
           ...updatedStats
         }
       } else {
-        updatedTimeline.push({ ...updatedStats, second: updatedStats.time })
+        updatedTimeline.push(updatedStats)
       }
       return updatedTimeline
     }
@@ -233,4 +233,5 @@ sample({
   target: $challengerStatistics
 })
 
+export { baseChallengerStatistics, defaultStore }
 export { $challenger, $challengerWorkStatistics, $challengerStatistics }

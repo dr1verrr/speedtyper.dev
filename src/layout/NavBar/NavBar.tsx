@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom'
 
 import SwitchTheme from '@/components/buttons/SwitchTheme'
 import About from '@/components/icons/About'
+import List from '@/components/icons/List'
 import HomePageLogo from '@/components/navigation/HomePageLogo'
 import { Button, Stack } from '@/components/shared'
 import UserAvatar from '@/components/shared/Avatar'
-import Box from '@/components/shared/Box'
 import Container from '@/components/shared/Container'
 import IconButton from '@/components/shared/IconButton'
 import RequireAuthentication from '@/hoc/RequireAuth'
@@ -26,7 +26,11 @@ const useStyles = createUseStyles<RuleNames, unknown, Theme>({
     left: 0,
     zIndex: 500,
     color: theme.common.text,
-    background: theme.common.bg
+    background: theme.common.bg,
+    padding: '3px 5px',
+    '@media (max-width: 400px)': {
+      padding: '3px 0'
+    }
   })
 })
 
@@ -42,9 +46,22 @@ export default function NavBar() {
 
   const ProfileAvatarButton = RequireAuthentication(() => {
     return (
-      <Link to='/profile'>
+      <Link
+        style={{ borderRadius: '50%' }}
+        to='/profile'
+      >
         <IconButton sx={{ padding: 5 }}>
           <UserAvatar />
+        </IconButton>
+      </Link>
+    )
+  })
+
+  const UserChallengesList = RequireAuthentication(() => {
+    return (
+      <Link to='/challenges'>
+        <IconButton>
+          <List />
         </IconButton>
       </Link>
     )
@@ -58,38 +75,46 @@ export default function NavBar() {
   return (
     <nav className={classes.NavBar}>
       <Container maxWidth='md'>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0 10px'
-          }}
-        >
+        <Stack sx={{ justifyContent: 'space-between' }}>
           <Link to='/'>
             <HomePageLogo />
           </Link>
           <Stack
-            spacing={15}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
+            spacing={10}
+            sx={{ alignItems: 'center', justifyContent: 'center' }}
           >
+            <Link to='/play'>
+              <Button
+                sx={{
+                  fontWeight: 600,
+                  paddingLeft: 20,
+                  paddingRight: 20
+                }}
+                variant='default'
+              >
+                Play
+              </Button>
+            </Link>
+            <UserChallengesList />
             <SwitchTheme
               sx={{ maxWidth: 35, maxHeight: 35 }}
               onClick={toggleTheme}
             />
             <ProfileAvatarButton />
             <AuthenticationButton />
-            <Link to='/about'>
-              <IconButton sx={{ maxWidth: 35, maxHeight: 35 }}>
+            <Link
+              style={{ borderRadius: '50%' }}
+              to='/about'
+            >
+              <IconButton
+                sx={{ maxWidth: 35, maxHeight: 35 }}
+                variant='primary'
+              >
                 <About />
               </IconButton>
             </Link>
           </Stack>
-        </Box>
+        </Stack>
       </Container>
     </nav>
   )

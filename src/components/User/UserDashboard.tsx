@@ -1,13 +1,13 @@
 import { User } from 'firebase/auth'
 
-import { Typography, Button } from '../shared'
+import deleteUser from '@/app/actions/actions_delete_user'
+import { signout } from '@/app/auth'
+import requestWithToastify from '@/handlers/requestWithToastify'
+
+import { Button, Typography } from '../shared'
 import UserAvatar from '../shared/Avatar'
 import IconButton from '../shared/IconButton'
 import Stack from '../shared/Stack/Stack'
-
-import deleteUser from '@/app/actions/actions_delete_user'
-import { signout } from '@/app/auth'
-import fetchWithToastify from '@/handlers/fetchWithToastify'
 
 type UserDashboardProps = {
   user: User
@@ -20,11 +20,10 @@ export default function UserDashboard({ user }: UserDashboardProps) {
     <Stack
       direction='column'
       spacing={20}
-      sx={{ paddingTop: 20, paddingBottom: 20 }}
     >
       <Stack
         spacing={15}
-        sx={{ alignItems: 'center' }}
+        sx={{ alignItems: 'center', flexWrap: 'wrap', wordBreak: 'break-all' }}
       >
         <a
           href={photoURL || undefined}
@@ -32,19 +31,26 @@ export default function UserDashboard({ user }: UserDashboardProps) {
           target='_blank'
         >
           <IconButton size='large'>
-            <UserAvatar />
+            <UserAvatar size={35} />
           </IconButton>
         </a>
         {displayName && (
           <Stack direction='column'>
-            <Typography variant='h2'>{displayName}</Typography>
+            <Typography
+              sx={{ marginTop: 0, wordBreak: 'break-all' }}
+              variant='h2'
+            >
+              {displayName}
+            </Typography>
             {metadata.lastSignInTime && (
               <Typography>
                 <Stack direction='column'>
                   <Typography sx={{ fontSize: 18, fontWeight: 600 }}>
                     Last signed in time:
                   </Typography>
-                  <Typography>{metadata.lastSignInTime}</Typography>
+                  <Typography sx={{ wordBreak: 'break-all' }}>
+                    {metadata.lastSignInTime}
+                  </Typography>
                 </Stack>
               </Typography>
             )}
@@ -53,7 +59,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
       </Stack>
       <Stack
         spacing={5}
-        sx={{ alignItems: 'center' }}
+        sx={{ alignItems: 'center', wordBreak: 'break-all' }}
       >
         <Typography sx={{ fontSize: 18 }}>User ID: </Typography>
         <Typography sx={{ fontWeight: 'bold' }}>{uid}</Typography>
@@ -63,24 +69,32 @@ export default function UserDashboard({ user }: UserDashboardProps) {
         spacing={15}
       >
         <Button
+          variant='default'
           onClick={() =>
-            fetchWithToastify(signout, {
-              pending: 'Signing out...',
-              success: 'Signed out.'
+            requestWithToastify(signout, {
+              showProgress: true,
+              messages: {
+                pending: 'Signing out...',
+                success: 'Signed out.'
+              }
             })
           }
         >
           Logout
         </Button>
         <Button
+          sx={{ borderColor: 'red' }}
           onClick={() =>
-            fetchWithToastify(deleteUser, {
-              pending: 'Deleting account...',
-              success: 'Account was deleted.'
+            requestWithToastify(deleteUser, {
+              showProgress: true,
+              messages: {
+                pending: 'Deleting account...',
+                success: 'Account was deleted.'
+              }
             })
           }
         >
-          Delete account
+          ✖️ Delete account
         </Button>
       </Stack>
     </Stack>

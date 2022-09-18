@@ -2,7 +2,6 @@ import react from '@vitejs/plugin-react'
 import * as path from 'path'
 import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   root: './',
@@ -15,5 +14,8 @@ export default defineConfig({
   define: {
     'process.env': process.env
   },
-  publicDir: 'public'
+  publicDir: 'public',
+  build: {
+    chunkSizeWarningLimit: 1600
+  }
 })

@@ -1,8 +1,12 @@
-import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import './styles/ChallengerInput.css'
 
-import { Box, Button } from '@/components/shared'
+import { useStore } from 'effector-react'
+import React, { useEffect, useRef, useState } from 'react'
+
+import { Box, Button, Typography } from '@/components/shared'
 import { useTheme } from '@/services/theme/actions'
 import usePrismStyles from '@/services/theme/prism-themes'
+import $preferences from '@/store/preferences/store'
 
 import { useChallenger } from './hooks'
 import useChallengerInput from './hooks/useChallengerInput'
@@ -16,16 +20,16 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   const highlightedRef = useRef<HTMLSpanElement>(null)
   const highlightedWrapperRef = useRef<HTMLEmbedElement>(null)
   const [isFocused, setFocused] = useState(false)
-  const listenersAdded = useRef({ onPressedEnter: false, onPressedPauseHotkey: false })
   const theme = useTheme()
   const prismClasses = usePrismStyles({ theme })
+  const preferences = useStore($preferences)
 
   const {
-    actions: challengerActions,
-    challenger: { started, paused, finished }
+    actions,
+    challenger: { started, paused, finished, highlighted }
   } = useChallenger()
 
-  const { actions, handlers, loading, originalHighlighted } = useChallengerInput({
+  const { handlers, loading } = useChallengerInput({
     code,
     language,
     refs: {
@@ -44,85 +48,29 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     finished,
     paused,
     started,
-    focused: isFocused
+    focused: isFocused,
+    preferences
   })
 
-  const onClick: MouseEventHandler<HTMLDivElement> = e => {
-    if (!started && !loading.highlighting && originalHighlighted) {
-      return actions.status.startTyping(originalHighlighted)
-    }
-    if (paused) {
-      challengerActions.status.togglePause()
-    }
-    if (started) {
-      inputRef.current?.focus()
-    }
-  }
-
-  const onPressedEnter = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && originalHighlighted) {
-        e.preventDefault()
-        actions.status.startTyping(originalHighlighted)
-      }
-    },
-    [originalHighlighted]
-  )
-
-  const onPressedPauseHotkey = useCallback((e: KeyboardEvent) => {
-    if (e.code === 'Backquote' && e.altKey) {
-      e.preventDefault()
-      challengerActions.status.togglePause()
-    }
-  }, [])
-
   useEffect(() => {
-    if (paused) {
+    if (!started && !highlighted) {
+      actions.challenger.tokenize(code, language)
+    }
+    if (paused || finished) {
       inputRef.current?.blur()
     }
 
     if (started && !paused) {
       inputRef.current?.focus()
     }
-
-    if (started && !listenersAdded.current.onPressedPauseHotkey) {
-      listenersAdded.current = { onPressedEnter: false, onPressedPauseHotkey: true }
-      document.addEventListener('keydown', onPressedPauseHotkey)
-      document.removeEventListener('keydown', onPressedEnter)
-    }
-
-    if (!started && !listenersAdded.current.onPressedEnter && originalHighlighted) {
-      listenersAdded.current.onPressedEnter = true
-      document.addEventListener('keydown', onPressedEnter)
-    }
-
-    if (finished) {
-      listenersAdded.current = { onPressedEnter: false, onPressedPauseHotkey: false }
-      document.removeEventListener('keydown', onPressedPauseHotkey)
-    }
-  }, [started, paused, finished, originalHighlighted])
+  }, [started, paused, finished, highlighted, code, language])
 
   useEffect(() => {
-    const onUnmount = () => {
-      document.removeEventListener('keydown', onPressedEnter)
-      document.removeEventListener('keydown', onPressedPauseHotkey)
+    if (cursorRef.current && codeRef.current && highlighted) {
+      cursorRef.current!.textContent = highlighted.code.slice(0, 1)
+      codeRef.current!.textContent = highlighted.code.slice(1)
     }
-
-    actions.status.tokenize()
-
-    return () => {
-      onUnmount()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!loading.highlighting && originalHighlighted) {
-      cursorRef.current!.textContent = originalHighlighted.code.slice(0, 1)
-      codeRef.current!.textContent = originalHighlighted.code.slice(1)
-    }
-  }, [loading, originalHighlighted])
-
-  if (loading.highlighting) return null
+  }, [highlighted])
 
   const onBlur: React.FocusEventHandler<HTMLTextAreaElement> = e => {
     if (isFocused) {
@@ -132,14 +80,18 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
 
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
     if (!isFocused) {
-      setFocused(true)
+      if (!started) {
+        inputRef.current?.blur()
+      } else {
+        setFocused(true)
+      }
     }
   }
 
   return (
     <Box
       className={`${classes.wrapper} ${prismClasses[theme.mode as 'light']}`}
-      onClick={onClick}
+      onClick={handlers.handleClick()}
     >
       <textarea
         ref={inputRef}
@@ -148,16 +100,16 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
         tabIndex={-1}
         value=''
         onBlur={onBlur}
-        onChange={handlers.handleChange}
+        onChange={handlers.handleChange()}
         onFocus={onFocus}
       />
-
       <div
         ref={highlightedWrapperRef}
         className={`language-${language} ${classes.highlighterWrapper}`}
       >
         <pre className={classes.highlighter}>
           <div className={classes.highlighterInner}>
+            {loading.highlighting && code}
             <span
               ref={highlightedRef}
               className='hl'
@@ -178,12 +130,29 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
           {loading.highlighting && (
             <Button className={classes.previewMaskButton}>Tokenization...</Button>
           )}
-          {!started && (
-            <Button className={classes.previewMaskButton}>Press Enter to start.</Button>
+          {!started && !loading.highlighting && (
+            <Button className={classes.previewMaskButton}>
+              Press <Typography highlighted>Enter</Typography> to start.
+            </Button>
           )}
           {paused && (
-            <Button sx={{ fontSize: 20 }}>
-              Press <span style={{ fontWeight: 'bold' }}>Alt+`</span> to continue.
+            <Button
+              sx={{
+                fontSize: 20,
+                display: 'flex',
+                alignItems: 'center',
+                padding: '7px 15px',
+                borderColor: 'palevioletred'
+              }}
+            >
+              Press
+              <Typography
+                highlighted
+                sx={{ marginLeft: 7, marginRight: 7 }}
+              >
+                Alt+`
+              </Typography>
+              to continue.
             </Button>
           )}
         </div>

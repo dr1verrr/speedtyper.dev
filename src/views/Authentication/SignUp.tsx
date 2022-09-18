@@ -8,7 +8,7 @@ import { Button } from '@/components/shared'
 import Container from '@/components/shared/Container'
 import Stack from '@/components/shared/Stack/Stack'
 import TextField from '@/components/shared/TextField'
-import fetchWithToastify from '@/handlers/fetchWithToastify'
+import requestWithToastify from '@/handlers/requestWithToastify'
 
 export default function SignIn() {
   const formData = useRef({ email: '', password: '', nickname: '' })
@@ -24,9 +24,12 @@ export default function SignIn() {
     }
 
     if (email && password && nickname) {
-      fetchWithToastify(register, {
-        pending: 'Signing up...',
-        success: 'Successfully signed up.'
+      requestWithToastify(register, {
+        messages: {
+          pending: 'Signing up...',
+          success: 'Successfully signed up.'
+        },
+        showProgress: true
       })
     }
   }

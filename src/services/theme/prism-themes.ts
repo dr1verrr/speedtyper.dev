@@ -4,7 +4,7 @@ import { Theme } from './types'
 
 const dracula = {
   //'& code[class*="language-"], pre[class*="language-"]': {
-  //  color: '#f8f8f2',
+  color: '#f8f8f2',
   //  background: 'none',
   //  textShadow: '0 1px rgba(0, 0, 0, 0.3)',
   //  fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
@@ -77,7 +77,7 @@ const dracula = {
 const oneLight = {
   //'code[class*="language-"], pre[class*="language-"]': {
   //  background: 'hsl(230, 1%, 98%)',
-  //  color: 'hsl(230, 8%, 24%)',
+  color: 'hsl(230, 8%, 24%)',
   //  fontFamily:
   //    '"Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace',
   //  direction: 'ltr',

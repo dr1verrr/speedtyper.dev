@@ -4,7 +4,7 @@ import useAuthUser from '@/hooks/useAuthUser'
 
 import Typography from '../Typography'
 
-export default function UserAvatar() {
+export default function UserAvatar({ size = 20 }: { size?: number }) {
   const { user } = useAuthUser()
   const [error, setError] = useState(false)
 
@@ -12,7 +12,7 @@ export default function UserAvatar() {
     return (
       <Typography
         sx={{
-          fontSize: 20,
+          fontSize: size,
           display: 'inline-block',
           verticalAlign: 'middle',
           textAlign: 'center',

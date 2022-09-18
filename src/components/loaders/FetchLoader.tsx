@@ -15,8 +15,9 @@ export default function FetchingLoader() {
       <Box
         sx={{
           position: 'fixed',
-          bottom: 35,
-          right: 35
+          bottom: 80,
+          right: 80,
+          zIndex: 1000
         }}
       >
         <SpinnerWave />

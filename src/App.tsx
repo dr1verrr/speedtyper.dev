@@ -15,7 +15,7 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      updateAuthData(!!user)
+      updateAuthData(user?.uid || null)
     })
   }, [])
 

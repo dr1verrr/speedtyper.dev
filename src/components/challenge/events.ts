@@ -8,6 +8,9 @@ const challengerChanged = createEvent<Partial<ChallengerStore>>()
 const challengerStatisticsFilled = createEvent<Partial<ChallengerStore>>()
 const challengerWorkStatisticsChanged = createEvent<Partial<ChallengerStatisticsStore>>()
 const challengerStatisticsCleared = createEvent()
+const challengerStatsProgressUpdate = createEvent<IsError>()
+const challengerStatsReset = createEvent()
+const challengerResetAll = createEvent()
 
 type IsError = boolean
 
@@ -36,5 +39,8 @@ export {
   challengerStatisticUpdate,
   challengerWorkStatisticsChanged,
   challengerReset,
-  challengerStatisticsCleared
+  challengerStatisticsCleared,
+  challengerStatsProgressUpdate,
+  challengerStatsReset,
+  challengerResetAll
 }

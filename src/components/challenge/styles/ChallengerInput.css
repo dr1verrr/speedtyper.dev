@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'Iosevka SS14';
+  font-display: swap;
+  font-weight: 400;
+  font-stretch: normal;
+  font-style: normal;
+  src: url('/fonts/iosevka-ss14-regular.ttf') format('truetype'),
+    url('/fonts/iosevka-ss14-regular.woff2') format('woff2');
+}

@@ -7,7 +7,7 @@ import { Theme } from '@/services/theme/types'
 import { rgba } from '@/utils/styles'
 
 type RuleNames = 'button'
-type Variants = 'primary' | 'action' | 'default'
+type Variants = 'primary' | 'action' | 'default' | 'info'
 
 type ButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -20,6 +20,8 @@ type ButtonProps = React.DetailedHTMLProps<
 type ButtonStyledProps = Omit<ButtonProps, 'variant'> & {
   variant: Variants
 }
+
+export type { Variants }
 
 const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
   button: {
@@ -37,15 +39,21 @@ const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
   }
 })
 
-export default function Button({ variant = 'default', ...props }: ButtonProps) {
+export default function Button({
+  variant = 'default',
+  className,
+  sx,
+  ...props
+}: ButtonProps) {
   const theme = useTheme()
   const classes = useStyles({ ...props, variant, theme })
 
   return (
     <button
+      className={clsx(classes.button, className)}
+      style={sx}
+      type='button'
       {...props}
-      className={clsx(classes.button, props.className)}
-      style={{ ...props.style, ...props.sx }}
     >
       {props.children}
     </button>

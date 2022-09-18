@@ -4,9 +4,9 @@ import { Navigate, Outlet } from 'react-router-dom'
 import $auth from '@/store/auth/store'
 
 function PublicRoute() {
-  const isAuthenticated = useStore($auth)
+  const uid = useStore($auth)
 
-  return !isAuthenticated ? <Outlet /> : <Navigate to='/profile' />
+  return !uid ? <Outlet /> : <Navigate to='/profile' />
 }
 
 export default PublicRoute

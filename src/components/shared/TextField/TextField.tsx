@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
@@ -14,7 +15,6 @@ type RuleNames = 'input'
 const useStyles = createUseStyles<RuleNames, TextFieldProps, Theme>({
   input: ({ theme }) => ({
     display: 'inline-block',
-    zIndex: 1,
     transition: 'background .2s ease',
     border: `2px solid ${theme.input.border.color}`,
     fontSize: 'inherit',
@@ -35,25 +35,31 @@ const useStyles = createUseStyles<RuleNames, TextFieldProps, Theme>({
   })
 })
 
-export default function TextField({ sx, multiline = false, ...props }: TextFieldProps) {
-  const theme = useTheme()
-  const classes = useStyles({ theme, ...props })
+const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, TextFieldProps>(
+  ({ sx, multiline = false, ...props }, ref) => {
+    const theme = useTheme()
+    const classes = useStyles({ theme, ...props })
 
-  if (multiline) {
+    if (multiline) {
+      return (
+        <textarea
+          ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
+          className={classes.input}
+          style={sx}
+          {...props}
+        />
+      )
+    }
+
     return (
-      <textarea
+      <input
+        ref={ref as React.ForwardedRef<HTMLInputElement>}
         className={classes.input}
-        {...props}
         style={sx}
+        {...props}
       />
     )
   }
+)
 
-  return (
-    <input
-      className={classes.input}
-      style={sx}
-      {...props}
-    />
-  )
-}
+export default TextField

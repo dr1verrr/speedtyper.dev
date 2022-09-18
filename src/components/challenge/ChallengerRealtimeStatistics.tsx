@@ -1,104 +1,86 @@
 import { useStore } from 'effector-react'
 import { useEffect, useRef, useState } from 'react'
-import { createUseStyles } from 'react-jss'
 
-import { useTheme } from '@/services/theme/actions'
-import { Theme } from '@/services/theme/types'
+import { convertMsToTime } from '@/utils/timestamp'
 
 import Metrics from '../metrics/Metrics'
-import { Box, Stack } from '../shared'
-import { $challenger, $challengerStatistics, ChallengerStatisticsStore } from './store'
-
-type RuleNames = 'progressBar' | 'progressBarWrapper'
-
-const useStyles = createUseStyles<RuleNames, ChallengerStatisticsStore, Theme>({
-  progressBar: ({ theme, progress }) => ({
-    width: '100%',
-    padding: 2,
-    position: 'relative',
-    borderRadius: 30,
-    background: theme.highlighter.progressBar.noFilled,
-    '&::after': {
-      content: '""',
-      transition: 'width 0.2s ease',
-      background: theme.highlighter.progressBar.filled,
-      height: '100%',
-      width: `${Math.floor(progress)}%`,
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      borderRadius: 'inherit'
-    }
-  }),
-  progressBarWrapper: ({ theme }) => ({
-    padding: '20px',
-    border: `1px solid ${theme.divider}`,
-    borderRadius: 7,
-    background: theme.highlighter.background
-  })
-})
+import { Stack } from '../shared'
+import { useChallenger } from './hooks'
+import { $challenger, $challengerStatistics } from './store'
 
 export default function ChallengerRealtimeStatistics() {
   const statistics = useStore($challengerStatistics)
   const challengerStatus = useStore($challenger)
-  const theme = useTheme()
-  const classes = useStyles({ theme, ...statistics })
   const interval = useRef<NodeJS.Timer>()
+
+  const { actions: challengerActions } = useChallenger()
 
   const [delayedStats, setDelayedStats] = useState({
     wpm: $challengerStatistics.getState().wpm
   })
 
-  useEffect(() => {
-    const updateDelayedStats = () => {
+  const actions = {
+    updateDelayedStats: () => {
       const statistics = $challengerStatistics.getState()
       setDelayedStats({
         wpm: statistics.wpm
       })
+    },
+    timer: {
+      set: () => {
+        interval.current = setInterval(actions.updateDelayedStats, 1000)
+      },
+      clear: () => {
+        clearInterval(interval.current)
+      }
+    },
+    control: {
+      togglePlayPause: () => {
+        if (!challengerStatus.started) {
+          return challengerActions.status.started.toggle()
+        }
+        challengerActions.status.paused.toggle()
+      }
+    }
+  }
+
+  useEffect(() => {
+    const { finished, started, paused } = challengerStatus
+
+    if (finished) {
+      setDelayedStats({ wpm: 0 })
+      interval.current = undefined
+      return actions.timer.clear()
     }
 
-    if (challengerStatus.started && !interval.current) {
-      interval.current = setInterval(updateDelayedStats, 1000)
+    if ((started && !interval.current) || (started && !paused && interval.current)) {
+      actions.timer.set()
     }
 
-    if (challengerStatus.paused && interval.current) {
-      clearInterval(interval.current)
-    } else if (!challengerStatus.paused && challengerStatus.started && interval.current) {
-      interval.current = setInterval(updateDelayedStats, 1000)
-    }
-
-    if (challengerStatus.finished) {
-      clearInterval(interval.current)
+    if (paused) {
+      actions.timer.clear()
     }
 
     return () => {
-      clearInterval(interval.current)
+      actions.timer.clear()
     }
   }, [challengerStatus])
 
   return (
     <Stack
-      direction='column'
-      spacing={15}
+      direction='row'
+      spacing={20}
+      sx={{ overflow: 'auto' }}
     >
-      <Box className={classes.progressBarWrapper}>
-        <Box className={classes.progressBar}></Box>
-      </Box>
-      <Stack
-        direction='row'
-        spacing={20}
-        sx={{ overflow: 'auto' }}
-      >
-        <Metrics
-          data={[
-            ['Time', `${statistics.time}s`],
-            ['WPM', `${delayedStats.wpm.toFixed(0)}`],
-            ['Combo', `${statistics.combo}`],
-            ['Progress', `${Math.floor(statistics.progress).toFixed(0)}%`]
-          ]}
-        />
-      </Stack>
+      <Metrics
+        data={[
+          ['Time', `${convertMsToTime(statistics.time)}`],
+          ['WPM', `${delayedStats.wpm.toFixed(0)}`],
+          ['Combo', `${statistics.combo}`],
+          ['Progress', `${Math.floor(statistics.progress).toFixed(0)}%`]
+        ]}
+        style={{ flex: 1, maxWidth: '33%' }}
+      />
     </Stack>
   )
 }

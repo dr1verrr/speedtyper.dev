@@ -1,15 +1,20 @@
+import { createStore } from 'effector'
+import { persist } from 'effector-storage/local'
+
+import { saveState } from '@/utils/localStorage'
+
 import { LocalStorageKeys } from './constants'
 import { authChanged } from './events'
-import { loadState, saveState } from '@/utils/localStorage'
-import { createStore } from 'effector'
 
-type AuthStore = boolean
+type AuthStore = string | undefined | null
 
-const $auth = createStore<AuthStore>(loadState(LocalStorageKeys.auth) || false)
+const $auth = createStore<AuthStore>(null)
 
-$auth.on(authChanged, (_, payload) => {
-  saveState(LocalStorageKeys.auth, payload)
-  return payload
+$auth.on(authChanged, (_, uid) => {
+  saveState(LocalStorageKeys.auth, uid)
+  return uid
 })
+
+persist({ store: $auth, key: LocalStorageKeys.auth })
 
 export default $auth

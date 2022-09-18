@@ -1,16 +1,13 @@
-// FIX: missing highlight token (incorrect id)
 import Prism from 'prismjs'
 
-const getFirstTokenWithStringContent = (
-  token: string | Prism.Token
-): string | Prism.Token | undefined => {
+const getToken = (token: string | Prism.Token): string | Prism.Token | undefined => {
   if (typeof token === 'string') {
     return token
   } else {
     if (typeof token.content === 'string') {
-      return token
+      return token as Prism.Token
     } else if (Array.isArray(token.content)) {
-      return getFirstTokenWithStringContent(token.content[0])
+      return token
     }
   }
 }
@@ -21,281 +18,202 @@ type ResplittedToken = {
   indentSpaces?: string
 }
 
-const getSpecialCharsBeforeWord = (str: string) => {
-  let filteredWord = str
-  let letters = ''
-
-  for (let idx = 0; idx < str.length; idx++) {
-    const ltr = str[idx]
-    if (ltr === ' ' || ltr === '\t') {
-      letters += ltr
-      filteredWord = filteredWord.slice(1)
-    } else break
-  }
-
-  return { letters, filteredWord }
-}
-
 const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar) => {
   const tokens = Prism.tokenize(code, grammar || Prism.languages[language])
-  const resplittedTokens: ResplittedToken[] = []
+  const reformattedTokens: ResplittedToken[] = []
 
-  if (language === 'plain' && typeof tokens[0] === 'string') {
-    const splittedByNewRow = tokens[0].split('\n')
-    const plainTokens = []
-
-    console.log('splitted by new row', splittedByNewRow, 'tokens', tokens)
-
-    for (let idx = 0; idx < splittedByNewRow.length; idx++) {
-      const splittedTkn = splittedByNewRow[idx]
-      const element = document.createElement('span')
-
-      if (splittedTkn === '') {
-        plainTokens.push({ content: '\n', indentSpaces: '', type: 'new-row', element })
-      } else if (
-        !splittedTkn.includes('\t') &&
-        !splittedTkn.startsWith(' ') &&
-        splittedTkn.trim().length
-      ) {
-        plainTokens.push({ content: splittedTkn, type: 'plain', element })
-      } else {
-        if (splittedTkn.startsWith(' ') || splittedTkn.startsWith('\t')) {
-          const indentChars = getSpecialCharsBeforeWord(splittedTkn)
-
-          plainTokens.push({
-            content: '\n',
-            indentSpaces: indentChars.letters,
-            type: 'new-row',
-            element
-          })
-
-          if (indentChars.filteredWord) {
-            console.log('filteed word', indentChars.filteredWord)
-            plainTokens.push({
-              content: indentChars.filteredWord,
-              type: 'plain',
-              element: document.createElement('span')
-            })
-          }
-        }
-      }
-
-      //if (splittedTkn.startsWith(' ')) {
-      //  const spacesBefore = ' '.repeat(
-      //    splittedTkn.length - splittedTkn.trimStart().length
-      //  )
-      //  plainTokens.push(
-      //    {
-      //      content: '\n',
-      //      type: 'new-row',
-      //      element,
-      //      indentSpaces: spacesBefore
-      //    },
-      //    {
-      //      content: splittedTkn.trimStart(),
-      //      type: 'plain',
-      //      element: document.createElement('span')
-      //    }
-      //  )
-      //} else if (idx > 0) {
-      //  if (splittedTkn.trim() === '') {
-      //    plainTokens.push({
-      //      content: '\n',
-      //      indentSpaces: splittedTkn.repeat(splittedTkn.length),
-      //      type: 'new-row',
-      //      element
-      //    })
-      //  } else {
-      //    plainTokens.push(
-      //      {
-      //        content: '\n',
-      //        type: 'new-row',
-      //        element,
-      //        indentSpaces: ''
-      //      },
-      //      {
-      //        content: splittedTkn,
-      //        type: 'plain',
-      //        element: document.createElement('span')
-      //      }
-      //    )
-      //  }
-      //} else {
-      //  plainTokens.push({ content: splittedTkn, type: 'plain', element })
-      //}
-    }
-
-    console.log('plain tokens', plainTokens)
-
-    if (tokens[0].includes('\t')) {
-      if (plainTokens[plainTokens.length - 2].content !== '\n') {
-        plainTokens.splice(plainTokens.length - 2, 0, {
-          content: '\n',
-          indentSpaces: '',
-          element: document.createElement('span'),
-          type: 'new-row'
-        })
-      }
-    }
-
-    return {
-      code,
-      language,
-      tokens: plainTokens.map((pt, idx) => {
-        return {
-          ...pt,
-          id: idx
-        }
-      }),
-      total: plainTokens.reduce((acc, current) => {
-        return acc + current.content.length
-      }, 0)
-    }
-  }
-
-  function getSplittedTokens(token: string | Prism.Token, prefix?: string) {
-    let splittedTokens: ResplittedToken[] = []
+  const resplitToken = (token: string | Prism.Token): ResplittedToken[] => {
+    const resplittedTokens: ResplittedToken[] = []
 
     if (typeof token === 'string') {
       if (token.includes('\n')) {
-        let splitted = token
-        const tokens: ResplittedToken[] = []
+        if (token.startsWith('\n')) {
+          for (let idx = 0; token.length > idx; idx++) {
+            const char = token[idx]
+            if (char === '\n') {
+              let indentChars = ''
+              const nextChars = token.slice(idx + 1)
 
-        if (splitted.startsWith(' ')) {
+              for (const nextChar of nextChars) {
+                if (nextChar === ' ' || nextChar === '\t') {
+                  indentChars += nextChar
+                } else break
+              }
+
+              resplittedTokens.push({
+                content: '\n',
+                type: 'new-row',
+                indentSpaces: indentChars
+              })
+            } else if (char.match(/[A-Za-z]/) || char === '"' || char === "'") {
+              const word = token.slice(idx)
+              if (word) {
+                resplittedTokens.push({
+                  content: word,
+                  type: 'plain'
+                })
+              }
+              break
+            }
+          }
+        } else {
           let word = ''
 
-          for (const letter of splitted) {
+          for (const letter of token) {
             if (letter !== '\n') {
               word += letter
             } else break
           }
 
-          tokens.push({ content: word, type: 'plain' })
+          resplittedTokens.push({ content: word, type: 'plain' })
 
-          const nextTokens = splitted.replace(word, '').split('\n')
+          const specialChars = token.slice(word.length)
+          for (let idx = 0; idx < specialChars.length; idx++) {
+            const char = specialChars[idx]
+            if (char === '\n') {
+              let word = ''
+              let indentChars = ''
+              const nextChars = specialChars.slice(idx + 1)
 
-          for (let idx = 0; idx < nextTokens.length; idx++) {
-            const nextToken = nextTokens[idx]
-            if (nextToken === '') {
-              if (nextTokens[idx + 1]) {
-                tokens.push({
-                  content: '\n',
-                  type: 'plain',
-                  indentSpaces: nextTokens[idx + 1]
-                })
-              } else {
-                tokens.push({
-                  content: '\n',
-                  type: 'plain',
-                  indentSpaces: ''
+              for (let idx = 0; nextChars.length > idx; idx++) {
+                const nextChar = nextChars[idx]
+                if (nextChar === ' ' || nextChar === '\t') {
+                  indentChars += nextChar
+                } else if (
+                  nextChar.match(/[A-Za-z]/) ||
+                  nextChar === '"' ||
+                  nextChar === "'"
+                ) {
+                  word = nextChars.slice(idx)
+                  break
+                } else break
+              }
+
+              resplittedTokens.push({
+                content: '\n',
+                type: 'new-row',
+                indentSpaces: indentChars
+              })
+
+              if (word) {
+                resplittedTokens.push({
+                  content: word,
+                  type: 'plain'
                 })
               }
             }
           }
-        } else {
-          let splittedLetters: string[] = []
-          const word = splitted.slice(1).trimStart()
+        }
+      } else {
+        resplittedTokens.push({ content: token, type: 'plain' })
+      }
+    } else {
+      const firstType = token.type
+      const tokenContent = token.content
 
-          if (word) {
-            splittedLetters = splitted.replace(word, '').split('\n')
-          } else {
-            splittedLetters = splitted.split('\n')
-          }
+      if (Array.isArray(tokenContent)) {
+        const getStringContentTokens = (tknContent: (string | Prism.Token)[]) => {
+          const splitted: ResplittedToken[] = []
 
-          if (
-            splittedLetters.length === 2 &&
-            !splittedLetters[0] &&
-            !splittedLetters[1]
-          ) {
-            tokens.push({ content: '\n', indentSpaces: '', type: 'plain' })
-          } else {
-            for (let idx = 0; idx < splittedLetters.length; idx++) {
-              const splittedLetter = splittedLetters[idx]
-              if (splittedLetter === '') {
-                if (splittedLetters[idx + 1]) {
-                  tokens.push({
-                    content: '\n',
-                    type: 'plain',
-                    indentSpaces: splittedLetters[idx + 1]
-                  })
-                } else {
-                  tokens.push({ content: '\n', indentSpaces: '', type: 'plain' })
-                }
+          for (const tkn of tknContent) {
+            if (typeof tkn === 'string') {
+              splitted.push({ type: firstType, content: tkn })
+            } else {
+              if (typeof tkn.content === 'string') {
+                splitted.push({ type: firstType + ' ' + tkn.type, content: tkn.content })
+              } else if (Array.isArray(tkn.content)) {
+                const stringContentTokens = getStringContentTokens(tkn.content)
+                splitted.push(...stringContentTokens)
               }
             }
           }
 
-          if (word) {
-            tokens.push({ content: word, type: 'plain' })
+          return splitted
+        }
+
+        const stringContentTokens = getStringContentTokens(tokenContent)
+        for (const stringContentTkn of stringContentTokens) {
+          resplittedTokens.push(stringContentTkn)
+        }
+      } else {
+        resplittedTokens.push({ content: tokenContent as string, type: firstType })
+      }
+    }
+
+    return resplittedTokens
+  }
+
+  if (tokens.length === 1 && typeof tokens[0] === 'string') {
+    let plainToken = tokens[0]
+    const presplitted: ResplittedToken[] = []
+
+    for (; plainToken.length; ) {
+      const char = plainToken[0]
+
+      if (char === '\n') {
+        const nextChars = plainToken.slice(1)
+        let indentChars = ''
+        for (const nextChar of nextChars) {
+          if (nextChar === ' ' || nextChar === '\t') {
+            indentChars += nextChar
+          } else {
+            break
           }
         }
 
-        for (const token of tokens) {
-          splittedTokens.push(token)
+        plainToken = plainToken.slice(indentChars.length + 1)
+        presplitted.push({ content: '\n', type: 'new-row', indentSpaces: indentChars })
+      } else {
+        let word = ''
+
+        for (const char of plainToken) {
+          if (char !== '\n') {
+            word += char
+          } else {
+            break
+          }
         }
-      } else {
-        splittedTokens.push({ type: 'plain', content: token })
-      }
-    } else {
-      if (prefix) {
-        splittedTokens.push({
-          type: prefix + ' ' + token.type,
-          content: token.content as string
-        })
-      } else {
-        splittedTokens.push({ type: token.type, content: token.content as string })
+
+        plainToken = plainToken.slice(word.length)
+        presplitted.push({ content: word, type: 'plain' })
       }
     }
 
-    return splittedTokens
-  }
-
-  const addResplitedToken = (token: string | Prism.Token, prefix?: string) => {
-    const splittedTokens = getSplittedTokens(token, prefix)
-
-    for (const splittedTkn of splittedTokens) {
-      resplittedTokens.push(splittedTkn)
+    for (const tkn of presplitted) {
+      reformattedTokens.push(tkn)
     }
-  }
-
-  for (const token of tokens) {
-    if (typeof token !== 'string') {
-      if (Array.isArray(token.content)) {
-        for (const arrToken of token.content) {
-          addResplitedToken(arrToken, token.type)
-        }
-      } else {
-        addResplitedToken(token)
+  } else {
+    for (const token of tokens) {
+      const tokenWithStringContent = getToken(token)
+      const resplittedTokens = resplitToken(tokenWithStringContent!)
+      for (const resplittedToken of resplittedTokens) {
+        reformattedTokens.push(resplittedToken)
       }
-    } else {
-      addResplitedToken(token)
     }
   }
 
   return {
     code,
     language,
-    tokens: resplittedTokens.map((tkn, idx) => {
+    tokens: reformattedTokens.map((tkn, idx) => {
       const element = document.createElement('span')
 
       if (tkn.type && tkn.type !== 'plain') {
-        if (tkn.type.includes('-')) {
-          tkn.type = tkn.type.split('-').join(' ')
+        if (tkn.type !== 'new-row') {
+          element.className = 'token ' + tkn.type
+        } else {
+          element.className = 'new-row'
         }
-
-        element.className = 'token ' + tkn.type
-      } else if (tkn.content === '\n') {
-        element.className = 'new-row'
       }
 
       return {
         ...tkn,
         element,
         id: idx,
-        type: tkn.content === '\n' ? 'new-row' : tkn.type
+        type: tkn.type
       }
     }),
-    total: resplittedTokens.reduce((acc, current) => {
+    total: reformattedTokens.reduce((acc, current) => {
       return acc + current.content.length
     }, 0)
   }
@@ -304,4 +222,4 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
 type Highlighted = ReturnType<typeof getHighlighted>
 
 export type { Highlighted }
-export { getFirstTokenWithStringContent, getHighlighted }
+export { getToken as getFirstTokenWithStringContent, getHighlighted }
