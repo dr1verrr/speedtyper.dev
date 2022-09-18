@@ -122,14 +122,13 @@ const useStyles = {
     cursor: ({ theme, focused, preferences, started, paused }) => ({
       color:
         started && focused
-          ? theme.highlighter.background
+          ? theme.highlighter.cursor.color
           : !started
-          ? rgba(theme.highlighter.color, 0.75)
+          ? rgba(theme.highlighter.color, 0.85)
           : theme.highlighter.color,
-      background: focused
-        ? rgba(theme.highlighter.color, 0.85)
-        : theme.highlighter.background,
+      background: focused ? theme.highlighter.cursor.bg : theme.highlighter.background,
       position: 'relative',
+      scrollMargin: '35px',
       '&.new-row': {
         background: 'none',
         outline: 'none',

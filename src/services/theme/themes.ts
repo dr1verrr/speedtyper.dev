@@ -58,6 +58,10 @@ const lightTheme = {
     background: '#F5F5F5',
     color: '#000',
     hover: '#333',
+    cursor: {
+      bg: '#252525',
+      color: '#fff'
+    },
     progressBar: {
       filled: {
         color: '#212121'
@@ -129,6 +133,10 @@ const darkTheme = {
     background: '#222',
     color: '#fff',
     hover: '#ccc',
+    cursor: {
+      bg: '#dedede',
+      color: '#000'
+    },
     progressBar: {
       filled: {
         color: '#e1e1e1'

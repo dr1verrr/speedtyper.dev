@@ -142,7 +142,7 @@ export default function ChallengerResults({ stats }: { stats?: TChallengerResult
     return (
       <Container
         maxWidth='lg'
-        sx={{ padding: 10, width: '100%' }}
+        sx={{ padding: 10 }}
       >
         <Stack
           direction='row'

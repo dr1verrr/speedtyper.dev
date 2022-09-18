@@ -257,7 +257,7 @@ const useChallengerInput = ({ refs }: useChallengerProps) => {
               refs.codeRef.current!.textContent!.slice(1)
 
             if (doesNeedScroll()) {
-              refs.codeRef.current?.scrollIntoView({ block: 'start' })
+              refs.cursorRef.current?.scrollIntoView({ block: 'start' })
             }
 
             if (current.token.type === 'new-row') {
@@ -277,9 +277,8 @@ const useChallengerInput = ({ refs }: useChallengerProps) => {
               refs.cursorRef.current!.textContent = newSymbol
             }
 
-            if (current.token.type) {
-              refs.cursorRef.current!.className =
-                cursorClassName + ' ' + current.token.type
+            if (current.symbol === '\n') {
+              refs.cursorRef.current!.className = cursorClassName + ' ' + 'new-row'
             } else {
               refs.cursorRef.current!.className = cursorClassName
             }
