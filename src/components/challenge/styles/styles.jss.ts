@@ -1,6 +1,7 @@
 import { createUseStyles } from 'react-jss'
 
 import { Theme } from '@/services/theme/types'
+import { PreferencesStore } from '@/store/preferences/store'
 import { rgba } from '@/utils/styles'
 
 import { ChallengerInputProps } from '../types'
@@ -15,18 +16,31 @@ type ChallengerRuleNames =
   | 'wrapper'
   | 'highlighterWrapper'
   | 'highlighterInner'
+  | '@keyframes gradient'
 
 type ChallengerStyledProps = ChallengerInputProps & {
   finished: boolean
   started: boolean
   paused: boolean
   focused: boolean
+  preferences: PreferencesStore
 }
 
 const useStyles = {
   challenger: createUseStyles<ChallengerRuleNames, ChallengerStyledProps, Theme>({
+    '@keyframes gradient': {
+      '0%': {
+        backgroundPosition: '0% 50%'
+      },
+      '50%': {
+        backgroundPosition: '100% 50%'
+      },
+      '100%': {
+        backgroundPosition: '0% 50%'
+      }
+    },
     previewMask: ({ theme }) => ({
-      transition: 'background 0.3s ease',
+      transition: 'background 0.2s ease',
       position: 'absolute',
       cursor: 'pointer',
       top: 0,
@@ -41,11 +55,6 @@ const useStyles = {
       zIndex: 100,
       '&:hover': {
         background: rgba(theme.highlighter.hover, 0.1)
-      },
-      '&:hover $previewMaskButton': {
-        //background: rgba(theme.highlighter.accent, 0.75),
-        //color: rgba(theme.highlighter.color, 0.75),
-        //borderColor: rgba(theme.highlighter.color, 0.75)
       }
     }),
     hiddenInput: {
@@ -65,65 +74,73 @@ const useStyles = {
     previewMaskButton: ({ theme }) => ({
       padding: '12px 30px',
       fontSize: 20,
-      background: '#b794f4',
-      borderColor: theme.highlighter.color
+      borderColor: 'palevioletred'
     }),
-    highlighter: ({ theme }) => ({
-      color: theme.highlighter.color,
+    highlighter: ({ theme, preferences }) => ({
       background: theme.highlighter.background,
       position: 'relative',
-      fontSize: 18,
-      fontFamily: 'monospace',
-      lineHeight: 1.4,
+      fontSize: preferences.challenger.fontSize,
+      fontFamily: preferences.challenger.fontFamily + ', monospace',
+      lineHeight: 1.45,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-all',
       tabSize: 2,
       borderLeft: `1px solid ${theme.divider}`,
       borderRight: `1px solid ${theme.divider}`,
-      margin: 'auto auto'
+      margin: 'auto auto',
+      height: '100%'
     }),
     highlighterInner: ({ theme }) => ({
       padding: '25px 50px'
     }),
-    highlighterWrapper: ({ theme, paused }) => ({
+    highlighterWrapper: ({ theme, paused, started }) => ({
       position: 'relative',
-      transition: 'filter 0.2s ease',
+      transition: 'filter 0.1s ease',
       width: '100%',
-      overflow: 'auto',
-      maxHeight: '55vh',
-      filter: paused ? 'blur(7px)' : 'none',
+      overflow: 'hidden',
+      maxHeight: '54vh',
+      filter: (paused && 'blur(12.5px)') || 'none',
       display: 'flex',
       justifyContent: 'center'
     }),
     codeLeft: ({ theme }) => ({
       color: rgba(theme.highlighter.color, 0.75)
     }),
-    wrapper: ({ theme, focused }) => ({
+    wrapper: ({ theme, focused, started, paused }) => ({
       position: 'relative',
       display: 'flex',
       alignItems: 'stretch',
       justifyContent: 'center',
       background: theme.highlighter.background,
       overflow: 'hidden',
-      outline: !focused ? `1px dashed ${rgba(theme.highlighter.color, 0.7)}` : 'none',
+      outline:
+        !focused && started && !paused
+          ? `1px dashed ${rgba(theme.highlighter.color, 0.7)}`
+          : 'none',
       borderRadius: 15,
       border: `1px solid ${theme.divider}`
     }),
-    cursor: ({ theme, focused }) => ({
-      color: rgba(theme.highlighter.background, 1),
-      background: rgba(theme.highlighter.color, 0.85),
+    cursor: ({ theme, focused, preferences, started, paused }) => ({
+      color:
+        started && focused
+          ? theme.highlighter.background
+          : !started
+          ? rgba(theme.highlighter.color, 0.75)
+          : theme.highlighter.color,
+      background: focused
+        ? rgba(theme.highlighter.color, 0.85)
+        : theme.highlighter.background,
+      position: 'relative',
       '&.new-row': {
-        position: 'relative',
+        background: 'none',
         outline: 'none',
         color: theme.highlighter.color
       },
       '&.new-row:after': {
-        width: '0',
-        height: '0',
         position: 'absolute',
         content: '"↵"',
         whiteSpace: 'nowrap',
-        right: -3,
+        right: -(preferences.challenger.fontSize + 5),
         bottom: 0,
         top: 0
       }

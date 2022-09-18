@@ -1,1 +1,88 @@
-
+{
+  "wpm": 91.2,
+  "time": 5000,
+  "timeStarted": "2022-09-14T17:44:06.340Z",
+  "errors": [2, 14, 16],
+  "maxCombo": 22,
+  "timeline": [
+    {
+      "code": {
+        "left": 36,
+        "total": 38
+      },
+      "wpm": 24,
+      "combo": 0,
+      "time": 0,
+      "progress": 5.26315789473685,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2],
+      "maxCombo": 2
+    },
+    {
+      "code": {
+        "left": 30,
+        "total": 38
+      },
+      "wpm": 96,
+      "combo": 6,
+      "time": 1000,
+      "progress": 21.05263157894737,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2],
+      "maxCombo": 6
+    },
+    {
+      "code": {
+        "left": 22,
+        "total": 38
+      },
+      "wpm": 96,
+      "combo": 2,
+      "time": 2000,
+      "progress": 42.10526315789473,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2, 14],
+      "maxCombo": 12
+    },
+    {
+      "code": {
+        "left": 19,
+        "total": 38
+      },
+      "wpm": 75.99999999999999,
+      "combo": 3,
+      "time": 3000,
+      "progress": 50,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2, 14, 16],
+      "maxCombo": 12
+    },
+    {
+      "code": {
+        "left": 3,
+        "total": 38
+      },
+      "wpm": 105,
+      "combo": 19,
+      "time": 4000,
+      "progress": 92.10526315789474,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2, 14, 16],
+      "maxCombo": 19
+    },
+    {
+      "code": {
+        "left": 0,
+        "total": 38
+      },
+      "wpm": 91.2,
+      "combo": 22,
+      "time": 5000,
+      "progress": 100,
+      "timeStarted": "2022-09-14T17:44:06.340Z",
+      "errors": [2, 14, 16],
+      "maxCombo": 22
+    }
+  ],
+  "timeEnded": "2022-09-14T17:44:12.350Z"
+}
