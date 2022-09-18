@@ -87,8 +87,7 @@ const useStyles = {
       tabSize: 2,
       borderLeft: `1px solid ${theme.divider}`,
       borderRight: `1px solid ${theme.divider}`,
-      margin: 'auto auto',
-      height: '100%'
+      margin: 'auto auto'
     }),
     highlighterInner: ({ theme }) => ({
       padding: '25px 50px'
