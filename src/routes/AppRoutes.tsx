@@ -1,5 +1,7 @@
-import { lazy, useLayoutEffect } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { lazy } from 'react'
+import { Route, Routes } from 'react-router-dom'
+
+import About from '@/views/About'
 
 import AuthenticatedRoute from './AuthenticatedRoute'
 import PublicRoute from './PublicRoute'
@@ -10,14 +12,15 @@ const SignIn = lazy(() => import('@/views/Authentication/SignIn'))
 const SignUp = lazy(() => import('@/views/Authentication/SignUp'))
 const Profile = lazy(() => import('@/views/Profile'))
 const ChallengePage = lazy(() => import('@/views/ChallengePage'))
+const GetStartedPage = lazy(() => import('@/views/GetStarted'))
+const ChallengerResultsPage = lazy(
+  () => import('@/components/challenge/ChallengerResults')
+)
+const PlayPage = lazy(() => import('@/views/PlayPage'))
+const ChallengesPage = lazy(() => import('@/views/ChallengesPage'))
+const ChallengeInfo = lazy(() => import('@/views/ChallengeInfo'))
 
 function AppRoutes() {
-  const location = useLocation()
-
-  useLayoutEffect(() => {
-    window.scrollTo({ top: 0 })
-  }, [location])
-
   return (
     <Routes>
       <Route
@@ -27,6 +30,10 @@ function AppRoutes() {
       <Route
         element={<NotFound />}
         path='*'
+      />
+      <Route
+        element={<PlayPage />}
+        path='/play'
       />
       <Route element={<PublicRoute />}>
         <Route
@@ -43,10 +50,34 @@ function AppRoutes() {
           element={<Profile />}
           path='/profile'
         />
+        <Route
+          element={<ChallengePage />}
+          path='/challenge/:id'
+        />
+        <Route
+          element={<ChallengerResultsPage />}
+          path='/session/:id'
+        />
       </Route>
       <Route
         element={<ChallengePage />}
         path='/challenge'
+      />
+      <Route
+        element={<ChallengesPage />}
+        path='/challenges'
+      />
+      <Route
+        element={<ChallengeInfo />}
+        path='/challenge-info/:id'
+      />
+      <Route
+        element={<GetStartedPage />}
+        path='/get-started'
+      />
+      <Route
+        element={<About />}
+        path='/about'
       />
     </Routes>
   )
