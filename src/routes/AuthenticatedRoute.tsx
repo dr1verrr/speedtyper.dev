@@ -1,11 +1,12 @@
-import $auth from '@/store/auth/store'
 import { useStore } from 'effector-react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-function AuthenticatedRoute() {
-  const isAuthenticated = useStore($auth)
+import $auth from '@/store/auth/store'
 
-  return isAuthenticated ? <Outlet /> : <Navigate to='/sign-in' />
+function AuthenticatedRoute() {
+  const uid = useStore($auth)
+
+  return uid ? <Outlet /> : <Navigate to='/sign-in' />
 }
 
 export default AuthenticatedRoute

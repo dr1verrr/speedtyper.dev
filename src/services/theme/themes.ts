@@ -9,6 +9,7 @@ const lightTheme = {
       hover: '#333'
     }
   },
+  info: '#afeeee',
   action: {
     hover: '#ececec'
   },
@@ -18,17 +19,26 @@ const lightTheme = {
       default: {
         bg: '#f5f5f5',
         text: '#333',
-        border: '#dcdcdc'
+        border: '#dcdcdc',
+        svg: '#333'
       },
       primary: {
-        bg: '#000',
-        text: '#fff',
-        border: '#ccc'
+        bg: '#fff',
+        text: '#333',
+        border: '#55affa',
+        svg: '#fff'
       },
       action: {
-        bg: '#22a5f1',
+        bg: '#db7093',
         text: '#000',
-        border: '#ccc'
+        border: '#333',
+        svg: '#000'
+      },
+      info: {
+        bg: '#55affa',
+        text: '#333',
+        border: '#55affa',
+        svg: '#999'
       }
     }
   },
@@ -73,23 +83,33 @@ const darkTheme = {
   action: {
     hover: '#333'
   },
+  info: '#afeeee',
   divider: '#3e3e3e',
   button: {
     variant: {
       default: {
         bg: '#222',
         text: '#fff',
-        border: '#3e3e3e'
+        border: '#3e3e3e',
+        svg: '#fff'
       },
       primary: {
-        bg: '#000',
+        bg: '#222',
         text: '#fff',
-        border: ''
+        border: '#3857cb',
+        svg: '#fff'
       },
       action: {
-        bg: '#22a5f1',
+        bg: '#db7093',
         text: '#000',
-        border: ''
+        border: '#dad8d6',
+        svg: '#000'
+      },
+      info: {
+        bg: '#3857cb',
+        text: '#dad8d6',
+        border: '#3857cb',
+        svg: '#000'
       }
     }
   },

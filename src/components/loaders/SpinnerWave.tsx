@@ -1,7 +1,8 @@
-import { useTheme } from '@/services/theme/actions'
-import { Theme } from '@/services/theme/types'
 import { CSSProperties } from 'react'
 import { createUseStyles } from 'react-jss'
+
+import { useTheme } from '@/services/theme/actions'
+import { Theme } from '@/services/theme/types'
 
 type SpinnerProps = {
   size?: number
@@ -32,8 +33,8 @@ const useStyles = createUseStyles<RuleNames, SpinnerStyledProps, Theme>({
   spinner: {
     display: 'inline-block',
     position: 'relative',
-    width: ({ size }) => size + size * 2,
-    height: ({ size }) => size + size * 2,
+    width: ({ size }) => size,
+    height: ({ size }) => size,
     '& div': {
       display: 'inline-block',
       position: 'absolute',

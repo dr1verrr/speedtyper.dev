@@ -3,7 +3,6 @@ import { createUseStyles } from 'react-jss'
 
 import { useTheme } from '@/services/theme/actions'
 import { Theme } from '@/services/theme/types'
-import { rgba } from '@/utils/styles'
 
 import { Box, Typography } from '../shared'
 
@@ -24,8 +23,8 @@ const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
     minWidth: 150,
     width: '100%',
     maxWidth: '33.333%',
-    color: '#fff',
-    padding: '20px',
+    color: theme.common.textColors.primary,
+    padding: '15px 30px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -39,7 +38,7 @@ const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
     marginRight: 10
   }),
   metricValue: ({ theme }) => ({
-    color: rgba(theme.highlighter.color, 0.5)
+    color: theme.common.textColors.secondary
   })
 })
 

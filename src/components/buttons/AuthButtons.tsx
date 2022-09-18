@@ -1,17 +1,21 @@
+import { signinWithGithubPopup, signinWithGooglePopup } from '@/app/auth'
+import requestWithToastify from '@/handlers/requestWithToastify'
+
 import Github from '../icons/Github'
 import Google from '../icons/Google'
 import { Button } from '../shared'
-import { signinWithGithubPopup, signinWithGooglePopup } from '@/app/auth'
-import fetchWithToastify from '@/handlers/fetchWithToastify'
 
 export default function AuthButtons() {
   return (
     <>
       <Button
         onClick={() =>
-          fetchWithToastify(signinWithGithubPopup, {
-            pending: 'Authenticating via Github...',
-            success: 'Authenticated via Github.'
+          requestWithToastify(signinWithGithubPopup, {
+            showProgress: true,
+            messages: {
+              pending: 'Authenticating via Github...',
+              success: 'Authenticated via Github.'
+            }
           })
         }
       >
@@ -19,9 +23,12 @@ export default function AuthButtons() {
       </Button>
       <Button
         onClick={() =>
-          fetchWithToastify(signinWithGooglePopup, {
-            pending: 'Authenticating via Google...',
-            success: 'Authenticated via Google.'
+          requestWithToastify(signinWithGooglePopup, {
+            showProgress: true,
+            messages: {
+              pending: 'Authenticating via Google...',
+              success: 'Authenticated via Google.'
+            }
           })
         }
       >

@@ -28,7 +28,13 @@ const useStyles = createUseStyles<'layout', unknown, Theme>({
     background: theme.common.bg,
     color: rgba(theme.common.text, 0.9),
     minHeight: '100vh',
-    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowX: 'hidden',
+    '& *::selection': {
+      background: rgba(theme.common.text, 0.9),
+      color: theme.common.bg
+    },
     '& svg': {
       fill: rgba(theme.common.text, 0.9)
     }
@@ -49,17 +55,7 @@ export default function Layout({ children }: LayoutProps) {
   const memoizedLayoutInner = useMemo(
     () => (
       <>
-        <main style={{ minHeight: '100%' }}>
-          <Suspense
-            fallback={
-              <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
-                <Spinner size={35} />
-              </Box>
-            }
-          >
-            {children}
-          </Suspense>
-        </main>
+        <main style={{ flex: 1 }}>{children}</main>
       </>
     ),
     [children]
@@ -77,13 +73,6 @@ export default function Layout({ children }: LayoutProps) {
   const [currentTheme, setCurrentTheme] = useState(getTheme(localTheme || 'light'))
 
   const classes = useStyles({ theme: currentTheme })
-
-  const toastContainerTheme = useMemo(() => {
-    if (currentTheme.mode === 'light') {
-      return 'dark'
-    }
-    return 'light'
-  }, [currentTheme])
 
   useEffect(() => {
     if (isPrefersModeChecked.current || !localTheme) {
@@ -107,13 +96,22 @@ export default function Layout({ children }: LayoutProps) {
     <ThemeProvider theme={currentTheme}>
       <div className={classes.layout}>
         {memoizedNavBar}
-        {memoizedLayoutInner}
+
+        <Suspense
+          fallback={
+            <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
+              <Spinner size={35} />
+            </Box>
+          }
+        >
+          {memoizedLayoutInner}
+        </Suspense>
       </div>
       {memoizedFetchLoader}
       <ToastContainer
         position='bottom-center'
         style={{ fontWeight: 'bold' }}
-        theme={toastContainerTheme}
+        theme={currentTheme.mode as 'light'}
       />
     </ThemeProvider>
   )

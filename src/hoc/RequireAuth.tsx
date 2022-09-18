@@ -1,18 +1,19 @@
-import $auth from '@/store/auth/store'
 import { useStore } from 'effector-react'
+
+import $auth from '@/store/auth/store'
 
 export default function RequireAuthentication<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   displayOnAuthenticated = true
 ) {
-  const isAuthenticated = useStore($auth)
+  const uid = useStore($auth)
 
   return function (props: P) {
-    if (displayOnAuthenticated && isAuthenticated) {
+    if (displayOnAuthenticated && uid) {
       return <WrappedComponent {...props} />
     }
 
-    if (!displayOnAuthenticated && !isAuthenticated) {
+    if (!displayOnAuthenticated && !uid) {
       return <WrappedComponent {...props} />
     }
 

@@ -7,7 +7,7 @@ import { Button } from '@/components/shared'
 import Container from '@/components/shared/Container'
 import Stack from '@/components/shared/Stack/Stack'
 import TextField from '@/components/shared/TextField'
-import fetchWithToastify from '@/handlers/fetchWithToastify'
+import requestWithToastify from '@/handlers/requestWithToastify'
 
 export default function SignIn() {
   const formData = useRef({ email: '', password: '' })
@@ -15,11 +15,13 @@ export default function SignIn() {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
     const { email, password } = formData.current
-    console.log('submit data', email, password)
     if (email && password) {
-      fetchWithToastify(() => signin(email, password), {
-        pending: 'Signing in...',
-        success: 'Successfully signed in.'
+      requestWithToastify(() => signin(email, password), {
+        showProgress: true,
+        messages: {
+          pending: 'Signing in...',
+          success: 'Successfully signed in.'
+        }
       })
     }
   }

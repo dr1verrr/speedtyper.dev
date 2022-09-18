@@ -7,7 +7,7 @@ import { rgba } from '@/utils/styles'
 
 type RuleNames = 'button'
 
-type Variants = 'primary' | 'action' | 'default'
+type Variants = 'primary' | 'action' | 'default' | 'info'
 
 type Sizes = 'small' | 'medium' | 'large'
 
@@ -49,7 +49,7 @@ const useStyles = createUseStyles<RuleNames, IconButtonStyledProps, Theme>({
       background: theme.action.hover
     },
     '& svg': {
-      fill: rgba(theme.common.text, 0.9)
+      fill: theme.button.variant[variant].svg
     }
   })
 })
@@ -89,8 +89,9 @@ export default function IconButton({
   return (
     <button
       className={classes.button}
+      type='button'
       {...props}
-      style={{ fill: theme.button.variant[variant].text, ...sx }}
+      style={sx}
     >
       {props.children}
     </button>

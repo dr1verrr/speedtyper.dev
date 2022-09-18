@@ -1,7 +1,5 @@
-import { CSSProperties, ReactNode } from 'react'
+import { CSSProperties, forwardRef, ReactNode } from 'react'
 import { createUseStyles } from 'react-jss'
-
-import { Theme } from '@/services/theme/types'
 
 type StackProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -18,32 +16,28 @@ type RuleNames = 'stack'
 type StackStyledProps = Omit<StackProps, 'direction'> &
   Required<Pick<StackProps, 'direction'>>
 
-const useStyles = (props: StackStyledProps) =>
-  createUseStyles<RuleNames, StackStyledProps, Theme>({
-    stack: {
-      display: 'flex',
-      flexDirection: props.direction,
-      rowGap: props.spacing,
-      columnGap: props.spacing,
-      ...props.sx
-    }
-  })(props)
+const useStyles = createUseStyles<RuleNames, StackStyledProps>({
+  stack: ({ direction, spacing }) => ({
+    display: 'flex',
+    flexDirection: direction,
+    gap: spacing
+  })
+})
 
-export default function Stack({
-  children,
-  sx,
-  direction = 'row',
-  spacing,
-  ...props
-}: StackProps) {
-  const classes = useStyles({ sx, direction, spacing })
+const Stack = forwardRef<HTMLDivElement, StackProps>(
+  ({ children, sx, direction = 'row', spacing, ...props }, ref) => {
+    const classes = useStyles({ sx, direction, spacing })
+    return (
+      <div
+        ref={ref}
+        className={classes.stack}
+        style={sx}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+)
 
-  return (
-    <div
-      className={classes.stack}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-}
+export default Stack
