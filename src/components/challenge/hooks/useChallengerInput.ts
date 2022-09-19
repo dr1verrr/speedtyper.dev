@@ -256,9 +256,6 @@ const useChallengerInput = ({ refs }: useChallengerProps) => {
             refs.codeRef.current!.textContent =
               refs.codeRef.current!.textContent!.slice(1)
 
-            if (doesNeedScroll()) {
-              refs.cursorRef.current?.scrollIntoView({ block: 'start' })
-            }
 
             if (current.token.type === 'new-row') {
               if (current.token.indentSpaces) {
@@ -281,6 +278,10 @@ const useChallengerInput = ({ refs }: useChallengerProps) => {
               refs.cursorRef.current!.className = cursorClassName + ' ' + 'new-row'
             } else {
               refs.cursorRef.current!.className = cursorClassName
+            }
+
+            if (doesNeedScroll()) {
+              refs.cursorRef.current?.scrollIntoView({ block: 'start' })
             }
           }
 
