@@ -10,7 +10,7 @@ This is a React.js keyboard trainer application.
 ## Features
 
 ### 1. ⌨ Typing features
-- 📜 Large texts optimization, feel free with it
+- 📜 Large texts supporting
 - 🌈 Code highlight
 - 🔍 Language autodetection
 - 💾📊 Saving sessions / statistics
