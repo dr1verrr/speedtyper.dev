@@ -65,7 +65,7 @@ export default function HomePageLogo() {
         sx={{ margin: 0 }}
         variant='h3'
       >
-        keyboard-trainer.dev
+        speedtyper.dev
       </Typography>
     </Box>
   )
