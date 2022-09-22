@@ -1,6 +1,6 @@
-# ⌨ Keyboard Trainer
+# ⌨ Speed Typer
 
-This is a React.js keyboard trainer application.
+This is a React.js speed-typer application.
 
 <video autoplay loop muted src='https://user-images.githubusercontent.com/67706933/190857521-fa1d4098-30c0-4a6e-9d13-ef45ac70c1e5.mp4'>
 </video>
