@@ -24,6 +24,10 @@ const ChallengerProgressBar = lazy(() => import('./ChallengerProgressBar'))
 const ChallengerControls = lazy(() => import('./ChallengerControls'))
 const ChallengerResults = lazy(() => import('./ChallengerResults'))
 
+const getWpm = (pressed: number) => {
+  return pressed / 5 / (1 / 60)
+}
+
 export default function Challenger({
   language,
   code,
@@ -34,6 +38,7 @@ export default function Challenger({
   const { actions: challengerActions, challenger } = useChallenger()
   const [results, setResults] = useState<TChallengerResults>()
   const [resultStats, setResultStats] = useState<ChallengerStatisticsStore>()
+  const pressed = useRef(0)
   const setNext = useEvent(nextChallenge)
 
   const preferences = useStore($preferences)
@@ -62,17 +67,22 @@ export default function Challenger({
   }
 
   const actions = {
-    updateTimer: () => {
-      const time = $challengerWorkStatistics.getState().time
+    updateTimeAndWpm: () => {
+      const { time, keyboard } = $challengerWorkStatistics.getState()
       if (!isTimedOut()) {
-        setStatistics({ time: time + CHALLENGER_STATS_TIME_INCREMENT })
+        const wpm = getWpm(keyboard.pressed - pressed.current)
+        pressed.current = keyboard.pressed
+        setStatistics({
+          time: time + CHALLENGER_STATS_TIME_INCREMENT,
+          wpm
+        })
       } else {
         onTimedOut()
       }
     },
     timer: {
       set: () => {
-        timerInterval.current = setInterval(actions.updateTimer, 1000)
+        timerInterval.current = setInterval(actions.updateTimeAndWpm, 1000)
       },
       clear: () => {
         clearInterval(timerInterval.current)
@@ -83,7 +93,12 @@ export default function Challenger({
       const stats = rest
       const accuracy = ((code!.total - stats.errors.length) / code!.total) * 100
 
-      return { ...stats, timeEnded: new Date(), accuracy }
+      return {
+        ...stats,
+        timeEnded: new Date(),
+        accuracy,
+        wpm: stats.timeline.reduce((p, n) => p + n.wpm, 0) / stats.timeline.length
+      }
     },
     next: () => {
       setNext()
@@ -102,6 +117,7 @@ export default function Challenger({
           }
 
           if (finished) {
+            pressed.current = 0
             const statistics = $challengerStatistics.getState()
             if (statistics.progress === 100) {
               setResultStats(statistics)
