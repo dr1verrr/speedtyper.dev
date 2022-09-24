@@ -182,16 +182,16 @@ sample({
   clock: [challengerWorkStatisticUpdate, challengerWorkStatisticsChanged],
   source: { state: $challengerWorkStatistics },
   fn: ({ state }) => {
-    const getWpm = () => {
-      const pressed = state.keyboard.pressed
-      if (state.time < 1000) {
-        return pressed / 5 / (1 / 60)
-      }
+    //const getWpm = () => {
+    //  const pressed = state.keyboard.pressed
+    //  if (state.time < 1000) {
+    //    return pressed / 5 / (1 / 60)
+    //  }
 
-      const timeinMinutes = state.time / 1000 / 60
+    //  const timeinMinutes = state.time / 1000 / 60
 
-      return pressed / 5 / timeinMinutes
-    }
+    //  return pressed / 5 / timeinMinutes
+    //}
 
     const getBestStats = () => {
       const challengerStats = $challengerStatistics.getState()
@@ -203,13 +203,13 @@ sample({
     }
 
     const progress = getProgress(state.code)
-    const wpm = getWpm()
+    //const wpm = getWpm()
     const bestStats = getBestStats()
     const { maxCombo } = bestStats
 
     const timeline = $challengerStatistics.getState().timeline
     const { currentId, keyboard, ...onlyStats } = state
-    const updatedStats = { ...onlyStats, wpm, progress, maxCombo }
+    const updatedStats = { ...onlyStats, progress, maxCombo }
     const timelineExistedIndex = timeline.findIndex(t => t.time === state.time)
 
     const getUpdatedTimeline = () => {
