@@ -28,6 +28,14 @@ const getWpm = (pressed: number) => {
   return pressed / 5 / (1 / 60)
 }
 
+const getElapsedTime = (elapsedTime: number) => {
+  if (elapsedTime < 0) {
+    return elapsedTime * -1
+  }
+  if (elapsedTime === 0) return 0
+  return elapsedTime
+}
+
 export default function Challenger({
   language,
   code,
@@ -70,8 +78,7 @@ export default function Challenger({
     updateTimeAndWpm: () => {
       const { time, keyboard } = $challengerWorkStatistics.getState()
       if (!isTimedOut()) {
-        const wpm = getWpm(keyboard.pressed - pressed.current)
-        pressed.current = keyboard.pressed
+        const wpm = actions.getUpdatedWpm(keyboard.pressed)
         setStatistics({
           time: time + CHALLENGER_STATS_TIME_INCREMENT,
           wpm
@@ -102,6 +109,12 @@ export default function Challenger({
     },
     next: () => {
       setNext()
+    },
+    getUpdatedWpm: (rightPressed: number) => {
+      const wpm = getWpm(rightPressed - pressed.current)
+      pressed.current = rightPressed
+
+      return wpm
     }
   }
 
@@ -143,21 +156,15 @@ export default function Challenger({
           }
 
           if (paused) {
-            const time = $challengerWorkStatistics.getState().time
+            const { keyboard, time } = $challengerWorkStatistics.getState()
             const elapsedTime =
               new Date().getMilliseconds() -
               timeStartedOrResumed.current!.getMilliseconds()
-
-            const getElapsedTime = () => {
-              if (elapsedTime < 0) {
-                return elapsedTime * -1
-              }
-              if (elapsedTime === 0) return 0
-              return elapsedTime
-            }
+            const wpm = actions.getUpdatedWpm(keyboard.pressed)
 
             setStatistics({
-              time: time + getElapsedTime()
+              time: time + getElapsedTime(elapsedTime),
+              wpm
             })
 
             actions.timer.clear()
