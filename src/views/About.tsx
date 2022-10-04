@@ -64,7 +64,7 @@ export default function About() {
         sx={{ maxWidth: 700 }}
       >
         <a
-          href='https://github.com/dr1verrr/keyboard-trainer.dev'
+          href='https://github.com/dr1verrr/speedtyper.dev'
           rel='noreferrer'
           target='_blank'
         >
