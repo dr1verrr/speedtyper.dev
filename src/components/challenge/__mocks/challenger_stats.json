@@ -1,6 +1,7 @@
 {
   "wpm": 91.2,
   "time": 5000,
+  "accuracy": 100,
   "timeStarted": "2022-09-14T17:44:06.340Z",
   "errors": [2, 14, 16],
   "maxCombo": 22,

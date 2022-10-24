@@ -220,11 +220,10 @@ export default function Challenger({
     return (
       <Box
         sx={{
-          marginBottom: 25,
-          minHeight: '80vh',
+          height: '100%',
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          marginBottom: 25
         }}
       >
         <Suspense
@@ -247,39 +246,30 @@ export default function Challenger({
             </Box>
           }
         >
-          <Box
+          <Stack
+            direction='column'
             sx={{
-              minHeight: '80vh',
-              display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              paddingTop: 20
             }}
           >
-            <Stack
-              direction='column'
-              sx={{
-                alignItems: 'center',
-                paddingTop: 20
-              }}
-            >
-              <Stack spacing={10}>
-                <Button
-                  sx={{ padding: '12px 20px' }}
-                  variant='primary'
-                  onClick={() => {
-                    challengerActions.reset()
-                    setResultStats(undefined)
-                    setResults(undefined)
-                  }}
-                >
-                  Play again
-                </Button>
-                {showNextButton && <Button onClick={actions.next}>Next</Button>}
-              </Stack>
-
-              <ChallengerResults stats={results} />
+            <Stack spacing={10}>
+              <Button
+                sx={{ padding: '12px 20px' }}
+                variant='primary'
+                onClick={() => {
+                  challengerActions.reset()
+                  setResultStats(undefined)
+                  setResults(undefined)
+                }}
+              >
+                Play again
+              </Button>
+              {showNextButton && <Button onClick={actions.next}>Next</Button>}
             </Stack>
-          </Box>
+
+            <ChallengerResults stats={results} />
+          </Stack>
         </Suspense>
       </Box>
     )
