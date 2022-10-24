@@ -289,16 +289,16 @@ export default function Challenger({
     <Container
       sx={{
         padding: 20,
-        minHeight: '84vh',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
         maxWidth: preferences.challenger.use_challenger_large_view_width ? 1440 : 1010
       }}
     >
       <Stack
         direction='column'
         spacing={15}
+        sx={{ width: '100%' }}
       >
         <Stack
           spacing={15}

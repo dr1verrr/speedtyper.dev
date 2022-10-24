@@ -3,6 +3,14 @@ import { persist } from 'effector-storage/local'
 
 import { codeSamples } from '@/views/ChallengePage/constants'
 
+const getDefaultChallenges = () => {
+  return Object.keys(codeSamples).map(lang => {
+    return { code: codeSamples[lang as keyof typeof codeSamples], language: lang }
+  })
+}
+
+const defaultChallenges = getDefaultChallenges()
+
 import { LocalStorageKeys } from './constants'
 import { fetchChallengesFx } from './effects'
 import { nextChallenge } from './events'
@@ -36,12 +44,13 @@ $challenges
     if (payload && payload.length) {
       const challenges = payload.map(({ created, ...ch }) => ch)
       return { ...state, challenges, current: challenges[0], left: challenges }
-    } else {
-      const challenges = Object.keys(codeSamples).map(lang => {
-        const code = codeSamples[lang as keyof typeof codeSamples]
-        return { code, language: lang }
-      })
-      return { ...state, challenges, current: challenges[0], left: challenges }
+    }
+  })
+  .on(fetchChallengesFx.fail, (state, payload) => {
+    return {
+      challenges: defaultChallenges,
+      current: defaultChallenges[0],
+      left: defaultChallenges
     }
   })
   .on(nextChallenge, ({ challenges, left }) => {

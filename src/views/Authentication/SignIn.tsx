@@ -32,16 +32,19 @@ export default function SignIn() {
   }
 
   return (
-    <Container maxWidth='sm'>
+    <Container
+      maxWidth='sm'
+      sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
+    >
       <form
         autoComplete='on'
-        style={{ padding: 15 }}
+        style={{ padding: 15, width: '100%' }}
         onSubmit={onSubmit}
       >
         <Stack
           direction='column'
           spacing={10}
-          sx={{ fontSize: 20 }}
+          sx={{ fontSize: 20, width: '100%' }}
         >
           <Stack
             direction='column'

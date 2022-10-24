@@ -23,12 +23,16 @@ type LayoutProps = {
   children?: ReactNode
 }
 
-const useStyles = createUseStyles<'layout', unknown, Theme>({
+const useStyles = createUseStyles<'layout' | 'layoutInner', unknown, Theme>({
   layout: ({ theme }) => ({
     background: theme.common.bg,
     color: rgba(theme.common.text, 0.9),
-    minHeight: '100vh',
+    height: '100vh',
+    width: '100vw',
+    position: 'relative',
     display: 'flex',
+    maxHeight: '100vh',
+    maxWidth: '100vw',
     flexDirection: 'column',
     overflowX: 'hidden',
     '& *::selection': {
@@ -38,6 +42,14 @@ const useStyles = createUseStyles<'layout', unknown, Theme>({
     '& svg': {
       fill: rgba(theme.common.text, 0.9)
     }
+  }),
+  layoutInner: ({ theme }) => ({
+    display: 'flex',
+    flexWrap: 'wrap',
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    flex: 1
   })
 })
 
@@ -48,18 +60,6 @@ export default function Layout({ children }: LayoutProps) {
   const updateTheme = useEvent(themeChanged)
   const isPrefersModeChecked = useRef(false)
   const isFirstRender = useRef(true)
-
-  const memoizedNavBar = useMemo(() => <NavBar />, [])
-  const memoizedFetchLoader = useMemo(() => <FetchLoader />, [])
-
-  const memoizedLayoutInner = useMemo(
-    () => (
-      <>
-        <main style={{ flex: 1 }}>{children}</main>
-      </>
-    ),
-    [children]
-  )
 
   const getTheme = (mode: ThemeStore) => {
     switch (mode) {
@@ -73,6 +73,18 @@ export default function Layout({ children }: LayoutProps) {
   const [currentTheme, setCurrentTheme] = useState(getTheme(localTheme || 'light'))
 
   const classes = useStyles({ theme: currentTheme })
+
+  const memoizedNavBar = useMemo(() => <NavBar />, [])
+  const memoizedFetchLoader = useMemo(() => <FetchLoader />, [])
+
+  const memoizedLayoutInner = useMemo(
+    () => (
+      <>
+        <main className={classes.layoutInner}>{children}</main>
+      </>
+    ),
+    [children, classes]
+  )
 
   useEffect(() => {
     if (isPrefersModeChecked.current || !localTheme) {
