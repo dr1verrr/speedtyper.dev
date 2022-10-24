@@ -281,6 +281,7 @@ export default function Challenger({
         padding: 20,
         display: 'flex',
         alignItems: 'center',
+        minWidth: 150,
         width: '100%',
         maxWidth: preferences.challenger.use_challenger_large_view_width ? 1440 : 1010
       }}
