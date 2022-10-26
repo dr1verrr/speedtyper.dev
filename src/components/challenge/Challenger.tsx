@@ -222,6 +222,8 @@ export default function Challenger({
         sx={{
           height: '100%',
           display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
           alignItems: 'center',
           marginBottom: 25
         }}

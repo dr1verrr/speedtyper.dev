@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
-
+import Fetch from '@/features/Fetch'
+import ForwardBack from '@/features/navigation/ForwardBack'
 import Prism from '@/services/highlight/prism'
 
 import SpinnerWave from '../loaders/SpinnerWave'
-import { Box } from '../shared'
+import { Box, Button, Container, Stack, Typography } from '../shared'
 import Challenger from './Challenger'
-import { STATUS } from './constants'
-import { StatusValues } from './types'
+import { E_STATUS, STATUS } from './constants'
 
 type ChallengerWrapperProps = {
   challengeData: {
@@ -17,63 +16,100 @@ type ChallengerWrapperProps = {
   showNextButton?: boolean
 }
 
+type LOAD_SUCCESS = E_STATUS.grammarLoaded
+type LOAD_ERROR = E_STATUS.grammarNotFound | E_STATUS.languageNotFound
+
 export default function ChallengerWrapper({
   challengeData,
   showNextButton = false
 }: ChallengerWrapperProps) {
-  const [isLoading, setLoading] = useState(true)
-  const [status, setStatus] = useState<StatusValues>()
-
   const actions = {
-    loadLanguages: (lang: string) => {
-      if (lang) {
-        Prism.plugins.autoloader.loadLanguages(
-          lang,
-          () => actions.status.loadLanguages.success(lang),
-          actions.status.loadLanguages.error
-        )
+    loadLanguages: async (lang: string) => {
+      const getLanguages = () => {
+        return new Promise<LOAD_SUCCESS | LOAD_ERROR>((resolve, reject) => {
+          Prism.plugins.autoloader.loadLanguages(
+            lang,
+            () => resolve(actions.status.loadLanguages.success(lang)),
+            () => resolve(actions.status.loadLanguages.error())
+          )
+        })
       }
+
+      const response = await getLanguages()
+      if (response === E_STATUS.grammarLoaded) {
+        return response
+      }
+
+      return Promise.reject<E_STATUS.grammarNotFound | E_STATUS.languageNotFound>(
+        response
+      )
     },
     status: {
       loadLanguages: {
         success: (lang: string) => {
           if (Prism.languages[lang]) {
-            setStatus(STATUS.grammarLoaded)
+            return STATUS.grammarLoaded
           } else {
-            setStatus(STATUS.languageNotFound)
+            return STATUS.languageNotFound
           }
-          setLoading(false)
         },
         error: () => {
-          setStatus(STATUS.grammarNotFound)
-          setLoading(false)
+          return STATUS.grammarNotFound
         }
       }
     }
   }
 
-  useEffect(() => {
-    setStatus(undefined)
-    setLoading(true)
-    actions.loadLanguages(challengeData.language)
-  }, [challengeData])
+  return (
+    <Fetch
+      fetch={() => actions.loadLanguages(challengeData.language)}
+      loadingElement={
+        <Box sx={{ position: 'fixed', top: '50%', left: '50%', translate: '-50% 0' }}>
+          <SpinnerWave />
+        </Box>
+      }
+      renderError={err => {
+        const error = err as LOAD_ERROR
 
-  if (isLoading) {
-    return (
-      <Box sx={{ position: 'fixed', top: '50%', left: '50%', translate: '-50% 0' }}>
-        <SpinnerWave />
-      </Box>
-    )
-  }
-
-  if (!isLoading && status && status === STATUS.grammarLoaded) {
-    return (
-      <Challenger
-        {...challengeData}
-        showNextButton={showNextButton}
-      />
-    )
-  }
-
-  return null
+        return (
+          <Container
+            style={{
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Stack
+              direction='column'
+              spacing={30}
+            >
+              <Box sx={{ padding: '2em', background: '#222' }}>
+                <Typography sx={{ fontSize: '4em', color: 'red' }}>
+                  Error: {error === E_STATUS.languageNotFound && 'Language not found.'}
+                  {error === E_STATUS.grammarNotFound && 'Grammar not found.'}
+                </Typography>
+              </Box>
+              <ForwardBack>
+                <Button
+                  sx={{ padding: '1em', fontSize: '1.5em' }}
+                  variant='default'
+                >
+                  Go back
+                </Button>
+              </ForwardBack>
+            </Stack>
+          </Container>
+        )
+      }}
+      renderSuccess={() => {
+        return (
+          <Challenger
+            {...challengeData}
+            showNextButton={showNextButton}
+          />
+        )
+      }}
+    />
+  )
 }
