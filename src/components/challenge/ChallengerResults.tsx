@@ -1,27 +1,11 @@
-import 'chartjs-adapter-moment'
-
 import { useParams } from 'react-router-dom'
 
 import { getSession } from '@/api/firestore/challenge'
 import Fetch from '@/features/Fetch'
 
-import SpinnerWave from '../loaders/SpinnerWave'
-import { Container } from '../shared'
+import FullscreenLoader from '../loaders/FullscreenLoader'
 import ChallengerChart from './ChallengerChart'
 import { TChallengerResults } from './types.d'
-
-const Loader = (
-  <Container
-    sx={{
-      minHeight: '80vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}
-  >
-    <SpinnerWave />
-  </Container>
-)
 
 export default function ChallengerResults({ stats }: { stats?: TChallengerResults }) {
   const params = useParams() as any
@@ -30,7 +14,7 @@ export default function ChallengerResults({ stats }: { stats?: TChallengerResult
     return (
       <Fetch
         fetch={getSession}
-        loadingElement={Loader}
+        loadingElement={FullscreenLoader}
         renderSuccess={response => {
           const stats = response?.results
           if (stats) {

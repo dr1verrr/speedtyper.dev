@@ -2,7 +2,7 @@ import Fetch from '@/features/Fetch'
 import ForwardBack from '@/features/navigation/ForwardBack'
 import Prism from '@/services/highlight/prism'
 
-import SpinnerWave from '../loaders/SpinnerWave'
+import FullscreenLoader from '../loaders/FullscreenLoader'
 import { Box, Button, Container, Stack, Typography } from '../shared'
 import Challenger from './Challenger'
 import { E_STATUS, STATUS } from './constants'
@@ -63,11 +63,7 @@ export default function ChallengerWrapper({
   return (
     <Fetch
       fetch={() => actions.loadLanguages(challengeData.language)}
-      loadingElement={
-        <Box sx={{ position: 'fixed', top: '50%', left: '50%', translate: '-50% 0' }}>
-          <SpinnerWave />
-        </Box>
-      }
+      loadingElement={FullscreenLoader}
       renderError={err => {
         const error = err as LOAD_ERROR
 

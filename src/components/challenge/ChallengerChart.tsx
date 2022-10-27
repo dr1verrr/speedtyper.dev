@@ -1,3 +1,5 @@
+import 'chartjs-adapter-moment'
+
 import {
   CategoryScale,
   Chart as ChartJS,

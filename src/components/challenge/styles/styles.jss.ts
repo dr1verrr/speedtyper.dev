@@ -97,7 +97,7 @@ const useStyles = {
       transition: 'filter 0.1s ease',
       width: '100%',
       overflow: 'hidden',
-      maxHeight: '54vh',
+      maxHeight: '50vh',
       filter: (paused && 'blur(12.5px)') || 'none',
       display: 'flex',
       justifyContent: 'center'
