@@ -1,4 +1,4 @@
-import '../../../styles/ChallengerInput.css'
+import './styles/ChallengerInput.css'
 
 import { useStore } from 'effector-react'
 import React, { useEffect, useRef, useState } from 'react'
