@@ -1,4 +1,4 @@
-import { ChallengerStatisticsStore } from './store'
+import { ChallengerStatisticsStore } from './store/store'
 
 type ChallengerInputProps = {
   language: string

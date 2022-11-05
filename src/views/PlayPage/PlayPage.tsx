@@ -1,5 +1,5 @@
-import Play from '@/components/challenge/Play'
+import { PlayChallenges } from '@/features/challenge.features'
 
 export default function PlayPage() {
-  return <Play />
+  return <PlayChallenges />
 }

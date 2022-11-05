@@ -1,13 +1,13 @@
+import FullscreenLoader from '@/components/loaders/FullscreenLoader'
+import { Box, Button, Container, Stack, Typography } from '@/components/shared'
 import Fetch from '@/features/Fetch'
 import ForwardBack from '@/features/navigation/ForwardBack'
 import Prism from '@/services/highlight/prism'
 
-import FullscreenLoader from '../loaders/FullscreenLoader'
-import { Box, Button, Container, Stack, Typography } from '../shared'
-import Challenger from './Challenger'
-import { E_STATUS, STATUS } from './constants'
+import { E_STATUS, STATUS } from '../../../store/store.constants'
+import Challenger from '../Challenger'
 
-type ChallengerWrapperProps = {
+type PlayChallengeProps = {
   challengeData: {
     id?: string
     language: string
@@ -19,10 +19,10 @@ type ChallengerWrapperProps = {
 type LOAD_SUCCESS = E_STATUS.grammarLoaded
 type LOAD_ERROR = E_STATUS.grammarNotFound | E_STATUS.languageNotFound
 
-export default function ChallengerWrapper({
+export default function PlayChallenge({
   challengeData,
   showNextButton = false
-}: ChallengerWrapperProps) {
+}: PlayChallengeProps) {
   const actions = {
     loadLanguages: async (lang: string) => {
       const getLanguages = () => {

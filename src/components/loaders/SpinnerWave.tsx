@@ -9,6 +9,8 @@ type SpinnerProps = {
   sx?: CSSProperties
 }
 
+export type { SpinnerProps }
+
 type RuleNames = 'spinner' | '@keyframes spinner'
 
 type SpinnerStyledProps = Omit<SpinnerProps, 'size'> & {

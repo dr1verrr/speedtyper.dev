@@ -24,7 +24,7 @@ export default function Features() {
             highlighted
             sx={{ fontSize: 24, padding: '12px 25px' }}
           >
-           ⌨️ Train by your own text / code
+            ⌨️ Train by your own text / code
           </Typography>
           <video
             autoPlay

@@ -3,16 +3,11 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import $preferences from '@/store/preferences/store'
 
-import { Highlighted } from '../helpers'
-import { $challengerStatistics } from '../store'
-import { ChallengerInputProps } from '../types'
-import useChallenger from './useChallenger'
-
-const defaults = {
-  loading: {
-    highlighting: true
-  }
-}
+import { $challengerStatistics } from '../../store/store'
+import { Highlighted } from '../../store/store.helpers'
+import { ChallengerInputProps } from '../../types'
+import useChallenger from '../useChallenger'
+import { defaults } from './constants'
 
 type Loading = {
   highlighting: boolean
@@ -255,7 +250,6 @@ const useChallengerInput = ({ refs }: useChallengerProps) => {
               current.symbol
             refs.codeRef.current!.textContent =
               refs.codeRef.current!.textContent!.slice(1)
-
 
             if (current.token.type === 'new-row') {
               if (current.token.indentSpaces) {

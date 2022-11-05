@@ -11,8 +11,8 @@ import {
   challengerStatsReset,
   challengerWorkStatisticsChanged,
   statusToggled
-} from './events'
-import { Highlighted } from './helpers'
+} from './store.events'
+import { Highlighted } from './store.helpers'
 
 type BaseChallengerStatistics = {
   code: null | {

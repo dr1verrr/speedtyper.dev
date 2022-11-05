@@ -3,26 +3,27 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { createSession } from '@/api/firestore/challenge'
+import FullscreenLoader from '@/components/loaders/FullscreenLoader'
+import { Box, Button, Container, Stack } from '@/components/shared'
 import { nextChallenge } from '@/store/challenges/events'
 import $preferences from '@/store/preferences/store'
 
-import SpinnerWave from '../loaders/SpinnerWave'
-import { Box, Button, Container, Stack } from '../shared'
-import ChallengerInput from './ChallengerInput'
-import { CHALLENGER_STATS_TIME_INCREMENT } from './constants'
-import { challengerWorkStatisticsChanged } from './events'
-import useChallenger from './hooks/useChallenger'
-import {
-  $challengerStatistics,
-  $challengerWorkStatistics,
-  ChallengerStatisticsStore
-} from './store'
-import { ChallengerProps, TChallengerResults } from './types.d'
+import { useChallenger } from '../../hooks'
+import { $challengerStatistics, $challengerWorkStatistics } from '../../store'
+import { ChallengerStatisticsStore } from '../../store/store'
+import { CHALLENGER_STATS_TIME_INCREMENT } from '../../store/store.constants'
+import { challengerWorkStatisticsChanged } from '../../store/store.events'
+import { ChallengerProps, TChallengerResults } from '../../types'
+import ChallengerInput from '../shared/ui-interact/ChallengerInput'
 
-const ChallengerRealtimeStatistics = lazy(() => import('./ChallengerRealtimeStatistics'))
-const ChallengerProgressBar = lazy(() => import('./ChallengerProgressBar'))
-const ChallengerControls = lazy(() => import('./ChallengerControls'))
-const ChallengerResults = lazy(() => import('./ChallengerResults'))
+const ChallengerRealtimeStatistics = lazy(
+  () => import('../shared/statistics/ChallengerRealtimeStatistics')
+)
+const ChallengerProgressBar = lazy(
+  () => import('../shared/progress/ChallengerProgressBar')
+)
+const ChallengerControls = lazy(() => import('../shared/ui-interact/ChallengerControls'))
+const ChallengerResults = lazy(() => import('../../views/ChallengerResults.views'))
 
 const getWpm = (pressed: number) => {
   return pressed / 5 / (1 / 60)
@@ -228,26 +229,7 @@ export default function Challenger({
           marginBottom: 25
         }}
       >
-        <Suspense
-          fallback={
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <SpinnerWave size={150} />
-            </Box>
-          }
-        >
+        <Suspense fallback={<FullscreenLoader />}>
           <Stack
             direction='column'
             sx={{

@@ -4,19 +4,20 @@ import { getElementFromComponentOrJSX } from './helpers'
 
 type FetchProps<FetchFn, Error = any> = {
   loadingElement: React.ComponentType | JSX.Element
-  renderError?: (error: Error) => JSX.Element | null
+  renderError?: (error: Error, refetch: FetchFn) => JSX.Element | void | null
   renderSuccess?: (
-    successData: FetchFn extends (...args: any[]) => Promise<infer Res> ? Res : never
-  ) => JSX.Element | null
+    successData: FetchFn extends (...args: any[]) => Promise<infer Res> ? Res : never,
+    refetch: FetchFn
+  ) => JSX.Element | void | null
   fetch: FetchFn extends (...args: any[]) => Promise<infer Res> ? FetchFn : never
 }
 
-export default function Fetch<FetchFn, Error>({
+const Fetch = <FetchFn, Error>({
   loadingElement,
   renderError,
   fetch,
   renderSuccess
-}: FetchProps<FetchFn, Error>) {
+}: FetchProps<FetchFn, Error>) => {
   const [loader, setLoader] = useState<JSX.Element>()
   const [isLoading, setLoading] = useState(false)
   const [error, setError] = useState<Error>()
@@ -46,12 +47,18 @@ export default function Fetch<FetchFn, Error>({
   }
 
   if (renderError && error) {
-    return renderError(error)
+    const renderedError = renderError(error, fetch)
+    if (renderedError) return renderedError
+    return null
   }
 
   if (renderSuccess && response) {
-    return renderSuccess(response)
+    const renderedSuccess = renderSuccess(response, fetch)
+    if (renderedSuccess) return renderedSuccess
+    return null
   }
 
   return null
 }
+
+export default Fetch

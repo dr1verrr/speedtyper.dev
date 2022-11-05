@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 
 import { getChallenge } from '@/api/firestore/challenge'
-import ChallengerWrapper from '@/components/challenge'
 import SpinnerWave from '@/components/loaders/SpinnerWave'
 import Box from '@/components/shared/Box'
+import PlayChallenge from '@/features/challenge.features'
 
 interface ChallengeData {
   language: string
@@ -34,7 +34,7 @@ export default function ChallengePage() {
   }, [location, params])
 
   if (challengeData) {
-    return <ChallengerWrapper challengeData={challengeData} />
+    return <PlayChallenge challengeData={challengeData} />
   }
 
   return (

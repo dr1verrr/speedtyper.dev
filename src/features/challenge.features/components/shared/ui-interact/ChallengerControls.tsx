@@ -1,8 +1,8 @@
-import Pause from '../icons/Pause'
-import Play from '../icons/Play'
-import Refresh from '../icons/Refresh'
-import { Box, Button, Stack, Typography } from '../shared'
-import { useChallenger } from './hooks'
+import Pause from '@/components/icons/Pause'
+import Play from '@/components/icons/Play'
+import Refresh from '@/components/icons/Refresh'
+import { Box, Button, Stack, Typography } from '@/components/shared'
+import { useChallenger } from '@/features/challenge.features/hooks'
 
 type ChallengerControlsProps = {
   showNextButton?: boolean

@@ -15,11 +15,11 @@ import {
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 
+import Metrics from '@/components/metrics/Metrics'
+import { Box, Container, Stack } from '@/components/shared'
 import { convertMsToTime } from '@/utils/timestamp'
 
-import Metrics from '../metrics/Metrics'
-import { Box, Container, Stack } from '../shared'
-import { TChallengerResults } from './types'
+import { TChallengerResults } from '../../../types'
 
 ChartJS.register(
   CategoryScale,

@@ -1,5 +1,4 @@
 import { createStore } from 'effector'
-import { persist } from 'effector-storage/local'
 
 import { codeSamples } from '@/views/ChallengePage/constants'
 
@@ -9,9 +8,6 @@ const getDefaultChallenges = () => {
   })
 }
 
-const defaultChallenges = getDefaultChallenges()
-
-import { LocalStorageKeys } from './constants'
 import { fetchChallengesFx } from './effects'
 import { nextChallenge } from './events'
 
@@ -37,16 +33,22 @@ export type { ChallengesStore, Challenge }
 
 const $challenges = createStore<ChallengesStore>(defaultStore)
 
-persist({ store: $challenges, key: LocalStorageKeys.challenges })
-
 $challenges
   .on(fetchChallengesFx.doneData, (state, payload) => {
     if (payload && payload.length) {
       const challenges = payload.map(({ created, ...ch }) => ch)
       return { ...state, challenges, current: challenges[0], left: challenges }
     }
+    const defaultChallenges = getDefaultChallenges()
+    return {
+      ...state,
+      challenges: defaultChallenges,
+      current: defaultChallenges[0],
+      left: defaultChallenges
+    }
   })
   .on(fetchChallengesFx.fail, (state, payload) => {
+    const defaultChallenges = getDefaultChallenges()
     return {
       challenges: defaultChallenges,
       current: defaultChallenges[0],

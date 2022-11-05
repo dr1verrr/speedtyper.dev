@@ -1,17 +1,15 @@
-import './styles/ChallengerInput.css'
+import '../../../styles/ChallengerInput.css'
 
 import { useStore } from 'effector-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Box, Button, Typography } from '@/components/shared'
+import { useChallenger, useChallengerInput } from '@/features/challenge.features/hooks'
+import { useStyles } from '@/features/challenge.features/styles/styles.jss'
+import { ChallengerInputProps } from '@/features/challenge.features/types'
 import { useTheme } from '@/services/theme/actions'
 import usePrismStyles from '@/services/theme/prism-themes'
 import $preferences from '@/store/preferences/store'
-
-import { useChallenger } from './hooks'
-import useChallengerInput from './hooks/useChallengerInput'
-import { useStyles } from './styles/styles.jss'
-import { ChallengerInputProps } from './types'
 
 export default function ChallengerInput({ language, code }: ChallengerInputProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)

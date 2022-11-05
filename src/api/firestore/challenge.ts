@@ -19,7 +19,7 @@ import {
 
 import { getUser } from '@/app/actions'
 import { db } from '@/app/config/firebase'
-import { TChallengerResults } from '@/components/challenge/types.d'
+import { TChallengerResults } from '@/features/challenge.features/types'
 
 type FirebaseChallenge = {
   code: string

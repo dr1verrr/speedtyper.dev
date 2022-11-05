@@ -1,12 +1,11 @@
 import { useStore } from 'effector-react'
 import { useEffect, useRef, useState } from 'react'
 
+import Metrics from '@/components/metrics/Metrics'
+import { Stack } from '@/components/shared'
+import { useChallenger } from '@/features/challenge.features/hooks'
+import $challenger, { $challengerStatistics } from '@/features/challenge.features/store'
 import { convertMsToTime } from '@/utils/timestamp'
-
-import Metrics from '../metrics/Metrics'
-import { Stack } from '../shared'
-import { useChallenger } from './hooks'
-import { $challenger, $challengerStatistics } from './store'
 
 export default function ChallengerRealtimeStatistics() {
   const statistics = useStore($challengerStatistics)

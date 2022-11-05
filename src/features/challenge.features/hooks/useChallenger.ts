@@ -2,6 +2,7 @@ import { useEvent, useStore } from 'effector-react'
 
 import { nextChallenge } from '@/store/challenges/events'
 
+import { $challenger, ChallengerStore } from '../store/store'
 import {
   challengerChanged,
   challengerReset,
@@ -10,9 +11,8 @@ import {
   challengerStatsReset,
   challengerWorkStatisticsChanged,
   statusToggled
-} from '../events'
-import { getHighlighted } from '../helpers'
-import { $challenger, ChallengerStore } from '../store'
+} from '../store/store.events'
+import { getHighlighted } from '../store/store.helpers'
 
 const useChallenger = () => {
   const { finished, started, paused, highlighted, id } = useStore($challenger)
@@ -58,6 +58,7 @@ const useChallenger = () => {
       actions.statistics.reset()
     },
     nextChallenge: () => {
+      console.log('next challenge')
       setNextChallenge()
     },
     onUnmount: () => {
