@@ -112,7 +112,7 @@ export default function Layout({ children }: LayoutProps) {
         <Suspense
           fallback={
             <Box sx={{ position: 'fixed', bottom: 50, left: 50 }}>
-              <Spinner size={35} />
+              <Spinner size={15} />
             </Box>
           }
         >
