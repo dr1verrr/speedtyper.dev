@@ -60,10 +60,6 @@ function AppRoutes() {
         />
       </Route>
       <Route
-        element={<ChallengePage />}
-        path='/challenge'
-      />
-      <Route
         element={<ChallengesPage />}
         path='/challenges'
       />

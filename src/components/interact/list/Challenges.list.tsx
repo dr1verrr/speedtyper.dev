@@ -14,7 +14,7 @@ import { Box, Button, Container, Stack, TextField, Typography } from '@/componen
 import requestWithToastify from '@/handlers/requestWithToastify'
 
 type ChallengesListProps = {
-  data: Challenge[]
+  data: Challenge[] | undefined
 }
 
 const toastId = 'deleted'
@@ -35,7 +35,7 @@ export default function ChallengesList({ data }: ChallengesListProps) {
           { autoClose: 2000, updateId: toastId }
         )
         .then(() => {
-          setListData(chs => chs.filter(c => c.id !== id))
+          setListData(chs => chs?.filter(c => c.id !== id))
         })
     },
     removeAll: async () => {
@@ -56,6 +56,28 @@ export default function ChallengesList({ data }: ChallengesListProps) {
     }
   }
 
+  if (!listData || !listData.length) {
+    return (
+      <Container
+        maxWidth='sm'
+        sx={{ textAlign: 'center' }}
+      >
+        <Stack
+          direction='column'
+          spacing={25}
+          sx={{ padding: 30, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Typography sx={{ fontSize: 42, display: 'block' }}>
+            No data existed.
+          </Typography>
+          <Link to='/get-started'>
+            <Button>Create your first one challenge</Button>
+          </Link>
+        </Stack>
+      </Container>
+    )
+  }
+
   return (
     <Container sx={{ maxWidth: 540 }}>
       <Stack
@@ -72,7 +94,7 @@ export default function ChallengesList({ data }: ChallengesListProps) {
           </Link>
           <Button onClick={actions.removeAll}>✖️ Delete all</Button>
         </Stack>
-        {listData.map((ch, idx) => (
+        {listData?.map((ch, idx) => (
           <Stack
             key={idx}
             direction='column'
