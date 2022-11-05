@@ -71,18 +71,14 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }, [highlighted])
 
   const onBlur: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    if (isFocused) {
-      setFocused(false)
-    }
+    setFocused(false)
   }
 
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    if (!isFocused) {
-      if (!started) {
-        inputRef.current?.blur()
-      } else {
-        setFocused(true)
-      }
+    if (!started) {
+      inputRef.current?.blur()
+    } else {
+      setFocused(true)
     }
   }
 

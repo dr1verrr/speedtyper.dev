@@ -59,8 +59,8 @@ const lightTheme = {
     color: '#000',
     hover: '#333',
     cursor: {
-      bg: '#252525',
-      color: '#fff'
+      bg: '#000',
+      color: '#fafafa'
     },
     progressBar: {
       filled: {

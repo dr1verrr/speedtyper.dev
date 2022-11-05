@@ -26,6 +26,31 @@ type ChallengerStyledProps = ChallengerInputProps & {
   preferences: PreferencesStore
 }
 
+type GetCursorColorProps = {
+  focused: boolean
+  started: boolean
+  theme: Theme
+}
+
+const HELPERS = {
+  getCursorColor: ({ focused, started, theme }: GetCursorColorProps) => {
+    let color = ''
+    console.log('GET CURSOR COLOR IS FOCUSED', focused)
+
+    if (started) {
+      if (focused) {
+        color = theme.highlighter.cursor.color
+      } else {
+        color = theme.highlighter.color
+      }
+    } else {
+      color = rgba(theme.highlighter.color, 0.85)
+    }
+
+    return { color }
+  }
+}
+
 const useStyles = {
   challenger: createUseStyles<ChallengerRuleNames, ChallengerStyledProps, Theme>({
     '@keyframes gradient': {
@@ -120,12 +145,7 @@ const useStyles = {
       border: `1px solid ${theme.divider}`
     }),
     cursor: ({ theme, focused, preferences, started, paused }) => ({
-      color:
-        started && focused
-          ? theme.highlighter.cursor.color
-          : !started
-          ? rgba(theme.highlighter.color, 0.85)
-          : theme.highlighter.color,
+      color: HELPERS.getCursorColor({ focused, started, theme }).color,
       background: focused ? theme.highlighter.cursor.bg : theme.highlighter.background,
       position: 'relative',
       scrollMargin: '35px',
