@@ -101,6 +101,7 @@ const ChallengerResult = ({ options, next, results, repeat }: ChallengerResultPr
 const ChallengerCollectStats = () => {
   const { actions: contextActions, results } = useChallengerContext()
   const [resultStats, setResultStats] = useState<ChallengerStatisticsStore>()
+
   const getWpm = (pressed: number) => {
     return pressed / 5 / (1 / 60)
   }
@@ -232,6 +233,7 @@ const ChallengerCollectStats = () => {
 
   useEffect(() => {
     if (resultStats) {
+      challengerActions.reset()
       contextActions.setResults(actions.getResults(resultStats))
     }
   }, [resultStats])
@@ -257,7 +259,7 @@ const ChallengerProvider = ({
   options,
   multiple
 }: ChallengerProviderProps) => {
-  const { actions: challengerActions, challenger } = useChallenger()
+  const { actions: challengerActions } = useChallenger()
   const [results, setResults] = useState<TChallengerResults | null>(null)
 
   useEffect(() => {
@@ -299,7 +301,7 @@ const ChallengerProvider = ({
 
   return (
     <ChallengerContext.Provider value={{ results, actions, options }}>
-      {options.collectStats && challenger.started && <ChallengerCollectStats />}
+      {options.collectStats && <ChallengerCollectStats />}
       {results ? (
         <ChallengerResult
           next={next}
