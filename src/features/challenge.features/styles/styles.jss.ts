@@ -35,7 +35,6 @@ type GetCursorColorProps = {
 const HELPERS = {
   getCursorColor: ({ focused, started, theme }: GetCursorColorProps) => {
     let color = ''
-    console.log('GET CURSOR COLOR IS FOCUSED', focused)
 
     if (started) {
       if (focused) {
@@ -106,6 +105,7 @@ const useStyles = {
       position: 'relative',
       fontSize: preferences.challenger.fontSize,
       fontFamily: preferences.challenger.fontFamily + ', monospace',
+      fontVariantLigatures: 'none',
       lineHeight: 1.45,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-all',
