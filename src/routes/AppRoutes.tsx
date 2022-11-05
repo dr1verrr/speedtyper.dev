@@ -14,7 +14,7 @@ const Profile = lazy(() => import('@/views/Profile'))
 const ChallengePage = lazy(() => import('@/views/ChallengePage'))
 const GetStartedPage = lazy(() => import('@/views/GetStarted'))
 const ChallengerResultsPage = lazy(
-  () => import('@/components/challenge/ChallengerResults')
+  () => import('@/features/challenge.features/views/ChallengerResults.views')
 )
 const PlayPage = lazy(() => import('@/views/PlayPage'))
 const ChallengesPage = lazy(() => import('@/views/ChallengesPage'))
