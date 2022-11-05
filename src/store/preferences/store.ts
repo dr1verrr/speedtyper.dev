@@ -25,8 +25,8 @@ const defaultStore = {
     show_controls: true,
     collect_stats: true,
     use_challenger_large_view_width: true,
-    fontFamily: 'Iosevka SS14',
-    fontSize: 18
+    fontFamily: 'JetBrains Mono',
+    fontSize: 17
   }
 }
 
