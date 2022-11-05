@@ -1,7 +1,8 @@
 @font-face {
-  font-family: 'Iosevka SS14';
+  font-family: 'JetBrains Mono';
   font-display: swap;
   font-weight: 400;
+  font-variant-ligatures: none;
   font-stretch: normal;
   font-style: normal;
   src: url('/fonts/JetBrainsMonoNL-Regular.ttf') format('truetype'),
