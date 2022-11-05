@@ -62,7 +62,7 @@ export default function HomePageLogo() {
       </Box>
       <Typography
         className={classes.title}
-        sx={{ margin: 0 }}
+        sx={{ margin: 0, fontWeight: 600 }}
         variant='h3'
       >
         speedtyper.dev

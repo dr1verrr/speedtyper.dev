@@ -6,6 +6,9 @@ import { useChallenger } from '@/features/challenge.features/hooks'
 
 type ChallengerControlsProps = {
   showNextButton?: boolean
+  options?: {
+    showNextButton?: boolean
+  }
 }
 
 export default function ChallengerControls({ showNextButton }: ChallengerControlsProps) {

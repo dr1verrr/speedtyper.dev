@@ -56,6 +56,10 @@ function AppRoutes() {
           element={<SessionPage />}
           path='/session/:id'
         />
+        <Route
+          element={<ChallengePage />}
+          path='/challenge'
+        />
       </Route>
       <Route
         element={<ChallengesPage />}
