@@ -58,7 +58,6 @@ const useChallenger = () => {
       actions.statistics.reset()
     },
     nextChallenge: () => {
-      console.log('next challenge')
       setNextChallenge()
     },
     onUnmount: () => {

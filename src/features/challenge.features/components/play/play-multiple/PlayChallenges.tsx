@@ -23,6 +23,7 @@ Status.Success = ({ challenges, refetch }: TSuccessProps) => {
   if (challenge) {
     return (
       <PlayChallenge
+        multiple
         showNextButton
         challengeData={challenge}
       />

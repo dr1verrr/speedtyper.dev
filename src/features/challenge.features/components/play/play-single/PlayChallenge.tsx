@@ -1,8 +1,12 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useStore } from 'effector-react'
+
 import FullscreenLoader from '@/components/loaders/FullscreenLoader'
 import { Box, Button, Container, Stack, Typography } from '@/components/shared'
 import Fetch from '@/features/Fetch'
 import ForwardBack from '@/features/navigation/ForwardBack'
 import Prism from '@/services/highlight/prism'
+import $preferences from '@/store/preferences/store'
 
 import { E_STATUS, STATUS } from '../../../store/store.constants'
 import Challenger from '../Challenger'
@@ -13,15 +17,38 @@ type PlayChallengeProps = {
     language: string
     code: string
   }
+  multiple?: boolean
   showNextButton?: boolean
 }
 
 type LOAD_SUCCESS = E_STATUS.grammarLoaded
 type LOAD_ERROR = E_STATUS.grammarNotFound | E_STATUS.languageNotFound
 
+const Status = () => {}
+
+Status.Success = ({ challengeData, showNextButton, multiple }: PlayChallengeProps) => {
+  const { challenger } = useStore($preferences)
+
+  return (
+    <Challenger
+      multiple={multiple}
+      options={{
+        collectStats: challenger.collect_stats,
+        showControls: challenger.show_controls,
+        showProgressBar: challenger.show_progressbar,
+        showStats: challenger.show_stats,
+        useLargeView: challenger.use_challenger_large_view_width
+      }}
+      {...challengeData}
+      showNextButton={showNextButton}
+    />
+  )
+}
+
 export default function PlayChallenge({
   challengeData,
-  showNextButton = false
+  showNextButton = false,
+  multiple
 }: PlayChallengeProps) {
   const actions = {
     loadLanguages: async (lang: string) => {
@@ -100,8 +127,9 @@ export default function PlayChallenge({
       }}
       renderSuccess={() => {
         return (
-          <Challenger
-            {...challengeData}
+          <Status.Success
+            challengeData={challengeData}
+            multiple={multiple}
             showNextButton={showNextButton}
           />
         )

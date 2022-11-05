@@ -5,11 +5,22 @@ type ChallengerInputProps = {
   code: string
 }
 
+type ChallengerOptions = {
+  collectStats?: boolean
+  showProgressBar?: boolean
+  showControls?: boolean
+  showStats?: boolean
+  collectStats?: boolean
+  useLargeView?: boolean
+}
+
 type ChallengerProps = {
   language: string
   code: string
   id?: string
   showNextButton?: boolean
+  multiple?: boolean
+  options?: ChallengerOptions
 }
 
 type TChallengerResults = Omit<
@@ -35,5 +46,6 @@ export type {
   TChallengerResults,
   TSTATUS,
   StatusKeys,
+  ChallengerOptions,
   StatusValues
 }
