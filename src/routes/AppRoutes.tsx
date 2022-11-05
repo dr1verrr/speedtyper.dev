@@ -13,9 +13,7 @@ const SignUp = lazy(() => import('@/views/Authentication/SignUp'))
 const Profile = lazy(() => import('@/views/Profile'))
 const ChallengePage = lazy(() => import('@/views/ChallengePage'))
 const GetStartedPage = lazy(() => import('@/views/GetStarted'))
-const ChallengerResultsPage = lazy(
-  () => import('@/features/challenge.features/views/ChallengerResults.views')
-)
+const SessionPage = lazy(() => import('@/views/SessionPage'))
 const PlayPage = lazy(() => import('@/views/PlayPage'))
 const ChallengesPage = lazy(() => import('@/views/ChallengesPage'))
 const ChallengeInfo = lazy(() => import('@/views/ChallengeInfo'))
@@ -55,7 +53,7 @@ function AppRoutes() {
           path='/challenge/:id'
         />
         <Route
-          element={<ChallengerResultsPage />}
+          element={<SessionPage />}
           path='/session/:id'
         />
       </Route>
