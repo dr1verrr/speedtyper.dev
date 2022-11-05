@@ -54,12 +54,13 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
     if (!started && !highlighted) {
       actions.challenger.tokenize(code, language)
     }
-    if (paused || finished) {
-      inputRef.current?.blur()
-    }
-
-    if (started && !paused) {
-      inputRef.current?.focus()
+    if (highlighted) {
+      if (paused) {
+        return inputRef.current?.blur()
+      }
+      if (started) {
+        return inputRef.current?.focus()
+      }
     }
   }, [started, paused, finished, highlighted, code, language])
 
@@ -75,11 +76,7 @@ export default function ChallengerInput({ language, code }: ChallengerInputProps
   }
 
   const onFocus: React.FocusEventHandler<HTMLTextAreaElement> = e => {
-    if (!started) {
-      inputRef.current?.blur()
-    } else {
-      setFocused(true)
-    }
+    setFocused(true)
   }
 
   return (
