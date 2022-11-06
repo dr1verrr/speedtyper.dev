@@ -30,7 +30,7 @@ const useStyles = createUseStyles<RuleNames, Omit<ProgressBarProps, 'style'>, Th
       content: '""',
       transition: 'translate 0.2s ease',
       translate: `-${100 - value}% 0`,
-      background: theme.highlighter.progressBar.filled.color,
+      background: 'palevioletred',
       height: '100%',
       width: '100%',
       position: 'absolute',
