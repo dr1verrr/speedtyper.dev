@@ -15,7 +15,6 @@ export default function ChallengeInfo() {
         fetch={() => getChallenge({ challengeId: params.id })}
         loadingElement={FullscreenLoader}
         renderSuccess={challenge => {
-          console.log('CHALLENGE', challenge)
           if (challenge) {
             return <ChallengeEditable data={challenge} />
           }

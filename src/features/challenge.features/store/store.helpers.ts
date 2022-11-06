@@ -106,7 +106,6 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
                 type: 'new-row',
                 indentSpaces: indentChars
               })
-              //console.log('WORD', word.split(''))
 
               if (word) {
                 resplittedTokens.push({
@@ -204,8 +203,6 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
       }
     }
   }
-
-  console.log('reformatted tokens', reformattedTokens)
 
   return {
     code,
