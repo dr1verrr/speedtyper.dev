@@ -84,7 +84,19 @@ const getHighlighted = (code: string, language: string, grammar?: Prism.Grammar)
                   nextChar === '"' ||
                   nextChar === "'"
                 ) {
-                  word = nextChars.slice(idx)
+                  const removeSpecChars = (word: string) => {
+                    let clearWord = ''
+                    for (const ltr of word) {
+                      if (ltr.match(/[A-Za-z]/)) {
+                        clearWord += ltr
+                      } else break
+                    }
+                    return clearWord
+                  }
+                  const clearWord = removeSpecChars(nextChars.slice(idx))
+                  if (clearWord) {
+                    word = clearWord
+                  }
                   break
                 } else break
               }
