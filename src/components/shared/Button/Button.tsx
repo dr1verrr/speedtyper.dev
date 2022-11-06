@@ -21,7 +21,7 @@ type ButtonStyledProps = Omit<ButtonProps, 'variant'> & {
   variant: Variants
 }
 
-export type { Variants }
+export type { Variants, ButtonProps }
 
 const useStyles = createUseStyles<RuleNames, ButtonStyledProps, Theme>({
   button: {

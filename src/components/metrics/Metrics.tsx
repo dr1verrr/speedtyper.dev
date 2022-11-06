@@ -28,7 +28,7 @@ const useStyles = createUseStyles<RuleNames, StyledMetricsProps, Theme>({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    border: `1px solid ${theme.divider}`,
+    border: `1px solid ${theme.highlighter.progressBar.noFilled.color}`,
     borderRadius: 10,
     fontSize: 20,
     fontWeight: 600

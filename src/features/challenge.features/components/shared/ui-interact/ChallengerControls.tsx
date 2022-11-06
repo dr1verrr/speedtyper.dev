@@ -1,7 +1,7 @@
 import Pause from '@/components/icons/Pause'
 import Play from '@/components/icons/Play'
 import Refresh from '@/components/icons/Refresh'
-import { Box, Button, Stack, Typography } from '@/components/shared'
+import { Button, Stack, Typography } from '@/components/shared'
 import { useChallenger } from '@/features/challenge.features/hooks'
 
 type ChallengerControlsProps = {
@@ -40,15 +40,13 @@ export default function ChallengerControls({ showNextButton }: ChallengerControl
         sx={{ display: 'flex', alignItems: 'center' }}
         onClick={handlePlayPause()}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {(!started || paused) && <Play />}
-          {started && !paused && <Pause />}
-        </Box>
+        {(!started || paused) && <Play />}
+        {started && !paused && <Pause />}
         <Typography
           highlighted
           sx={{ cursor: 'pointer', fontSize: 12, marginLeft: 5 }}
         >
-          Alt+`
+          {!started ? 'Enter' : 'Alt+`'}
         </Typography>
       </Button>
       <Button

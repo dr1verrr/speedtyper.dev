@@ -30,7 +30,7 @@ const useStyles = createUseStyles<RuleNames, Omit<ProgressBarProps, 'style'>, Th
       content: '""',
       transition: 'translate 0.2s ease',
       translate: `-${100 - value}% 0`,
-      background: 'palevioletred',
+      background: theme.highlighter.progressBar.filled.color,
       height: '100%',
       width: '100%',
       position: 'absolute',
@@ -44,7 +44,7 @@ const useStyles = createUseStyles<RuleNames, Omit<ProgressBarProps, 'style'>, Th
   progressBarWrapper: ({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    padding: '15px',
+    padding: '12px',
     borderRadius: 7,
     background: theme.highlighter.background,
     overflow: 'hidden'

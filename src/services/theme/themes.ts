@@ -64,7 +64,7 @@ const lightTheme = {
     },
     progressBar: {
       filled: {
-        color: '#212121'
+        color: '#555'
       },
       noFilled: {
         color: '#dcdcdc'
@@ -139,7 +139,7 @@ const darkTheme = {
     },
     progressBar: {
       filled: {
-        color: '#e1e1e1'
+        color: '#ccc'
       },
       noFilled: {
         color: '#393939'
