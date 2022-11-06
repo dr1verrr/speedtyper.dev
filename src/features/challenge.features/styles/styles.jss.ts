@@ -119,7 +119,7 @@ const useStyles = {
     }),
     highlighterWrapper: ({ theme, paused, started }) => ({
       position: 'relative',
-      transition: 'filter 0.1s ease',
+      transition: 'filter .15s ease',
       width: '100%',
       overflow: 'hidden',
       maxHeight: '50vh',
